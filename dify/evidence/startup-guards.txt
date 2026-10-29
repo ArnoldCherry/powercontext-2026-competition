@@ -9,6 +9,7 @@ RuntimeError: INN_ADMIN_TOKEN must be a non-placeholder secret; set it in docker
 == preflight rejects env.example placeholders ==
 refuse placeholder or empty INIT_PASSWORD in /tmp/placeholders.env
 refuse placeholder or empty OCEANBASE_VECTOR_PASSWORD in /tmp/placeholders.env
+refuse placeholder or empty DIFY_AGENT_LOCAL_SANDBOX_AUTH_TOKEN in /tmp/placeholders.env
 refuse placeholder or empty INN_SERVICE_TOKEN in /tmp/placeholders.env
 refuse placeholder or empty INN_ADMIN_TOKEN in /tmp/placeholders.env
 EXIT=1
