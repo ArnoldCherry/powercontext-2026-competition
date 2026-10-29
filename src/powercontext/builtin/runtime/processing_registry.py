@@ -86,7 +86,7 @@ def canonical_processing_manifest(config: BuiltinConfig) -> dict[str, Any]:
     # Target schedules do not prove that the stopped deployment had no active
     # automatic Topic work. Preserve recovery responsibility conservatively.
     automatic = [TOPIC_MEMORY_SOURCE_WINDOW_BINDING]
-    if runtime.schedule_seconds is not None:
+    if runtime.schedule_seconds is not None or runtime.memory_source_count_threshold is not None:
         automatic.append(SOURCE_WINDOW_TRIGGER_NAME)
     if runtime.experience_schedule_seconds is not None:
         automatic.append(EXPERIENCE_INCUBATION_CURSOR_NAME)
@@ -102,5 +102,5 @@ def canonical_processing_manifest(config: BuiltinConfig) -> dict[str, Any]:
             PROFILE_SOURCE_WINDOW_BINDING: "profile",
             SKILL_DREAM_BINDING: "skill",
         },
-        "legacy_automatic_bindings": sorted(automatic),
+        "legacy_automatic_bindings": sorted(set(automatic)),
     }
