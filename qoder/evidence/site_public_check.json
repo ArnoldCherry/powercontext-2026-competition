@@ -1,0 +1,45 @@
+{
+  "url": "https://relay-board-wxl92p9nfrd.qoder.zone",
+  "checked_at": "2026-10-29T20:54:27+08:00",
+  "http_status": 200,
+  "title": "接力板 · 生态赛交付看板 | Qoder × OceanBase",
+  "h1": "让每一份提交，\n都有证据可循。",
+  "task_cards_expected_text": true,
+  "images": [
+    [
+      "assets/ui-hero.png",
+      true,
+      1440
+    ],
+    [
+      "assets/ui-memory.png",
+      true,
+      356
+    ],
+    [
+      "assets/ui-edit-dialog.png",
+      true,
+      1440
+    ],
+    [
+      "assets/ui-mobile-viewport.png",
+      true,
+      390
+    ],
+    [
+      "assets/ui-search-ds06.png",
+      true,
+      1440
+    ],
+    [
+      "assets/ui-filter-blocked.png",
+      true,
+      1440
+    ]
+  ],
+  "images_ok": true,
+  "horizontal_overflow": 0,
+  "console_errors": [],
+  "login_redirect": false,
+  "lightbox_open": true
+}

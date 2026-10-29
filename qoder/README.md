@@ -2,6 +2,8 @@
 
 > Qoder × OceanBase 2026 生态赛 · Qoder 赛道作品  
 > 用一块看板记录「任务 → 证据 → 提交 → 得分」，用 PowerContext 记住「偏好 → 进展 → 下一步」。
+>
+> 展示站：<https://relay-board-wxl92p9nfrd.qoder.zone>（Qoder Sites，公开访问）
 
 ## 一、解决的问题
 
@@ -178,7 +180,8 @@ Scope: scp_...
 - `evidence/ui_check.json`：18 项全部通过，控制台错误 0；
 - `evidence/performance.json`：30 轮本地实测，`/api/tasks` p50 1.54 ms，`/api/bootstrap`（含两次 PowerContext 检索）p50 1059.77 ms；
 - `evidence/ui-overview.png`、`ui-edit-dialog.png`、`ui-filter-blocked.png`、`ui-mobile.png`：界面截图；
-- `evidence/qoder-session.md`、`qoder-session.png`：Qoder 开发会话导出与记录截图。
+- `evidence/qoder-session.md`、`qoder-session.png`：Qoder 开发会话导出与记录截图；
+- `evidence/site_public_check.json`、`site-live.png`：公网无痕访问验证（HTTP 200、图片全部加载、无登录跳转、无控制台错误）。
 
 ## 七、数据与目录
 
@@ -209,7 +212,8 @@ qoder/
 - Qoder 账号 UID：`01a18285-6bd1-78e0-abad-5d5ee482486e`
 - 主要开发过程：需求拆解 → PowerContext 本地服务验证 → 后端/前端实现 → 单元与接口验证 → 重启恢复验证 → Playwright 界面验证 → Qoder Sites 展示站发布
 - 会话记录导出：`evidence/qoder-session.md` 与 `evidence/qoder-session.png`（由本机 Qoder 会话记录生成，含需求、关键实现、工具调用统计与验证步骤）
-- 展示站源码：`site/`；线上地址：`<QODER_SITES_URL>`（发布后回填）
+- 展示站源码：`site/`；线上地址：<https://relay-board-wxl92p9nfrd.qoder.zone>（Qoder Sites，任何人可访问）
+- 公网无痕验证：HTTP 200、6 张截图全部加载、无登录跳转、无横向溢出、控制台错误 0，证据见 `evidence/site_public_check.json`
 
 > 评审可在 Qoder 中打开 `DS-06.md` 会话，结合 UID 核对开发过程与站点归属。
 
@@ -218,7 +222,7 @@ qoder/
 - 仓库：<https://github.com/ArnoldCherry/powercontext-2026-competition>
 - 分支：`feat/eco-qoder`
 - 实现 Commit：`89a1400c5d110ee685871ae6be174561658b0bc3`
-- 后续文档/展示站 Commit：`<FINAL_COMMIT_SHA>`（提交后回填）
+- 展示站与证据 Commit：`872b53b2`（完整 SHA 见 `answers/parallel/DS-06.md`）
 - 代码目录：`qoder/`
 
 ## 十、已知限制
