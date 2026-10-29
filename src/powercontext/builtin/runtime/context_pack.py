@@ -140,8 +140,6 @@ class ContextPackDelta:
             prefix_items=prefix_items,
             appended=appended,
         )
-        if delta.to_bytes() != data:
-            raise ContextPackError("Context Pack delta JSON is not canonical")
         return delta
 
 
