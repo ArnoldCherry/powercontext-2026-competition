@@ -74,3 +74,11 @@ class SourceProcessingPendingProvider:
                 if intent is None or intent.dirty_generation == intent.clean_generation:
                     await intents.mark_dirty(connection, scope, self._binding)
         return str(rows[-1][0]) if len(rows) == limit else None
+
+    async def pending_count(self, connection: AsyncConnection, scope_id: str, /) -> int:
+        head = await connection.scalar(
+            select(SOURCE_JOURNAL_HEADS_TABLE.c.position).where(SOURCE_JOURNAL_HEADS_TABLE.c.scope_id == scope_id)
+        )
+        cursor = await SourceCursorRepository().load(connection, scope_id, self._binding)
+        consumed = 0 if cursor is None else cursor.cursor.sequence
+        return max(0, int(head or 0) - consumed)
