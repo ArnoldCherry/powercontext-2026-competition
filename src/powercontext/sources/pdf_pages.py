@@ -696,7 +696,26 @@ def _question_cues(question: str) -> _Cues:
     income_phrases = re.search(
         r"operating (?:income|expenses?|profit)|cost of (?:sales|revenue|goods)|income tax", cleaned
     )
-    if income_phrases or terms.intersection({"incom", "revenu", "sal", "gross", "margin", "eps", "earn", "profit"}):
+    income_terms = {
+        "incom",
+        "revenu",
+        "sal",
+        "gross",
+        "margin",
+        "eps",
+        "earn",
+        "profit",
+        "tax",
+        "interest",
+        "outstand",
+        "research",
+        "develop",
+        "advertis",
+        "pension",
+        "sell",
+        "administrativ",
+    }
+    if income_phrases or terms.intersection(income_terms):
         add("income")
     if ("cash" in terms and "flow" in terms) or terms.intersection({
         "capex",
