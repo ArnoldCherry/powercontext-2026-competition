@@ -1,0 +1,62 @@
+{
+  "model": "bge-small-zh-v1.5",
+  "source": {
+    "base_model": "https://huggingface.co/BAAI/bge-small-zh-v1.5",
+    "base_revision": "7999e1d3359715c523056ef9478215996d62a620",
+    "license": "MIT",
+    "onnx_weights": "https://huggingface.co/Xenova/bge-small-zh-v1.5",
+    "onnx_revision": "75c43b069aac4d136ba6bc1122f995fedcfd2781",
+    "onnx_file": "onnx/model.onnx (FP32)"
+  },
+  "dimension": 512,
+  "pooling": "cls",
+  "normalize": true,
+  "query_instruction": "为这个句子生成表示以用于检索相关文章：",
+  "input_fp32": {
+    "size_bytes": 94851877,
+    "sha256": "69a0b846f4f116b5e6aabf9546ea6754d02264f3211a13a1bd69b31b8040749a"
+  },
+  "quantization": {
+    "int8": "onnxruntime.quantization.quantize_dynamic(weight_type=QInt8, per_channel=True)",
+    "fp16": "onnxruntime.transformers.float16.convert_float_to_float16(keep_io_types=True)",
+    "tools": {
+      "onnx": "1.19.1",
+      "onnxruntime": "1.23.2",
+      "numpy": "2.4.6",
+      "python": "3.11.9"
+    },
+    "generated_at": "2026-10-29T13:30:07Z",
+    "seconds_total": 3.18
+  },
+  "compression": {
+    "int8_ratio": 3.95,
+    "fp16_ratio": 1.997
+  },
+  "files": {
+    "model_quantized.onnx": {
+      "mode": "INT8 dynamic quantization",
+      "size_bytes": 24011364,
+      "sha256": "3878b70c12c509d4ada124df758cbeebf331a4f174b0d47a30bea5dc41aab9a4",
+      "seconds": 1.71,
+      "validation": {
+        "checker": "ok",
+        "inference": "ok",
+        "output_shape": [
+          1,
+          8,
+          512
+        ]
+      }
+    },
+    "model_fp16.onnx": {
+      "mode": "FP16 conversion (float32 I/O kept)",
+      "size_bytes": 47497427,
+      "sha256": "8e785b3017e6ab0b78310118ead69ffed5a6049b67f6ac1350eabccc8f1bf6bc",
+      "seconds": 0.84,
+      "validation": {
+        "checker": "ok",
+        "inference": "skipped"
+      }
+    }
+  }
+}

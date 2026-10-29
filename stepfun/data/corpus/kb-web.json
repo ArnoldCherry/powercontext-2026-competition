@@ -1,0 +1,54 @@
+{
+  "name": "Web 平台知识库（切换隔离测试）",
+  "description": "第二知识库，用于验证切换知识库后不会返回旧集合结果。",
+  "docs": [
+    {
+      "id": "webkb-01",
+      "title": "蓝莓种植",
+      "topic": "kb-switch",
+      "text": "蓝莓喜欢酸性土壤，种植时需要保证充足光照与排水。土壤 pH 值通常控制在四点五到五点五之间，缺水时果实会变小。"
+    },
+    {
+      "id": "webkb-02",
+      "title": "芒果成熟判断",
+      "topic": "kb-switch",
+      "text": "芒果成熟时果皮颜色会变深，轻按有弹性并带有明显果香。未成熟的芒果可以放在室温下催熟，不建议直接冷藏。"
+    },
+    {
+      "id": "webkb-03",
+      "title": "HTTP 缓存",
+      "topic": "web-platform",
+      "text": "HTTP 缓存通过 Cache-Control、ETag 与 Last-Modified 等响应头控制资源复用。immutable 适合带内容哈希的静态资源，可以减少重复验证请求。"
+    },
+    {
+      "id": "webkb-04",
+      "title": "跨源隔离",
+      "topic": "web-platform",
+      "text": "跨源隔离需要同时设置 Cross-Origin-Opener-Policy 与 Cross-Origin-Embedder-Policy。开启后页面可以使用 SharedArrayBuffer 与多线程 WASM。"
+    },
+    {
+      "id": "webkb-05",
+      "title": "Cookie 与 SameSite",
+      "topic": "web-platform",
+      "text": "Cookie 的 SameSite 属性可以降低跨站请求伪造风险。SameSite=Lax 适合大多数会话 Cookie，HttpOnly 可以阻止脚本读取 Cookie。"
+    },
+    {
+      "id": "webkb-06",
+      "title": "Vite 构建",
+      "topic": "web-platform",
+      "text": "Vite 在开发阶段使用原生 ES 模块与快速热更新，生产构建使用 Rollup 打包。Worker 可以通过 new Worker(new URL(...)) 的方式被正确拆分。"
+    },
+    {
+      "id": "webkb-07",
+      "title": "WebSocket 心跳",
+      "topic": "web-platform",
+      "text": "WebSocket 长连接需要心跳机制检测断线。客户端可以定时发送 ping，服务端及时回应 pong，超时后触发重连。"
+    },
+    {
+      "id": "webkb-08",
+      "title": "CSS 容器查询",
+      "topic": "web-platform",
+      "text": "CSS 容器查询允许组件根据父容器宽度调整布局，而不依赖视口宽度。它适合可复用卡片与响应式侧边栏。"
+    }
+  ]
+}

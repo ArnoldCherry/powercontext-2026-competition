@@ -1,0 +1,30 @@
+{
+  "name": "固定评测查询集",
+  "description": "24 条查询，覆盖关键词型、语义型、生活干扰型。relevant 为人工标注的相关文档 ID，用于 Recall@K 与 nDCG@K；标签基于文档主题而非模型输出。",
+  "queries": [
+    { "query": "seekdb 的混合检索是怎么实现的？", "relevant": ["sdb-06", "sdb-10", "vec-03"], "kind": "lexical" },
+    { "query": "浏览器里怎么用 WebGPU 加速 embedding？", "relevant": ["web-02", "web-04", "web-05"], "kind": "lexical" },
+    { "query": "BGE 模型查询时要加什么前缀？", "relevant": ["bge-02"], "kind": "lexical" },
+    { "query": "INT8 量化和 FP16 量化有什么区别？", "relevant": ["web-06", "web-07"], "kind": "lexical" },
+    { "query": "为什么混合检索比单独向量检索更好？", "relevant": ["vec-03", "vec-04"], "kind": "semantic" },
+    { "query": "seekdb 支持哪些中文分词器？", "relevant": ["sdb-05"], "kind": "lexical" },
+    { "query": "索引刷新后新文档才能被搜到吗？", "relevant": ["perf-04"], "kind": "semantic" },
+    { "query": "HNSW 支持哪些距离度量？", "relevant": ["sdb-04"], "kind": "lexical" },
+    { "query": "模型第一次加载为什么很慢？", "relevant": ["perf-02", "perf-03", "web-03"], "kind": "semantic" },
+    { "query": "怎么避免重复导入同一篇文档？", "relevant": ["perf-06"], "kind": "semantic" },
+    { "query": "Transformers.js 会不会调用云端 API？", "relevant": ["web-01"], "kind": "lexical" },
+    { "query": "番茄炒蛋怎么做？", "relevant": ["misc-01"], "kind": "misc" },
+    { "query": "周末露营要带什么？", "relevant": ["misc-10"], "kind": "misc" },
+    { "query": "seekdb-js 怎么写入向量和原文？", "relevant": ["sdb-02", "sdb-09", "sdb-10"], "kind": "lexical" },
+    { "query": "RRF 的 rank_constant 有什么作用？", "relevant": ["vec-05", "sdb-07"], "kind": "lexical" },
+    { "query": "浏览器 Worker 对界面有什么好处？", "relevant": ["web-08"], "kind": "semantic" },
+    { "query": "BGE 向量的维度是多少？", "relevant": ["bge-01"], "kind": "lexical" },
+    { "query": "向量维度不一致会怎样？", "relevant": ["vec-06"], "kind": "semantic" },
+    { "query": "杭州春天去哪里骑车？", "relevant": ["misc-02"], "kind": "misc" },
+    { "query": "睡眠不足有什么影响？", "relevant": ["misc-09"], "kind": "misc" },
+    { "query": "如何在用户设备上完成文本向量化而不上云？", "relevant": ["web-01", "web-04", "bge-04"], "kind": "semantic" },
+    { "query": "数据库内部如何把关键词和语义两路结果合并？", "relevant": ["sdb-06", "sdb-07", "vec-03"], "kind": "semantic" },
+    { "query": "怎样减小浏览器里 embedding 模型的下载体积？", "relevant": ["web-06", "web-07", "bge-04"], "kind": "semantic" },
+    { "query": "哪些因素会让查询从输入到看到结果变慢？", "relevant": ["perf-05", "perf-02"], "kind": "semantic" }
+  ]
+}

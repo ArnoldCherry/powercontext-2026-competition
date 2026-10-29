@@ -1,0 +1,141 @@
+{
+  "base": "http://127.0.0.1:8788",
+  "generatedAt": "2026-10-29T13:45:07.684Z",
+  "passed": 20,
+  "failed": 0,
+  "results": [
+    {
+      "name": "session + state",
+      "ok": true,
+      "active": "a9f9242b2549"
+    },
+    {
+      "name": "create KB A",
+      "ok": true,
+      "collection": "kb_7a2f139cc4c6_mvtli9sz"
+    },
+    {
+      "name": "import KB A",
+      "ok": true,
+      "count": 3
+    },
+    {
+      "name": "refresh index",
+      "ok": true,
+      "refreshMs": 507.0767630000046
+    },
+    {
+      "name": "hybrid search returns A collection",
+      "ok": true,
+      "ids": [
+        "a-1",
+        "a-2",
+        "a-3"
+      ],
+      "collection": "kb_7a2f139cc4c6_mvtli9sz",
+      "note": "seekdb DBMS_HYBRID_SEARCH: full-text + vector fused with RRF"
+    },
+    {
+      "name": "hybrid result provenance = A",
+      "ok": true,
+      "provenance": [
+        "7a2f139cc4c6",
+        "7a2f139cc4c6",
+        "7a2f139cc4c6"
+      ]
+    },
+    {
+      "name": "keyword search",
+      "ok": true,
+      "ids": [
+        "a-3"
+      ]
+    },
+    {
+      "name": "vector search",
+      "ok": true,
+      "ids": [
+        "a-1",
+        "a-2",
+        "a-3"
+      ]
+    },
+    {
+      "name": "create + activate KB B",
+      "ok": true,
+      "bId": "f283c15efcbc",
+      "collection": "kb_f283c15efcbc_mvtliac6"
+    },
+    {
+      "name": "import KB B",
+      "ok": true,
+      "count": 2
+    },
+    {
+      "name": "KB isolation: no A docs in B results",
+      "ok": true,
+      "ids": [
+        "b-2",
+        "b-1"
+      ],
+      "collection": "kb_f283c15efcbc_mvtliac6",
+      "provenance": [
+        "f283c15efcbc",
+        "f283c15efcbc"
+      ]
+    },
+    {
+      "name": "KB isolation: all results belong to B",
+      "ok": true,
+      "provenance": [
+        "f283c15efcbc",
+        "f283c15efcbc"
+      ]
+    },
+    {
+      "name": "B query hits B doc",
+      "ok": true,
+      "ids": [
+        "b-1",
+        "b-2"
+      ]
+    },
+    {
+      "name": "stale expectedKbId rejected with 409",
+      "ok": true,
+      "status": 409,
+      "error": "KB_CHANGED",
+      "activeKbId": "f283c15efcbc"
+    },
+    {
+      "name": "stale import rejected with 409",
+      "ok": true,
+      "status": 409
+    },
+    {
+      "name": "incremental upsert keeps count",
+      "ok": true,
+      "count": 3
+    },
+    {
+      "name": "dimension mismatch rejected",
+      "ok": true,
+      "status": 400,
+      "error": "embedding must be an array of 512 numbers"
+    },
+    {
+      "name": "get docs",
+      "ok": true,
+      "total": 3
+    },
+    {
+      "name": "delete KB A",
+      "ok": true,
+      "activeKbId": "a9f9242b2549"
+    },
+    {
+      "name": "delete KB B",
+      "ok": true
+    }
+  ]
+}

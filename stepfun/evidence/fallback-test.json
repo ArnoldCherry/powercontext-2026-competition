@@ -1,0 +1,35 @@
+{
+  "generatedAt": "2026-10-29T13:50:54.574Z",
+  "steps": [
+    {
+      "step": "auto-selects-webgpu",
+      "ok": true,
+      "badge": "WebGPU · FP16 45.3 MB"
+    },
+    {
+      "step": "auto-falls-back-wasm",
+      "ok": true,
+      "badge": "WASM · INT8 22.9 MB",
+      "notice": "未检测到可用的 WebGPU 适配器，已自动降级到 WASM / INT8"
+    },
+    {
+      "step": "wasm-import-and-hybrid-search",
+      "ok": true,
+      "hits": 8,
+      "top": [
+        {
+          "title": "数据库内混合检索",
+          "text": "seekdb 通过 DBMS_HYBRID_SEARCH 存储过程在数据库内部执行混合检索：一路是全文查询，一路是向量近邻查询，数据库负责合并两路候选并返回最终排序，客户端不需要分别取回两路结果再自行拼合。",
+          "meta": "sdb-06kb 14750b8cseekdbdemo103 字"
+        },
+        {
+          "title": "seekdb-js 的 hybridSearch",
+          "text": "seekdb-js 的 collection.hybridSearch 方法会把查询文本、查询向量和 RRF 参数交给 seekdb，由数据库生成并执行混合检索 SQL。调用方只收到融合后的单一结果列表。",
+          "meta": "sdb-10kb 14750b8cseekdbdemo102 字"
+        }
+      ],
+      "timing": "查询向量化 6.37 ms WASM seekdb 检索 7.60 ms 数据库内融合 端到端 68.0 ms 输入 → 结果可展示"
+    }
+  ],
+  "events": []
+}

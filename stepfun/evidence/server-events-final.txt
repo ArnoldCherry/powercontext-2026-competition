@@ -1,0 +1,28 @@
+{"ts":"2026-10-29T13:50:22.932Z","event":"server_stop","signal":"SIGTERM"}
+{"ts":"2026-10-29T13:50:30.223Z","event":"server_start","ok":true,"mode":"server","database":"stepfun","host":"127.0.0.1","port":2885,"version":"5.7.25-OceanBase seekdb-v1.4.0.0","node":"v22.20.0","platform":"linux-x64","httpPort":8788,"root":"/mnt/d/database/pc-parallel/stepfun/stepfun"}
+{"ts":"2026-10-29T13:50:39.026Z","event":"kb_created","kbId":"f214166af9d8","name":"E2E 主库 mvtlpdcz","collection":"kb_f214166af9d8_mvtlpeom"}
+{"ts":"2026-10-29T13:50:40.191Z","event":"docs_imported","kbId":"f214166af9d8","docs":32,"writeMs":165,"count":32}
+{"ts":"2026-10-29T13:50:40.239Z","event":"docs_imported","kbId":"f214166af9d8","docs":14,"writeMs":38,"count":46}
+{"ts":"2026-10-29T13:50:40.556Z","event":"index_refreshed","kbId":"f214166af9d8","refreshMs":313}
+{"ts":"2026-10-29T13:50:40.809Z","event":"search","kbId":"f214166af9d8","mode":"hybrid","q":"seekdb 的混合检索是怎么实现的？","hits":8,"retrievalMs":17.48}
+{"ts":"2026-10-29T13:50:41.471Z","event":"search","kbId":"f214166af9d8","mode":"hybrid","q":"seekdb 的混合检索是怎么实现的？","hits":8,"retrievalMs":3.48}
+{"ts":"2026-10-29T13:50:42.139Z","event":"search","kbId":"f214166af9d8","mode":"hybrid","q":"番茄炒蛋怎么做？","hits":8,"retrievalMs":3.44}
+{"ts":"2026-10-29T13:50:42.688Z","event":"search","kbId":"f214166af9d8","mode":"hybrid","q":"如何在用户设备上完成文本向量化而不上云？","hits":8,"retrievalMs":4.42}
+{"ts":"2026-10-29T13:50:43.513Z","event":"docs_imported","kbId":"f214166af9d8","docs":32,"writeMs":93,"count":46}
+{"ts":"2026-10-29T13:50:43.568Z","event":"docs_imported","kbId":"f214166af9d8","docs":14,"writeMs":47,"count":46}
+{"ts":"2026-10-29T13:50:44.179Z","event":"index_refreshed","kbId":"f214166af9d8","refreshMs":607}
+{"ts":"2026-10-29T13:50:45.565Z","event":"kb_created","kbId":"36f89be05568","name":"E2E 隔离库 mvtlpdcz","collection":"kb_36f89be05568_mvtlpjq8"}
+{"ts":"2026-10-29T13:50:46.262Z","event":"docs_imported","kbId":"36f89be05568","docs":8,"writeMs":24,"count":8}
+{"ts":"2026-10-29T13:50:46.967Z","event":"index_refreshed","kbId":"36f89be05568","refreshMs":702}
+{"ts":"2026-10-29T13:50:47.071Z","event":"search","kbId":"36f89be05568","mode":"hybrid","q":"seekdb 的混合检索是怎么实现的？","hits":8,"retrievalMs":7.18}
+{"ts":"2026-10-29T13:50:47.601Z","event":"search","kbId":"36f89be05568","mode":"hybrid","q":"蓝莓种植要注意什么？","hits":8,"retrievalMs":4.85}
+{"ts":"2026-10-29T13:50:48.156Z","event":"kb_activated","kbId":"f214166af9d8","collection":"kb_f214166af9d8_mvtlpeom","sessionId":"f652eb58-745d-48d4-9396-c7b54e17d90d"}
+{"ts":"2026-10-29T13:50:49.060Z","event":"search","kbId":"f214166af9d8","mode":"hybrid","q":"seekdb 的混合检索是怎么实现的？","hits":8,"retrievalMs":4.42}
+{"ts":"2026-10-29T13:50:52.517Z","event":"docs_imported","kbId":"81800de5995f","docs":2,"writeMs":12,"count":2}
+{"ts":"2026-10-29T13:50:53.226Z","event":"index_refreshed","kbId":"81800de5995f","refreshMs":706}
+{"ts":"2026-10-29T13:50:53.355Z","event":"search","kbId":"81800de5995f","mode":"hybrid","q":"数据库内的混合检索怎么实现？","hits":2,"retrievalMs":7.44}
+{"ts":"2026-10-29T13:50:58.619Z","event":"kb_created","kbId":"14750b8c94e6","name":"WASM 降级验证 mvtlpqpa","collection":"kb_14750b8c94e6_mvtlptsv"}
+{"ts":"2026-10-29T13:50:59.228Z","event":"docs_imported","kbId":"14750b8c94e6","docs":32,"writeMs":68,"count":32}
+{"ts":"2026-10-29T13:50:59.261Z","event":"docs_imported","kbId":"14750b8c94e6","docs":14,"writeMs":27,"count":46}
+{"ts":"2026-10-29T13:51:00.071Z","event":"index_refreshed","kbId":"14750b8c94e6","refreshMs":806}
+{"ts":"2026-10-29T13:51:00.235Z","event":"search","kbId":"14750b8c94e6","mode":"hybrid","q":"seekdb 的混合检索是怎么实现的？","hits":8,"retrievalMs":7.6}

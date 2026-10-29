@@ -1,0 +1,42 @@
+{
+  "generatedAt": "2026-10-29T13:50:50.529Z",
+  "external": [],
+  "modelRequests": [
+    "/models/bge-small-zh-v1.5/tokenizer.json",
+    "/models/bge-small-zh-v1.5/tokenizer_config.json",
+    "/models/bge-small-zh-v1.5/config.json",
+    "/models/bge-small-zh-v1.5/onnx/model_fp16.onnx"
+  ],
+  "ortRequests": [
+    "/ort/ort-wasm-simd-threaded.jsep.mjs",
+    "/ort/ort-wasm-simd-threaded.jsep.mjs",
+    "/ort/ort-wasm-simd-threaded.jsep.mjs",
+    "/ort/ort-wasm-simd-threaded.jsep.mjs",
+    "/ort/ort-wasm-simd-threaded.jsep.wasm"
+  ],
+  "steps": [
+    {
+      "step": "model-loaded-locally",
+      "ok": true,
+      "backend": "WebGPU · FP16 45.3 MB"
+    },
+    {
+      "step": "local-paste-import",
+      "ok": true,
+      "docs": 2
+    },
+    {
+      "step": "local-query-and-search",
+      "ok": true,
+      "hits": 2,
+      "timing": "查询向量化 12.4 ms WebGPU seekdb 检索 7.44 ms 数据库内融合 端到端 63.7 ms 输入 → 结果可展示"
+    },
+    {
+      "step": "no-external-network",
+      "ok": true,
+      "external": [],
+      "localModelRequests": 4,
+      "localOrtRequests": 5
+    }
+  ]
+}

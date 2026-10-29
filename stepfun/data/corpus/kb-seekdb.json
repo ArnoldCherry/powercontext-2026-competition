@@ -1,0 +1,282 @@
+{
+  "name": "seekdb 技术知识库",
+  "description": "用于评测的固定中文语料：seekdb、向量/混合检索、端侧推理、BGE 模型与工程性能。含 10 篇生活类干扰文档。",
+  "docs": [
+    {
+      "id": "sdb-01",
+      "title": "seekdb 是什么",
+      "topic": "seekdb",
+      "text": "seekdb 是 OceanBase 开源的 AI 原生数据库，采用单机架构，把关系数据、向量、全文与 JSON 能力放在同一个引擎中。它面向 AI 应用与 Agent 场景，强调轻量部署和一体化检索。"
+    },
+    {
+      "id": "sdb-02",
+      "title": "seekdb 的访问方式",
+      "topic": "seekdb",
+      "text": "seekdb 兼容 MySQL 协议，可以使用各种语言的 MySQL 客户端或 SQL 访问，也提供 pyseekdb 与 seekdb-js 等官方 SDK。SDK 支持集合管理、向量写入、语义搜索以及混合搜索。"
+    },
+    {
+      "id": "sdb-03",
+      "title": "嵌入式与 server 模式",
+      "topic": "seekdb",
+      "text": "seekdb 提供嵌入式与 server 两种运行方式。嵌入式模式通过本地原生库运行，不需要单独启动数据库进程；server 模式启动独立服务并监听端口，默认端口为 2881，两种模式使用同一套 SQL 与 SDK 接口。"
+    },
+    {
+      "id": "sdb-04",
+      "title": "HNSW 向量索引",
+      "topic": "seekdb",
+      "text": "seekdb 的向量索引支持 HNSW 近似最近邻算法，常用的距离度量包括 cosine、l2 与 inner_product。创建集合时需要指定向量维度，维度必须与写入向量保持一致。"
+    },
+    {
+      "id": "sdb-05",
+      "title": "全文索引与中文分词",
+      "topic": "seekdb",
+      "text": "seekdb 的全文索引支持 space、ngram、ngram2、beng 与 ik 等分词器。ik 分词器提供 smart 与 max_word 模式，适合中文关键词检索；英文与数字也可以使用空格分词。"
+    },
+    {
+      "id": "sdb-06",
+      "title": "数据库内混合检索",
+      "topic": "seekdb",
+      "text": "seekdb 通过 DBMS_HYBRID_SEARCH 存储过程在数据库内部执行混合检索：一路是全文查询，一路是向量近邻查询，数据库负责合并两路候选并返回最终排序，客户端不需要分别取回两路结果再自行拼合。"
+    },
+    {
+      "id": "sdb-07",
+      "title": "RRF 排名融合",
+      "topic": "seekdb",
+      "text": "RRF 即 Reciprocal Rank Fusion，按文档在各路结果中的排名倒数加权求和，不依赖原始分数的量纲。seekdb 的混合检索支持 RRF，可配置 rank_window_size 与 rank_constant 控制候选窗口和平滑程度。"
+    },
+    {
+      "id": "sdb-08",
+      "title": "seekdb 1.4.0",
+      "topic": "seekdb",
+      "text": "seekdb 1.4.0 增加了 Fork Table 写时复制、macOS 原生支持与存储优化，seekdb-js 也同步更新到 1.4.0，并扩展了 embedding 生态与集合 API。"
+    },
+    {
+      "id": "sdb-09",
+      "title": "集合的存储结构",
+      "topic": "seekdb",
+      "text": "在 seekdb 中，一个集合通常对应一张表，文档原文、向量与 JSON 元数据存放在同一张表里。向量索引和全文索引是表上的二级索引，写入后由数据库维护。"
+    },
+    {
+      "id": "sdb-10",
+      "title": "seekdb-js 的 hybridSearch",
+      "topic": "seekdb",
+      "text": "seekdb-js 的 collection.hybridSearch 方法会把查询文本、查询向量和 RRF 参数交给 seekdb，由数据库生成并执行混合检索 SQL。调用方只收到融合后的单一结果列表。"
+    },
+    {
+      "id": "vec-01",
+      "title": "稠密向量检索",
+      "topic": "vector",
+      "text": "稠密向量检索先用 embedding 模型把文本编码成固定维度的浮点向量，再按余弦相似度或内积寻找语义相近的文档。它擅长处理同义表达与自然语言提问。"
+    },
+    {
+      "id": "vec-02",
+      "title": "全文检索的特点",
+      "topic": "vector",
+      "text": "全文检索依赖倒排索引与分词器，对精确关键词、专有名词、型号和数字非常敏感。它不擅长理解同义改写，但能稳定命中字面匹配。"
+    },
+    {
+      "id": "vec-03",
+      "title": "混合检索的价值",
+      "topic": "vector",
+      "text": "混合检索同时使用语义召回与关键词召回，可以兼顾同义表达和精确匹配。对于既有自然语言问题又包含专有名词的知识库，混合检索通常比单独使用任一方式更稳健。"
+    },
+    {
+      "id": "vec-04",
+      "title": "单路检索的局限",
+      "topic": "vector",
+      "text": "单独使用向量检索可能漏掉包含生僻专名的文档，因为模型没有见过该词；单独使用关键词检索又难以处理同义改写和跨语言表达。两路互补是混合检索的动机。"
+    },
+    {
+      "id": "vec-05",
+      "title": "RRF 参数",
+      "topic": "vector",
+      "text": "在 RRF 中，rank_constant 越大，排名靠后的文档贡献越平滑；rank_window_size 决定每路参与融合的候选数量。参数需要结合召回规模与结果数量调整。"
+    },
+    {
+      "id": "vec-06",
+      "title": "向量维度约束",
+      "topic": "vector",
+      "text": "集合的向量维度在创建时固定，写入或查询的向量长度必须与索引维度一致，否则数据库会拒绝请求。换用不同维度的模型时需要新建集合并重新导入。"
+    },
+    {
+      "id": "vec-07",
+      "title": "归一化与相似度",
+      "topic": "vector",
+      "text": "把向量做 L2 归一化后，余弦相似度与内积排序等价。很多 embedding 模型在输出时已经归一化，检索系统仍应在写入前检查向量范数，避免数值异常。"
+    },
+    {
+      "id": "web-01",
+      "title": "浏览器本地推理",
+      "topic": "web",
+      "text": "Transformers.js 可以在浏览器中加载 ONNX 模型并完成推理，整个过程不需要调用云端推理 API。模型文件可以从本地静态资源加载，计算发生在用户设备上。"
+    },
+    {
+      "id": "web-02",
+      "title": "WebGPU 加速",
+      "topic": "web",
+      "text": "WebGPU 为浏览器提供现代 GPU 接口，适合矩阵乘密集的 Transformer 推理。ONNX Runtime Web 的 WebGPU 执行提供器可以把算子调度到显卡上。"
+    },
+    {
+      "id": "web-03",
+      "title": "WASM 后端",
+      "topic": "web",
+      "text": "WASM 后端兼容性好，几乎不依赖显卡驱动，但矩阵运算在 CPU 上执行，速度通常低于 WebGPU。多线程 WASM 需要页面处于跨源隔离状态。"
+    },
+    {
+      "id": "web-04",
+      "title": "执行提供器选择",
+      "topic": "web",
+      "text": "ONNX Runtime Web 支持 WebGPU 与 WASM 两种执行提供器。应用应先检测 navigator.gpu 与适配器是否可用，优先使用 WebGPU，失败时自动降级到 WASM，并在界面上明确显示当前后端。"
+    },
+    {
+      "id": "web-05",
+      "title": "shader-f16 特性",
+      "topic": "web",
+      "text": "WebGPU 适配器的 shader-f16 特性表示 GPU 支持 16 位浮点着色器运算。支持该特性时可以使用 FP16 模型，减少显存占用并提升吞吐；不支持时可退回 FP32。"
+    },
+    {
+      "id": "web-06",
+      "title": "INT8 动态量化",
+      "topic": "web",
+      "text": "INT8 动态量化把模型权重从 FP32 转成 8 位整数，并在推理时动态计算激活的量化参数。它不需要校准数据集，能显著减小模型体积，适合 CPU 与 WASM 推理。"
+    },
+    {
+      "id": "web-07",
+      "title": "FP16 量化",
+      "topic": "web",
+      "text": "FP16 把权重从 32 位浮点压缩为 16 位浮点，模型体积约为原来的一半。FP16 在支持半精度运算的 GPU 上速度快，数值范围比 INT8 更宽，通常精度损失较小。"
+    },
+    {
+      "id": "web-08",
+      "title": "Web Worker",
+      "topic": "web",
+      "text": "Web Worker 可以在后台线程运行模型推理，避免长时间计算阻塞主线程导致界面卡顿。主线程与 Worker 通过消息传递张量结果，传输大量数据时应控制批次大小。"
+    },
+    {
+      "id": "bge-01",
+      "title": "BGE-small-zh-v1.5",
+      "topic": "bge",
+      "text": "BGE-small-zh-v1.5 是 BAAI 发布的中文小规模 embedding 模型，输出 512 维向量。它参数量小、推理快，适合端侧与本地知识库场景。"
+    },
+    {
+      "id": "bge-02",
+      "title": "BGE 查询指令",
+      "topic": "bge",
+      "text": "BGE 系列模型建议在查询侧加入指令前缀：为这个句子生成表示以用于检索相关文章：。文档侧直接编码原文，不需要加该前缀。"
+    },
+    {
+      "id": "bge-03",
+      "title": "BGE 的池化方式",
+      "topic": "bge",
+      "text": "BGE 使用 CLS pooling 提取句子表示，并对输出向量做 L2 归一化。使用 Transformers.js 时应显式设置 pooling 为 cls、normalize 为 true。"
+    },
+    {
+      "id": "bge-04",
+      "title": "BGE 的 ONNX 版本",
+      "topic": "bge",
+      "text": "社区提供了 BGE-small-zh-v1.5 的 ONNX 权重，包含 FP32、FP16 与 INT8 等变体，可直接被 Transformers.js 加载，用于浏览器本地推理。"
+    },
+    {
+      "id": "bge-05",
+      "title": "量化质量评估",
+      "topic": "bge",
+      "text": "量化可能带来轻微精度损失。评估时应固定语料与查询集，使用 Recall@K 与 nDCG@K 等指标对比量化前后结果，而不是仅凭主观感受判断。"
+    },
+    {
+      "id": "perf-01",
+      "title": "批处理权衡",
+      "topic": "perf",
+      "text": "批处理可以提高 GPU 利用率与吞吐，但批次过大会增加显存占用，也会拉高单个请求的等待时间。端侧应用需要在吞吐与交互延迟之间选择合适批次。"
+    },
+    {
+      "id": "perf-02",
+      "title": "首次加载成本",
+      "topic": "perf",
+      "text": "模型首次加载包含权重下载、计算图初始化与 GPU 内核编译，通常明显慢于预热后的推理。性能报告应把首次加载与预热后请求分开记录。"
+    },
+    {
+      "id": "perf-03",
+      "title": "浏览器缓存",
+      "topic": "perf",
+      "text": "Transformers.js 可以使用浏览器 Cache API 缓存模型文件，减少重复加载时的网络传输。命中缓存时模型加载仍然需要初始化和编译，但会快很多。"
+    },
+    {
+      "id": "perf-04",
+      "title": "索引刷新",
+      "topic": "perf",
+      "text": "新写入的文档在索引刷新后可以被立即检索。刷新耗时随数据量与索引类型增长，批量导入时应先完成写入再统一刷新，避免每批都触发昂贵的重建。"
+    },
+    {
+      "id": "perf-05",
+      "title": "端到端延迟组成",
+      "topic": "perf",
+      "text": "端到端查询延迟由查询向量化、请求传输、数据库混合检索和结果渲染组成。只优化其中一段可能收益有限，应分阶段计时定位瓶颈。"
+    },
+    {
+      "id": "perf-06",
+      "title": "增量导入去重",
+      "topic": "perf",
+      "text": "增量导入应为每篇文档生成稳定的唯一 ID，并写入时使用 upsert。这样重复导入相同文档不会产生重复记录，更新内容时也能覆盖旧向量与原文。"
+    },
+    {
+      "id": "misc-01",
+      "title": "番茄炒蛋",
+      "topic": "misc",
+      "text": "番茄炒蛋的做法是先把鸡蛋打散炒至凝固盛出，再炒番茄出汁，最后把鸡蛋倒回锅中加盐调味。喜欢甜口可以加少量糖。"
+    },
+    {
+      "id": "misc-02",
+      "title": "杭州西湖骑行",
+      "topic": "misc",
+      "text": "杭州西湖适合春天骑行，苏堤和白堤是热门路线。清晨游客较少，沿途可以欣赏湖景与樱花，注意避让行人和观光车。"
+    },
+    {
+      "id": "misc-03",
+      "title": "马拉松训练",
+      "topic": "misc",
+      "text": "马拉松训练需要循序渐进，每周增加的跑量不宜超过百分之十。长距离慢跑、间歇跑和恢复跑要合理搭配，避免连续高强度训练。"
+    },
+    {
+      "id": "misc-04",
+      "title": "上海天气",
+      "topic": "misc",
+      "text": "明天上海可能有小雨，出门记得带伞。气温在十八到二十二度之间，早晚略凉，建议穿薄外套。"
+    },
+    {
+      "id": "misc-05",
+      "title": "咖啡烘焙",
+      "topic": "misc",
+      "text": "咖啡豆的烘焙程度会影响酸度与苦味平衡。浅烘保留更多果酸与花香，深烘则更突出焦糖与巧克力风味。手冲通常选择中浅烘。"
+    },
+    {
+      "id": "misc-06",
+      "title": "猫咪饮水",
+      "topic": "misc",
+      "text": "猫咪每天需要足够的饮水量，湿粮可以补充水分。可以在家中多个位置放置水碗，并保持水源清洁，鼓励猫咪主动喝水。"
+    },
+    {
+      "id": "misc-07",
+      "title": "吉他和弦",
+      "topic": "misc",
+      "text": "吉他初学者应先练习和弦转换与节奏型，再逐步加入扫弦与指弹。每天短时间高频练习比一次长时间练习更有效。"
+    },
+    {
+      "id": "misc-08",
+      "title": "路由器摆放",
+      "topic": "misc",
+      "text": "家用路由器建议放在房屋中央、离地较高的位置，减少墙体与金属物体造成的信号盲区。天线方向可以根据常用设备的位置调整。"
+    },
+    {
+      "id": "misc-09",
+      "title": "睡眠与记忆",
+      "topic": "misc",
+      "text": "睡眠不足会影响注意力和记忆巩固。成年人通常需要七到九小时睡眠，规律作息和睡前减少屏幕使用有助于提高睡眠质量。"
+    },
+    {
+      "id": "misc-10",
+      "title": "周末露营清单",
+      "topic": "misc",
+      "text": "周末露营需要检查帐篷、防潮垫、睡袋、照明设备和急救包。出发前关注天气与营地规则，野外用火要确认是否允许并彻底熄灭。"
+    }
+  ]
+}

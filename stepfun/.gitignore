@@ -1,0 +1,13 @@
+node_modules/
+dist/
+data/seekdb/
+data/seekdb-*/
+data/.bench/
+.venv*/
+__pycache__/
+*.pyc
+*.log
+models/bge-small-zh-v1.5/onnx/model.onnx
+models/bge-small-zh-v1.5/onnx/model_q4*.onnx
+.e2e/node_modules/
+public/ort/

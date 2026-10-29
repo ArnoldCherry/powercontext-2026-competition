@@ -1,0 +1,154 @@
+{
+  "backend": "WebGPU · FP16 45.3 MB",
+  "steps": [
+    {
+      "step": "create-kb-main",
+      "ok": true
+    },
+    {
+      "step": "import-demo",
+      "ok": true,
+      "message": "已导入 46 篇并刷新索引 · 147.0 docs/s"
+    },
+    {
+      "step": "search-hybrid",
+      "ok": true,
+      "head": "8 条结果·混合检索·kb_f214166af9d8_mvtlpeom\nseekdb DBMS_HYBRID_SEARCH: full-text + vector fused with RRF",
+      "top": [
+        {
+          "title": "数据库内混合检索",
+          "text": "seekdb 通过 DBMS_HYBRID_SEARCH 存储过程在数据库内部执行混合检索：一路是全文查询，一路是向量近邻查询，数据库负责合并两路候选并返回最终排序，客户端不需要分别取回两路结果再自行拼合。",
+          "score": "RRF 0.0325",
+          "meta": "sdb-06kb f214166aseekdbdemo103 字"
+        },
+        {
+          "title": "seekdb-js 的 hybridSearch",
+          "text": "seekdb-js 的 collection.hybridSearch 方法会把查询文本、查询向量和 RRF 参数交给 seekdb，由数据库生成并执行混合检索 SQL。调用方只收到融合后的单一结果列表。",
+          "score": "RRF 0.0320",
+          "meta": "sdb-10kb f214166aseekdbdemo102 字"
+        },
+        {
+          "title": "RRF 排名融合",
+          "text": "RRF 即 Reciprocal Rank Fusion，按文档在各路结果中的排名倒数加权求和，不依赖原始分数的量纲。seekdb 的混合检索支持 RRF，可配置 rank_window_size 与 rank_constant 控制候选窗口和平滑程度。",
+          "score": "RRF 0.0310",
+          "meta": "sdb-07kb f214166aseekdbdemo127 字"
+        }
+      ]
+    },
+    {
+      "step": "query-cache",
+      "ok": true,
+      "firstTiming": "查询向量化 13.6 ms WebGPU seekdb 检索 17.5 ms 数据库内融合 端到端 75.1 ms 输入 → 结果可展示",
+      "cachedTiming": "查询向量化 10 µs 缓存命中 seekdb 检索 3.48 ms 数据库内融合 端到端 56.6 ms 输入 → 结果可展示"
+    },
+    {
+      "step": "search-misc",
+      "ok": true,
+      "top": [
+        {
+          "title": "番茄炒蛋",
+          "text": "番茄炒蛋的做法是先把鸡蛋打散炒至凝固盛出，再炒番茄出汁，最后把鸡蛋倒回锅中加盐调味。喜欢甜口可以加少量糖。",
+          "score": "RRF 0.0328",
+          "meta": "misc-01kb f214166amiscdemo53 字"
+        },
+        {
+          "title": "咖啡烘焙",
+          "text": "咖啡豆的烘焙程度会影响酸度与苦味平衡。浅烘保留更多果酸与花香，深烘则更突出焦糖与巧克力风味。手冲通常选择中浅烘。",
+          "score": "RRF 0.0161",
+          "meta": "misc-05kb f214166amiscdemo56 字"
+        }
+      ]
+    },
+    {
+      "step": "search-semantic",
+      "ok": true,
+      "top": [
+        {
+          "title": "浏览器本地推理",
+          "text": "Transformers.js 可以在浏览器中加载 ONNX 模型并完成推理，整个过程不需要调用云端推理 API。模型文件可以从本地静态资源加载，计算发生在用户设备上。",
+          "score": "RRF 0.0328",
+          "meta": "web-01kb f214166awebdemo84 字"
+        },
+        {
+          "title": "端到端延迟组成",
+          "text": "端到端查询延迟由查询向量化、请求传输、数据库混合检索和结果渲染组成。只优化其中一段可能收益有限，应分阶段计时定位瓶颈。",
+          "score": "RRF 0.0320",
+          "meta": "perf-05kb f214166aperfdemo59 字"
+        },
+        {
+          "title": "量化质量评估",
+          "text": "量化可能带来轻微精度损失。评估时应固定语料与查询集，使用 Recall@K 与 nDCG@K 等指标对比量化前后结果，而不是仅凭主观感受判断。",
+          "score": "RRF 0.0304",
+          "meta": "bge-05kb f214166abgedemo71 字"
+        }
+      ]
+    },
+    {
+      "step": "incremental-reimport",
+      "ok": true,
+      "message": "已导入 46 篇并刷新索引 · 365.5 docs/s",
+      "count": "文档 46篇 E2E 主库 mvtlpdcz"
+    },
+    {
+      "step": "docs-tab",
+      "ok": true,
+      "rows": 46
+    },
+    {
+      "step": "import-isolation-kb",
+      "ok": true,
+      "message": "已导入 8 篇并刷新索引 · 644.9 docs/s"
+    },
+    {
+      "step": "kb-isolation-old-query",
+      "ok": true,
+      "hits": 8,
+      "mainCollection": "kb_f214166af9d8_mvtlpeom",
+      "isoCollection": "kb_36f89be05568_mvtlpjq8",
+      "leaked": 0,
+      "head": "8 条结果·混合检索·kb_36f89be05568_mvtlpjq8\nseekdb DBMS_HYBRID_SEARCH: full-text + vector fused with RRF"
+    },
+    {
+      "step": "kb-isolation-new-query",
+      "ok": true,
+      "top": [
+        {
+          "title": "蓝莓种植",
+          "text": "蓝莓喜欢酸性土壤，种植时需要保证充足光照与排水。土壤 pH 值通常控制在四点五到五点五之间，缺水时果实会变小。",
+          "score": "RRF 0.0328",
+          "meta": "webkb-01kb 36f89be0kb-switchdemo55 字"
+        },
+        {
+          "title": "芒果成熟判断",
+          "text": "芒果成熟时果皮颜色会变深，轻按有弹性并带有明显果香。未成熟的芒果可以放在室温下催熟，不建议直接冷藏。",
+          "score": "RRF 0.0161",
+          "meta": "webkb-02kb 36f89be0kb-switchdemo50 字"
+        }
+      ]
+    },
+    {
+      "step": "switch-back-main",
+      "ok": true,
+      "cleared": true,
+      "top": [
+        {
+          "title": "数据库内混合检索",
+          "text": "seekdb 通过 DBMS_HYBRID_SEARCH 存储过程在数据库内部执行混合检索：一路是全文查询，一路是向量近邻查询，数据库负责合并两路候选并返回最终排序，客户端不需要分别取回两路结果再自行拼合。",
+          "score": "RRF 0.0325",
+          "meta": "sdb-06kb f214166aseekdbdemo103 字"
+        },
+        {
+          "title": "seekdb-js 的 hybridSearch",
+          "text": "seekdb-js 的 collection.hybridSearch 方法会把查询文本、查询向量和 RRF 参数交给 seekdb，由数据库生成并执行混合检索 SQL。调用方只收到融合后的单一结果列表。",
+          "score": "RRF 0.0320",
+          "meta": "sdb-10kb f214166aseekdbdemo102 字"
+        }
+      ]
+    }
+  ],
+  "events": [
+    "console.error: \u001b[0;93m2026-10-29 21:50:38.879455 [W:onnxruntime:, session_state.cc:1280 VerifyEachNodeIsAssignedToAnEp] Some nodes were not assigned to the preferred execution providers which may or may not have an negative impact on performance. e.g. ORT explicitly assigns shape related ops to CPU to improve perf",
+    "console.error: \u001b[0;93m2026-10-29 21:50:38.880929 [W:onnxruntime:, session_state.cc:1282 VerifyEachNodeIsAssignedToAnEp] Rerunning with verbose output on a non-minimal build will show node assignments.\u001b[m"
+  ],
+  "generatedAt": "2026-10-29T13:50:49.753Z"
+}

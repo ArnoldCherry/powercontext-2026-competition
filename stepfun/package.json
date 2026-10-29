@@ -1,0 +1,44 @@
+{
+  "name": "stepfun-onside-kb",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Browser-side embedding + seekdb native hybrid retrieval mini knowledge base",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "node scripts/prepare-ort.mjs && node scripts/dev.mjs",
+    "dev:server": "tsx watch server/index.ts",
+    "dev:web": "vite",
+    "build": "node scripts/prepare-ort.mjs && vite build",
+    "typecheck": "tsc --noEmit",
+    "start": "tsx server/index.ts",
+    "models:fetch": "node scripts/fetch-model.mjs",
+    "test:api": "node scripts/api-test.mjs",
+    "prepare:ort": "node scripts/prepare-ort.mjs",
+    "test:e2e": "node tests/e2e.mjs",
+    "test:fallback": "node tests/fallback.mjs",
+    "test:network": "node tests/network.mjs",
+    "bench": "node tests/bench.mjs",
+    "bench:summary": "node scripts/summarize-bench.mjs"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "3.8.1",
+    "express": "5.3.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "seekdb": "1.4.0"
+  },
+  "devDependencies": {
+    "@types/express": "5.0.6",
+    "@types/node": "24.10.1",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.1.2",
+    "playwright-core": "1.64.1",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3",
+    "vite": "8.3.5"
+  }
+}
