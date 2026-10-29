@@ -1,0 +1,38 @@
+== fresh database health ==
+{"ok":true,"seekdb":"5.7.25-OceanBase seekdb-v1.4.0.0","database":"inn_verify"}
+== first visit on empty database ==
+{
+    "ok": true,
+    "player": {
+        "name": "\u963f\u98de",
+        "reputation": 2,
+        "tier": "\u751f\u5ba2",
+        "visit_no": 1,
+        "round": 1,
+        "debt": 0
+    },
+    "visit": {
+        "is_returning": false,
+        "is_first": true,
+        "action": "\u70b9\u83dc",
+        "delta": 2
+    },
+    "memories": [],
+    "lore": [
+        {
+            "title": "\u6842\u82b1\u917f",
+            "body": "\u540e\u9662\u8001\u69d0\u6811\u4e0b\u57cb\u7740\u4e09\u5e74\u524d\u7684\u6842\u82b1\u917f\u3002\u638c\u67dc\u8bf4\u53ea\u7ed9\u61c2\u9152\u7684\u4eba\u559d\uff0c\u5176\u5b9e\u662f\u8c01\u90fd\u820d\u4e0d\u5f97\u7ed9\u3002",
+            "kind": "\u9152"
+        }
+    ],
+    "daily_hint": null,
+    "secret_hit": false,
+    "retrieval": "fulltext",
+    "director_note": "\u5ba2\u4eba\u540d\u53f7\uff1a\u963f\u98de\uff1b\u7b2c 1 \u6b21\u5149\u4e34\uff0c\u7b2c 1 \u56de\u5408\uff1b\u4eba\u60c5\u503c 2\uff0c\u79f0\u53f7\u300c\u751f\u5ba2\u300d\uff1b\u8d4a\u8d26 0 \u6587\u3002\n\u8bed\u6c14\u8981\u6c42\uff1a\u5ba2\u6c14\u4f46\u758f\u79bb\uff0c\u5148\u6253\u91cf\u518d\u8bf4\u8bdd\u3002\n\u672c\u8f6e\u884c\u4e3a\uff1a\u70b9\u83dc\uff08\u4eba\u60c5 +2\uff09\u3002\n\u53ef\u7ec7\u5165\u7684\u6c5f\u6e56\u5f02\u95fb\uff1a\u300a\u6842\u82b1\u917f\u300b\u540e\u9662\u8001\u69d0\u6811\u4e0b\u57cb\u7740\u4e09\u5e74\u524d\u7684\u6842\u82b1\u917f\u3002\u638c\u67dc\u8bf4\u53ea\u7ed9\u61c2\u9152\u7684\u4eba\u559d\uff0c\u5176\u5b9e\u662f\u8c01\u90fd\u820d\u4e0d\u5f97\u7ed9\u3002\u3002\n\u7ed3\u5c3e\u629b\u51fa\u4e00\u4e2a\u95ee\u9898\u6216\u52a8\u4f5c\u7559\u4f4f\u5ba2\u4eba\uff1b\u4e0d\u8981\u8f93\u51fa\u4eba\u60c5\u6570\u503c\u6216\u79f0\u53f7\uff0c\u7cfb\u7edf\u4f1a\u7edf\u4e00\u6807\u6ce8\u3002",
+    "status_line": "\u3010\u4eba\u60c5 2 \u00b7 \u751f\u5ba2\u3011"
+}
+
+== initialized tables ==
+['inn_daily', 'inn_events', 'inn_lore', 'inn_players', 'inn_secrets']
+{'lore_count': 14}
+[{'title': '断肠面', 'min_reputation': -100}, {'title': '桂花酿', 'min_reputation': -100}, {'title': '青花瓷碗', 'min_reputation': -100}, {'title': '后院老槐树', 'min_reputation': -100}, {'title': '地窖', 'min_reputation': 40}, {'title': '燕十三', 'min_reputation': 0}, {'title': '招财', 'min_reputation': -100}, {'title': '阿绣', 'min_reputation': 20}, {'title': '灶王爷', 'min_reputation': -100}, {'title': '江湖悬赏', 'min_reputation': -100}, {'title': '陈年赊账簿', 'min_reputation': -100}, {'title': '断剑听雨', 'min_reputation': 30}, {'title': '客栈规矩', 'min_reputation': -100}, {'title': '女儿红', 'min_reputation': 60}]

@@ -1,0 +1,416 @@
+SQL> SELECT VERSION() AS version, CURRENT_USER() AS cur_user, NOW() AS ts
+[
+  {
+    "version": "5.7.25-OceanBase seekdb-v1.4.0.0",
+    "cur_user": "root@%",
+    "ts": "2026-10-29 18:01:07"
+  }
+]
+
+SQL> SHOW DATABASES
+[
+  {
+    "Database": "information_schema"
+  },
+  {
+    "Database": "inn"
+  },
+  {
+    "Database": "mysql"
+  },
+  {
+    "Database": "oceanbase"
+  },
+  {
+    "Database": "test"
+  }
+]
+
+SQL> SHOW TABLES
+[
+  {
+    "Tables_in_inn": "inn_daily"
+  },
+  {
+    "Tables_in_inn": "inn_events"
+  },
+  {
+    "Tables_in_inn": "inn_lore"
+  },
+  {
+    "Tables_in_inn": "inn_players"
+  },
+  {
+    "Tables_in_inn": "inn_secrets"
+  }
+]
+
+SQL> SELECT player_id, name, reputation, debt, visits, rounds, last_conversation_id, last_seen FROM inn_players ORDER BY last_seen DESC
+[
+  {
+    "player_id": "78981f49-6ac3-4aa3-9e93-e08b4486bdaf",
+    "name": "楚留香",
+    "reputation": 7,
+    "debt": 0,
+    "visits": 2,
+    "rounds": 2,
+    "last_conversation_id": "6ce7f704-16bc-4ced-b5b5-dd19499c9f6e",
+    "last_seen": "2026-10-29 10:00:16"
+  },
+  {
+    "player_id": "8d67a8c2-0cfe-45bc-93d3-59b604d92700",
+    "name": "令狐冲",
+    "reputation": 2,
+    "debt": 0,
+    "visits": 1,
+    "rounds": 1,
+    "last_conversation_id": "eeb9b8c8-bf44-4ee0-9b8f-b4e323a53ffb",
+    "last_seen": "2026-10-29 09:59:28"
+  },
+  {
+    "player_id": "cba44587-7b8a-4eda-a4f9-6d9a028e307a",
+    "name": "令狐冲",
+    "reputation": 20,
+    "debt": 0,
+    "visits": 8,
+    "rounds": 1,
+    "last_conversation_id": "7aac8214-64e7-4aff-9b2d-a23af67bdcef",
+    "last_seen": "2026-10-29 09:56:33"
+  }
+]
+
+SQL> SELECT id, player_id, conversation_id, visit_no, round_no, action, LEFT(utterance, 40) AS utterance, delta, created_at FROM inn_events ORDER BY id
+[
+  {
+    "id": 11,
+    "player_id": "cba44587-7b8a-4eda-a4f9-6d9a028e307a",
+    "conversation_id": "efde2a5b-a528-4969-8bed-256f37e13866",
+    "visit_no": 1,
+    "round_no": 1,
+    "action": "点菜",
+    "utterance": "我叫令狐冲，来碗断肠面。",
+    "delta": 2,
+    "created_at": "2026-10-29 09:56:14"
+  },
+  {
+    "id": 12,
+    "player_id": "cba44587-7b8a-4eda-a4f9-6d9a028e307a",
+    "conversation_id": "d870a511-fa8c-4630-9cf4-8148047454e9",
+    "visit_no": 2,
+    "round_no": 1,
+    "action": "叙旧",
+    "utterance": "掌柜的，还认得我吗？上次那碗断肠面什么味儿，我到现在还记得。",
+    "delta": 3,
+    "created_at": "2026-10-29 09:56:16"
+  },
+  {
+    "id": 13,
+    "player_id": "cba44587-7b8a-4eda-a4f9-6d9a028e307a",
+    "conversation_id": "d5b9695c-a8b5-41c8-b22e-d42de158a360",
+    "visit_no": 3,
+    "round_no": 1,
+    "action": "打听",
+    "utterance": "掌柜的，今日暗号是什么？",
+    "delta": 2,
+    "created_at": "2026-10-29 09:56:18"
+  },
+  {
+    "id": 14,
+    "player_id": "cba44587-7b8a-4eda-a4f9-6d9a028e307a",
+    "conversation_id": "8c987b32-7621-45ec-b0c7-b5f97fcedd26",
+    "visit_no": 4,
+    "round_no": 1,
+    "action": "叙旧",
+    "utterance": "招财今天吃小鱼干！",
+    "delta": 18,
+    "created_at": "2026-10-29 09:56:21"
+  },
+  {
+    "id": 15,
+    "player_id": "cba44587-7b8a-4eda-a4f9-6d9a028e307a",
+    "conversation_id": "cff6f7a0-16f0-404e-b94d-5563de1c135f",
+    "visit_no": 5,
+    "round_no": 1,
+    "action": "捣乱",
+    "utterance": "这破店我砸了！",
+    "delta": -10,
+    "created_at": "2026-10-29 09:56:24"
+  },
+  {
+    "id": 16,
+    "player_id": "cba44587-7b8a-4eda-a4f9-6d9a028e307a",
+    "conversation_id": "b46c455a-77bd-486b-be67-1f91c361e01a",
+    "visit_no": 6,
+    "round_no": 1,
+    "action": "赊账",
+    "utterance": "先赊二十文酒钱，记我账上。",
+    "delta": -5,
+    "created_at": "2026-10-29 09:56:27"
+  },
+  {
+    "id": 17,
+    "player_id": "cba44587-7b8a-4eda-a4f9-6d9a028e307a",
+    "conversation_id": "ecdb0873-b52f-44af-a257-b20e46605d25",
+    "visit_no": 7,
+    "round_no": 1,
+    "action": "还账",
+    "utterance": "我还你二十文，把账清了。",
+    "delta": 8,
+    "created_at": "2026-10-29 09:56:30"
+  },
+  {
+    "id": 18,
+    "player_id": "cba44587-7b8a-4eda-a4f9-6d9a028e307a",
+    "conversation_id": "7aac8214-64e7-4aff-9b2d-a23af67bdcef",
+    "visit_no": 8,
+    "round_no": 1,
+    "action": "打听",
+    "utterance": "给我讲讲燕十三的事。",
+    "delta": 2,
+    "created_at": "2026-10-29 09:56:33"
+  },
+  {
+    "id": 19,
+    "player_id": "8d67a8c2-0cfe-45bc-93d3-59b604d92700",
+    "conversation_id": "eeb9b8c8-bf44-4ee0-9b8f-b4e323a53ffb",
+    "visit_no": 1,
+    "round_no": 1,
+    "action": "点菜",
+    "utterance": "我叫令狐冲，来碗断肠面。",
+    "delta": 2,
+    "created_at": "2026-10-29 09:59:28"
+  },
+  {
+    "id": 20,
+    "player_id": "78981f49-6ac3-4aa3-9e93-e08b4486bdaf",
+    "conversation_id": "eb43b32f-8f27-46d7-9704-692a7b7e1e20",
+    "visit_no": 1,
+    "round_no": 1,
+    "action": "点菜",
+    "utterance": "我叫楚留香，来碗断肠面。",
+    "delta": 2,
+    "created_at": "2026-10-29 10:00:07"
+  },
+  {
+    "id": 21,
+    "player_id": "78981f49-6ac3-4aa3-9e93-e08b4486bdaf",
+    "conversation_id": "6ce7f704-16bc-4ced-b5b5-dd19499c9f6e",
+    "visit_no": 2,
+    "round_no": 1,
+    "action": "叙旧",
+    "utterance": "掌柜的，还认得我吗？上次那碗断肠面什么味儿，我到现在还记得。",
+    "delta": 3,
+    "created_at": "2026-10-29 10:00:13"
+  },
+  {
+    "id": 22,
+    "player_id": "78981f49-6ac3-4aa3-9e93-e08b4486bdaf",
+    "conversation_id": "6ce7f704-16bc-4ced-b5b5-dd19499c9f6e",
+    "visit_no": 2,
+    "round_no": 2,
+    "action": "打听",
+    "utterance": "今日暗号是什么？",
+    "delta": 2,
+    "created_at": "2026-10-29 10:00:16"
+  }
+]
+
+SQL> SELECT id, title, kind, keywords, min_reputation FROM inn_lore ORDER BY id
+[
+  {
+    "id": 1,
+    "title": "断肠面",
+    "kind": "菜",
+    "keywords": "面 断肠 招牌 吃",
+    "min_reputation": -100
+  },
+  {
+    "id": 2,
+    "title": "桂花酿",
+    "kind": "酒",
+    "keywords": "桂花 酒 酿 后院 槐树",
+    "min_reputation": -100
+  },
+  {
+    "id": 3,
+    "title": "青花瓷碗",
+    "kind": "器物",
+    "keywords": "瓷碗 青花 摔 赔",
+    "min_reputation": -100
+  },
+  {
+    "id": 4,
+    "title": "后院老槐树",
+    "kind": "地方",
+    "keywords": "槐树 后院 许愿 树",
+    "min_reputation": -100
+  },
+  {
+    "id": 5,
+    "title": "地窖",
+    "kind": "秘密",
+    "keywords": "地窖 钥匙 女儿红 藏酒",
+    "min_reputation": 40
+  },
+  {
+    "id": 6,
+    "title": "燕十三",
+    "kind": "人物",
+    "keywords": "燕十三 剑客 剑 霜降",
+    "min_reputation": 0
+  },
+  {
+    "id": 7,
+    "title": "招财",
+    "kind": "动物",
+    "keywords": "猫 招财 鱼干 后厨",
+    "min_reputation": -100
+  },
+  {
+    "id": 8,
+    "title": "阿绣",
+    "kind": "人物",
+    "keywords": "阿绣 老板娘 桂花 旧事",
+    "min_reputation": 20
+  },
+  {
+    "id": 9,
+    "title": "灶王爷",
+    "kind": "神",
+    "keywords": "灶王 暗号 口令 灶台 黄纸",
+    "min_reputation": -100
+  },
+  {
+    "id": 10,
+    "title": "江湖悬赏",
+    "kind": "事件",
+    "keywords": "悬赏 采花贼 一阵风 官府",
+    "min_reputation": -100
+  },
+  {
+    "id": 11,
+    "title": "陈年赊账簿",
+    "kind": "事件",
+    "keywords": "赊账 账本 还钱 欠",
+    "min_reputation": -100
+  },
+  {
+    "id": 12,
+    "title": "断剑听雨",
+    "kind": "器物",
+    "keywords": "断剑 听雨 剑冢 故人",
+    "min_reputation": 30
+  },
+  {
+    "id": 13,
+    "title": "客栈规矩",
+    "kind": "规矩",
+    "keywords": "规矩 打架 赊账 年纪",
+    "min_reputation": -100
+  },
+  {
+    "id": 14,
+    "title": "女儿红",
+    "kind": "秘密",
+    "keywords": "女儿红 地窖 酒 女儿",
+    "min_reputation": 60
+  }
+]
+
+SQL> SHOW INDEX FROM inn_lore
+[
+  {
+    "Table": "inn_lore",
+    "Non_unique": 0,
+    "Key_name": "PRIMARY",
+    "Seq_in_index": 1,
+    "Column_name": "id",
+    "Collation": "A",
+    "Cardinality": null,
+    "Sub_part": null,
+    "Packed": null,
+    "Null": "",
+    "Index_type": "BTREE",
+    "Comment": "available",
+    "Index_comment": "",
+    "Visible": "YES",
+    "Expression": null
+  },
+  {
+    "Table": "inn_lore",
+    "Non_unique": 1,
+    "Key_name": "ft_inn_lore",
+    "Seq_in_index": 1,
+    "Column_name": "title",
+    "Collation": "A",
+    "Cardinality": null,
+    "Sub_part": null,
+    "Packed": null,
+    "Null": "",
+    "Index_type": "FULLTEXT",
+    "Comment": "available",
+    "Index_comment": "",
+    "Visible": "YES",
+    "Expression": null
+  },
+  {
+    "Table": "inn_lore",
+    "Non_unique": 1,
+    "Key_name": "ft_inn_lore",
+    "Seq_in_index": 2,
+    "Column_name": "body",
+    "Collation": "A",
+    "Cardinality": null,
+    "Sub_part": null,
+    "Packed": null,
+    "Null": "",
+    "Index_type": "FULLTEXT",
+    "Comment": "available",
+    "Index_comment": "",
+    "Visible": "YES",
+    "Expression": null
+  },
+  {
+    "Table": "inn_lore",
+    "Non_unique": 1,
+    "Key_name": "ft_inn_lore",
+    "Seq_in_index": 3,
+    "Column_name": "keywords",
+    "Collation": "A",
+    "Cardinality": null,
+    "Sub_part": null,
+    "Packed": null,
+    "Null": "",
+    "Index_type": "FULLTEXT",
+    "Comment": "available",
+    "Index_comment": "",
+    "Visible": "YES",
+    "Expression": null
+  }
+]
+
+SQL> SELECT id, title, MATCH(title, body, keywords) AGAINST ('燕十三' IN NATURAL LANGUAGE MODE) AS score FROM inn_lore WHERE MATCH(title, body, keywords) AGAINST ('燕十三' IN NATURAL LANGUAGE MODE)
+[
+  {
+    "id": 6,
+    "title": "燕十三",
+    "score": 3.4041507536194957
+  }
+]
+
+SQL> SELECT player_id, code_date FROM inn_secrets ORDER BY code_date DESC
+[
+  {
+    "player_id": "cba44587-7b8a-4eda-a4f9-6d9a028e307a",
+    "code_date": "2026-10-29"
+  }
+]
+
+SQL> SELECT * FROM inn_daily ORDER BY code_date DESC LIMIT 3
+[
+  {
+    "code_date": "2026-10-29",
+    "passphrase": "招财今天吃小鱼干",
+    "hint": "灶王爷说：猫比人诚实。"
+  }
+]

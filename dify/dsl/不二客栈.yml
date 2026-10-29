@@ -1,0 +1,531 @@
+app:
+  description: 临安城外的「不二客栈」里，掌柜钱不二记得每位客人的旧账、浑话和善缘。 你每说一句话，他都会翻账本、查江湖异闻，再决定是请你喝酒还是赶你出门。
+    多来几次，他会记住你；说对今日暗号，还能骗到一坛十八年女儿红。
+  icon: 🏮
+  icon_background: '#FFEAD5'
+  icon_type: emoji
+  mode: advanced-chat
+  name: 不二客栈 · 记仇掌柜
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/deepseek:0.0.26@bdf47cb41e9062bba00d26625d2a795c1874011d8ce64bff738c44b5a31787ea
+    version: null
+kind: app
+site:
+  chat_color_theme: null
+  chat_color_theme_inverted: false
+  copyright: null
+  custom_disclaimer: ''
+  default_language: zh-Hans
+  description: null
+  icon: 🏮
+  icon_background: '#FFEAD5'
+  icon_type: emoji
+  input_placeholder: null
+  privacy_policy: null
+  show_workflow_steps: true
+  title: 不二客栈 · 记仇掌柜
+  use_icon_as_answer_icon: false
+version: 0.7.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions: []
+      allowed_file_types: []
+      allowed_file_upload_methods:
+      - remote_url
+      - local_file
+      enabled: false
+      fileUploadConfig:
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        image_file_size_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - remote_url
+        - local_file
+      number_limits: 3
+    opening_statement: 客官，打尖还是住店？先说好：赊账要还，砸店要赔；夸我年轻，可以免单。
+    retriever_resource:
+      enabled: false
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions:
+    - 我叫令狐冲，来碗断肠面。
+    - 掌柜的，上次的账还记着吗？
+    - 听说你后院埋了桂花酿？
+    - 今日暗号是什么？
+    suggested_questions_after_answer:
+      enabled: true
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: parameter-extractor
+      id: 3d7c0f1e-0001-4f3a-9a11-000000000001
+      selected: false
+      source: '1001'
+      sourceHandle: source
+      target: '1002'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: parameter-extractor
+        targetType: http-request
+      id: 3d7c0f1e-0001-4f3a-9a11-000000000002
+      selected: false
+      source: '1002'
+      sourceHandle: source
+      target: '1003'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: code
+      id: 3d7c0f1e-0001-4f3a-9a11-000000000007
+      selected: false
+      source: '1003'
+      sourceHandle: source
+      target: '1008'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: if-else
+      id: 3d7c0f1e-0001-4f3a-9a11-000000000003
+      selected: false
+      source: '1008'
+      sourceHandle: source
+      target: '1004'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: 3d7c0f1e-0001-4f3a-9a11-000000000004
+      selected: false
+      source: '1004'
+      sourceHandle: 'true'
+      target: '1005'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: code
+      id: 3d7c0f1e-0001-4f3a-9a11-000000000005
+      selected: false
+      source: '1005'
+      sourceHandle: source
+      target: '1009'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: answer
+      id: 3d7c0f1e-0001-4f3a-9a11-000000000008
+      selected: false
+      source: '1009'
+      sourceHandle: source
+      target: '1006'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: answer
+      id: 3d7c0f1e-0001-4f3a-9a11-000000000006
+      selected: false
+      source: '1004'
+      sourceHandle: 'false'
+      target: '1007'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        desc: ''
+        selected: false
+        title: 开始
+        type: start
+        variables: []
+      height: 90
+      id: '1001'
+      position:
+        x: 80
+        y: 300
+      positionAbsolute:
+        x: 80
+        y: 300
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: 把小二的听辨结果拆成行为、关键词和名号，交账房检索。
+        instruction: '你是「不二客栈」里跑堂的小二，只负责听客人的话并传话，不回答客人。
+
+          从下面这句话里提取三样东西：
+
+          1. action：客人的行为，只能从这些词里选一个：请安、点菜、请客、吹牛、叙旧、打听、赊账、还账、捣乱、威胁、偷窃。实在判断不了填「叙旧」。
+
+          2. keywords：客人提到的人、物、地点、话题，最多 4 个，用空格分隔。没有就填「无」。
+
+          3. player_name：客人自报的名号（如“我叫令狐冲”“叫我冲哥”），没有就填「无」。
+
+          只做提取，不要回答问题，不要编造客人没说的内容。'
+        model:
+          completion_params:
+            temperature: 0.1
+            thinking: false
+          mode: chat
+          name: deepseek-flash
+          provider: langgenius/deepseek/deepseek
+        parameters:
+        - description: 行为类别，必须是请安、点菜、请客、吹牛、叙旧、打听、赊账、还账、捣乱、威胁、偷窃之一
+          name: action
+          required: true
+          type: string
+        - description: 用于检索江湖异闻的关键词，最多4个，空格分隔，没有填「无」
+          name: keywords
+          required: false
+          type: string
+        - description: 客人自报的名号，没有填「无」
+          name: player_name
+          required: false
+          type: string
+        query:
+        - sys
+        - query
+        reasoning_mode: prompt
+        selected: false
+        title: 小二听音
+        type: parameter-extractor
+        vision:
+          enabled: false
+      height: 150
+      id: '1002'
+      position:
+        x: 400
+        y: 280
+      positionAbsolute:
+        x: 400
+        y: 280
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - id: key-value-1
+            key: ''
+            type: text
+            value: '{"player_id":"{{#sys.user_id#}}","conversation_id":"{{#sys.conversation_id#}}","utterance":"{{#sys.query#}}","action":"{{#1002.action#}}","keywords":"{{#1002.keywords#}}","player_name":"{{#1002.player_name#}}"}'
+          type: raw-text
+        desc: 账房先生查 seekdb：玩家旧事、人情值、赊账与江湖异闻。
+        headers: 'Content-Type: application/json'
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 2
+          retry_enabled: true
+          retry_interval: 100
+        selected: false
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: 查账本
+        type: http-request
+        url: http://inn-backend:8000/api/visit
+        variables: []
+      height: 134
+      id: '1003'
+      position:
+        x: 720
+        y: 288
+      positionAbsolute:
+        x: 720
+        y: 288
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "import json\n\n\ndef main(body: str) -> dict:\n    try:\n        data\
+          \ = json.loads(body)\n    except Exception as exc:\n        return {\n \
+          \           \"ok\": False,\n            \"status_line\": \"\",\n       \
+          \     \"director_note\": \"\",\n            \"tier\": \"\",\n          \
+          \  \"reputation\": 0,\n            \"secret_hit\": False,\n            \"\
+          is_returning\": False,\n            \"parse_error\": str(exc),\n       \
+          \ }\n    player = data.get(\"player\") or {}\n    visit = data.get(\"visit\"\
+          ) or {}\n    return {\n        \"ok\": bool(data.get(\"ok\")),\n       \
+          \ \"status_line\": data.get(\"status_line\") or \"\",\n        \"director_note\"\
+          : data.get(\"director_note\") or \"\",\n        \"tier\": player.get(\"\
+          tier\") or \"\",\n        \"reputation\": int(player.get(\"reputation\"\
+          ) or 0),\n        \"secret_hit\": bool(data.get(\"secret_hit\")),\n    \
+          \    \"is_returning\": bool(visit.get(\"is_returning\")),\n        \"parse_error\"\
+          : \"\",\n    }"
+        code_language: python3
+        desc: 把账房返回的 JSON 拆成掌柜能用的字段，并校验结果。
+        outputs:
+          director_note:
+            children: null
+            type: string
+          is_returning:
+            children: null
+            type: boolean
+          ok:
+            children: null
+            type: boolean
+          parse_error:
+            children: null
+            type: string
+          reputation:
+            children: null
+            type: number
+          secret_hit:
+            children: null
+            type: boolean
+          status_line:
+            children: null
+            type: string
+          tier:
+            children: null
+            type: string
+        selected: false
+        title: 账房先生
+        type: code
+        variables:
+        - value_selector:
+          - '1003'
+          - body
+          variable: body
+      height: 560
+      id: '1008'
+      position:
+        x: 1040
+        y: 540
+      positionAbsolute:
+        x: 1040
+        y: 540
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: '='
+            id: 7d3b8c21-0001-4b6e-9f01-000000000011
+            value: '200'
+            varType: number
+            variable_selector:
+            - '1003'
+            - status_code
+          id: 'true'
+          logical_operator: and
+        desc: 账房没接上话时走兜底回答。
+        selected: false
+        title: 账房接上了吗
+        type: if-else
+      height: 172
+      id: '1004'
+      position:
+        x: 1360
+        y: 300
+      positionAbsolute:
+        x: 1360
+        y: 300
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: 掌柜根据账本密报即兴回话。
+        model:
+          completion_params:
+            max_tokens: 4096
+            temperature: 1.0
+            thinking: false
+          mode: chat
+          name: deepseek-flash
+          provider: langgenius/deepseek/deepseek
+        prompt_template:
+        - id: 1b6f4d7a-0001-4b91-8c01-000000000021
+          role: system
+          text: '你是临安城外「不二客栈」的掌柜钱不二。五十来岁，抠门、记仇、嘴硬心软。你记得每个客人欠的账、说过的浑话、做过的混事。你说话带市井气，爱用“客官”“少侠”“哟”，但不油滑。
+
+            【账本密报】是账房先生整理的本轮信息，里面有客人的名号、人情值、称号、旧事、江湖异闻和本轮行为。
+
+            写作要求：
+
+            1. 第一句必须用客人名号称呼他一次（如「哟，令狐冲少侠」，名号以密报里的为准），再往下说。
+
+            2. 必须自然提起至少一条旧事（若有），并织入至少一条江湖异闻（若有），不要逐条复述密报。
+
+            3. 按称号调整语气：生死之交热络豪爽；座上宾客气熟稔；熟客嘴硬心软；生客客气疏离；不受欢迎阴阳怪气；仇人冷脸敲打。
+
+            4. 若客人说对了暗号，要惊喜，并提到地窖里的十八年女儿红；若客人问暗号，可神秘地告诉他今日暗号。
+
+            5. 不要提“密报”“系统”“JSON”“AI”，不要解释设定，不要跳出角色。
+
+            6. 回复 120~220 个汉字，结尾抛出一个问题或动作。绝对不要输出【人情 X · 称号】或任何类似的状态标记，系统会在末尾统一标注。'
+        - id: 5c2a9e13-0001-4f77-8b01-000000000022
+          role: user
+          text: '【账本密报】
+
+            {{#1008.director_note#}}
+
+
+            【客人刚才说】
+
+            {{#sys.query#}}'
+        selected: false
+        title: 掌柜回话
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 96
+      id: '1005'
+      position:
+        x: 1680
+        y: 300
+      positionAbsolute:
+        x: 1680
+        y: 300
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "import re\n\n\ndef main(text: str, status_line: str) -> dict:\n   \
+          \ cleaned = re.sub(r\"\\s*【人情[^】]*】\\s*$\", \"\", text or \"\").strip()\n\
+          \    body = f\"{cleaned}\\n\\n{status_line}\".strip() if status_line else\
+          \ cleaned\n    return {\"reply\": body}"
+        code_language: python3
+        desc: 去掉掌柜重复写出的状态标记，统一追加账本里的准确状态。
+        outputs:
+          reply:
+            children: null
+            type: string
+        selected: false
+        title: 落笔归档
+        type: code
+        variables:
+        - value_selector:
+          - '1005'
+          - text
+          variable: text
+        - value_selector:
+          - '1008'
+          - status_line
+          variable: status_line
+      height: 180
+      id: '1009'
+      position:
+        x: 1680
+        y: 540
+      positionAbsolute:
+        x: 1680
+        y: 540
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        answer: '{{#1009.reply#}}'
+        desc: ''
+        selected: false
+        title: 掌柜答话
+        type: answer
+        variables: []
+      height: 104
+      id: '1006'
+      position:
+        x: 2000
+        y: 196
+      positionAbsolute:
+        x: 2000
+        y: 196
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        answer: '账房先生打了个盹，没接上话。（HTTP {{#1003.status_code#}}）
+
+          客官稍等片刻，再喊一声？'
+        desc: ''
+        selected: false
+        title: 账房打盹
+        type: answer
+        variables: []
+      height: 104
+      id: '1007'
+      position:
+        x: 1680
+        y: 460
+      positionAbsolute:
+        x: 1680
+        y: 460
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+  rag_pipeline_variables: []
