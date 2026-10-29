@@ -64,7 +64,7 @@ class HTTPMemoryReranker:
         """Return original global ranks ordered by descending service score."""
 
         _validate_bounds(len(candidates), limit)
-        scores: dict[int, float] = {}
+        scores: dict[int, int | float] = {}
         requests = 0
         for start in range(0, len(candidates), self._batch_size):
             batch = candidates[start : start + self._batch_size]
@@ -88,7 +88,7 @@ class HTTPMemoryReranker:
         )
 
 
-def _parse_scores(response: httpx.Response, expected_ranks: frozenset[int]) -> list[tuple[int, float]]:
+def _parse_scores(response: httpx.Response, expected_ranks: frozenset[int]) -> list[tuple[int, int | float]]:
     try:
         payload = response.json()
     except ValueError as exc:
@@ -105,7 +105,7 @@ def _parse_scores(response: httpx.Response, expected_ranks: frozenset[int]) -> l
     return parsed
 
 
-def _parse_score_item(item: object, expected_ranks: frozenset[int]) -> tuple[int, float]:
+def _parse_score_item(item: object, expected_ranks: frozenset[int]) -> tuple[int, int | float]:
     if not isinstance(item, dict) or set(item) != {"rank", "score"}:
         raise ValueError("each reranker score must contain exactly rank and score")
     rank = item["rank"]
@@ -114,13 +114,9 @@ def _parse_score_item(item: object, expected_ranks: frozenset[int]) -> tuple[int
         raise ValueError(f"reranker returned a rank outside the current batch: {rank!r}")
     if type(raw_score) not in (int, float) or isinstance(raw_score, bool):
         raise ValueError("reranker score must be a finite number")
-    try:
-        score = float(raw_score)
-    except (OverflowError, ValueError) as exc:
-        raise ValueError("reranker score must be a finite number") from exc
-    if not math.isfinite(score):
+    if isinstance(raw_score, float) and not math.isfinite(raw_score):
         raise ValueError("reranker score must be a finite number")
-    return rank, score
+    return rank, raw_score
 
 
 def _validate_bounds(candidate_count: int, limit: int) -> None:
