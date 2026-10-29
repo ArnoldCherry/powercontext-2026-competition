@@ -183,11 +183,12 @@ POWERCONTEXT_MODE=external POWERCONTEXT_URL=http://127.0.0.1:18801 .venv\Scripts
 - `evidence/verification_after_restart.json`：8 项全部通过；
 - `evidence/ui_check.json`：18 项全部通过，控制台错误 0；
 - `evidence/clean_install_health.json`：全新虚拟环境安装 `requirements.txt` 后单命令启动，PowerContext 由应用管理，`127.0.0.1:18801` 未监听；
+- `evidence/selfcontained_health.json`：默认 18800 单命令启动时的受管理进程、Scope 与播种状态；
 - `evidence/error_cases.json`：端口占用、外部不可达、看板端口冲突的明确提示；
 - `evidence/performance.json`：30 轮本地实测；
 - `evidence/ui-overview.png`、`ui-edit-dialog.png`、`ui-filter-blocked.png`、`ui-mobile.png`：界面截图；
 - `evidence/qoder-session.md`、`qoder-session.png`：Qoder 开发会话导出与记录截图；
-- `evidence/site_public_check.json`、`site-live.png`：公网无痕访问验证。
+- `evidence/site_public_check.json`、`site-live.png`、`site-start-live.png`：公网无痕访问与单命令启动说明验证。
 
 ## 七、数据与目录
 
@@ -229,7 +230,7 @@ qoder/
 
 - 仓库：<https://github.com/ArnoldCherry/powercontext-2026-competition>
 - 分支：`fix/qoder-self-contained-memory`
-- Commit：`<FIX_COMMIT_SHA>`（推送后回填）
+- Commit：`dce30920d71e00a3512f848a233c689cad24dcdc`
 - 初版实现：`89a1400c5d110ee685871ae6be174561658b0bc3`
 - 代码目录：`qoder/`
 
