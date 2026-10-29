@@ -234,7 +234,7 @@ DROP DATABASE inn;
 docker compose -f docker-compose.yaml -f docker-compose.inn.yaml restart inn-backend
 ```
 
-`GET /api/daily` 可以查看当天暗号（用于验收，不建议暴露给玩家）。
+`GET /api/daily` 需要 `X-Inn-Service-Token`，可以查看当天暗号（用于验收，不建议暴露给玩家）。
 
 ---
 
