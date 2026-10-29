@@ -155,6 +155,8 @@ cp /path/to/powercontext-2026-competition/dify/docker-compose.inn.yaml ./docker-
 
 `inn-backend` 会启动在 Compose 默认网络，容器名 `inn-backend`；Dify 的 HTTP 节点通过 `http://inn-backend:8000` 访问它。
 
+> Dockerfile 默认用阿里云 PyPI 镜像；若你的网络访问官方 PyPI 更快，构建时追加 `--build-arg PIP_INDEX_URL=https://pypi.org/simple`。
+
 ### 4.4 启动
 
 ```bash
