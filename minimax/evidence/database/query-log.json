@@ -1,0 +1,1327 @@
+{
+  "database": {
+    "counts": {
+      "sdd_code_symbols": 7,
+      "sdd_documents": 11,
+      "sdd_import_runs": 7,
+      "sdd_query_log": 6,
+      "sdd_spec_entries": 5,
+      "sdd_spec_keywords": 29,
+      "sdd_spec_links": 16,
+      "sdd_test_cases": 11
+    },
+    "host": "127.0.0.1",
+    "name": "sdd_context",
+    "port": 2881,
+    "tables": [
+      "sdd_code_symbols",
+      "sdd_documents",
+      "sdd_import_runs",
+      "sdd_query_log",
+      "sdd_spec_entries",
+      "sdd_spec_keywords",
+      "sdd_spec_links",
+      "sdd_test_cases"
+    ],
+    "version": "5.7.25-OceanBase seekdb-v1.4.0.0"
+  },
+  "query_log": [
+    {
+      "created_at": "2026-10-29 12:42:15",
+      "id": 1,
+      "matched_reqs": "REQ-REPORT-004,REQ-REPORT-005,REQ-REPORT-001,REQ-REPORT-002,REQ-REPORT-003",
+      "params": [
+        [],
+        [
+          "REQ-REPORT-004",
+          "REQ-REPORT-005",
+          "REQ-REPORT-001",
+          "REQ-REPORT-002",
+          "REQ-REPORT-003"
+        ],
+        [
+          "REQ-REPORT-004",
+          "REQ-REPORT-005",
+          "REQ-REPORT-001",
+          "REQ-REPORT-002",
+          "REQ-REPORT-003"
+        ],
+        [
+          "ledger/report.py",
+          "monthly_report"
+        ],
+        [
+          "ledger/report.py",
+          "monthly_report"
+        ],
+        [
+          "REQ-REPORT-001",
+          "REQ-REPORT-002",
+          "REQ-REPORT-003",
+          "REQ-REPORT-004",
+          "REQ-REPORT-005"
+        ],
+        [
+          "tests/test_cli.py",
+          "test_cli_report_includes_refund_fields"
+        ],
+        [
+          "tests/test_cli.py",
+          "test_cli_report_prints_positive_month"
+        ],
+        [
+          "tests/test_csv_io.py",
+          "test_load_transactions_reads_bom_and_blank_lines"
+        ],
+        [
+          "tests/test_csv_io.py",
+          "test_load_transactions_rejects_bad_amount"
+        ],
+        [
+          "tests/test_csv_io.py",
+          "test_load_transactions_rejects_wrong_header"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_applies_min_amount"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_filters_month"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_groups_positive_expenses"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_handles_empty_month"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_separates_refunds"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_sorts_categories"
+        ],
+        []
+      ],
+      "response_sha256": "518923a7e872e3984b5cac556d3d24fd57ba1a02ca2d1dc0ae2ca7bf95875b77",
+      "statements": [
+        {
+          "params": [],
+          "sql": "SELECT req_id, keyword FROM sdd_spec_keywords ORDER BY req_id, keyword"
+        },
+        {
+          "params": [
+            "REQ-REPORT-004",
+            "REQ-REPORT-005",
+            "REQ-REPORT-001",
+            "REQ-REPORT-002",
+            "REQ-REPORT-003"
+          ],
+          "sql": "SELECT req_id, doc_path, title, body, source, line_start, line_end, sha256, imported_at\n        FROM sdd_spec_entries\n        WHERE req_id IN (%s, %s, %s, %s, %s)\n        ORDER BY req_id"
+        },
+        {
+          "params": [
+            "REQ-REPORT-004",
+            "REQ-REPORT-005",
+            "REQ-REPORT-001",
+            "REQ-REPORT-002",
+            "REQ-REPORT-003"
+          ],
+          "sql": "SELECT req_id, target_kind, target_path, target_symbol, relation, rationale\n        FROM sdd_spec_links\n        WHERE req_id IN (%s, %s, %s, %s, %s)\n        ORDER BY req_id, target_kind, target_path, target_symbol"
+        },
+        {
+          "params": [
+            "ledger/report.py",
+            "monthly_report"
+          ],
+          "sql": "SELECT path, qualname, symbol_kind, line_start, line_end, signature, docstring, source, sha256\n        FROM sdd_code_symbols\n        WHERE path = %s AND qualname = %s"
+        },
+        {
+          "params": [
+            "ledger/report.py",
+            "monthly_report"
+          ],
+          "sql": "SELECT DISTINCT req_id FROM sdd_spec_links\n                WHERE target_kind = 'code' AND target_path = %s AND target_symbol = %s\n                ORDER BY req_id"
+        },
+        {
+          "params": [
+            "REQ-REPORT-001",
+            "REQ-REPORT-002",
+            "REQ-REPORT-003",
+            "REQ-REPORT-004",
+            "REQ-REPORT-005"
+          ],
+          "sql": "SELECT req_id, target_kind, target_path, target_symbol, relation, rationale\n        FROM sdd_spec_links\n        WHERE req_id IN (%s, %s, %s, %s, %s)\n        ORDER BY req_id, target_kind, target_path, target_symbol"
+        },
+        {
+          "params": [
+            "tests/test_cli.py",
+            "test_cli_report_includes_refund_fields"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_cli.py",
+            "test_cli_report_prints_positive_month"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_csv_io.py",
+            "test_load_transactions_reads_bom_and_blank_lines"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_csv_io.py",
+            "test_load_transactions_rejects_bad_amount"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_csv_io.py",
+            "test_load_transactions_rejects_wrong_header"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_applies_min_amount"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_filters_month"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_groups_positive_expenses"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_handles_empty_month"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_separates_refunds"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_sorts_categories"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [],
+          "sql": "SELECT path, kind, sha256, imported_at FROM sdd_documents ORDER BY path, kind"
+        }
+      ],
+      "task_id": "TASK-001",
+      "task_sha256": "285ca5fca9769c8cacc75667e9daf2926015d7691c95d0b2ffb44e5f556ce20c"
+    },
+    {
+      "created_at": "2026-10-29 12:42:44",
+      "id": 2,
+      "matched_reqs": "REQ-REPORT-004,REQ-REPORT-005,REQ-REPORT-001,REQ-REPORT-002,REQ-REPORT-003",
+      "params": [
+        [],
+        [
+          "REQ-REPORT-004",
+          "REQ-REPORT-005",
+          "REQ-REPORT-001",
+          "REQ-REPORT-002",
+          "REQ-REPORT-003"
+        ],
+        [
+          "REQ-REPORT-004",
+          "REQ-REPORT-005",
+          "REQ-REPORT-001",
+          "REQ-REPORT-002",
+          "REQ-REPORT-003"
+        ],
+        [
+          "ledger/report.py",
+          "monthly_report"
+        ],
+        [
+          "ledger/report.py",
+          "monthly_report"
+        ],
+        [
+          "REQ-REPORT-001",
+          "REQ-REPORT-002",
+          "REQ-REPORT-003",
+          "REQ-REPORT-004",
+          "REQ-REPORT-005"
+        ],
+        [
+          "tests/test_cli.py",
+          "test_cli_report_includes_refund_fields"
+        ],
+        [
+          "tests/test_cli.py",
+          "test_cli_report_prints_positive_month"
+        ],
+        [
+          "tests/test_csv_io.py",
+          "test_load_transactions_reads_bom_and_blank_lines"
+        ],
+        [
+          "tests/test_csv_io.py",
+          "test_load_transactions_rejects_bad_amount"
+        ],
+        [
+          "tests/test_csv_io.py",
+          "test_load_transactions_rejects_wrong_header"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_applies_min_amount"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_filters_month"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_groups_positive_expenses"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_handles_empty_month"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_separates_refunds"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_sorts_categories"
+        ],
+        []
+      ],
+      "response_sha256": "63c6445a99a14ba07ec97e68c4c6afcfff62d832fdf22204985f31ecf5d9258a",
+      "statements": [
+        {
+          "params": [],
+          "sql": "SELECT req_id, keyword FROM sdd_spec_keywords ORDER BY req_id, keyword"
+        },
+        {
+          "params": [
+            "REQ-REPORT-004",
+            "REQ-REPORT-005",
+            "REQ-REPORT-001",
+            "REQ-REPORT-002",
+            "REQ-REPORT-003"
+          ],
+          "sql": "SELECT req_id, doc_path, title, body, source, line_start, line_end, sha256, imported_at\n        FROM sdd_spec_entries\n        WHERE req_id IN (%s, %s, %s, %s, %s)\n        ORDER BY req_id"
+        },
+        {
+          "params": [
+            "REQ-REPORT-004",
+            "REQ-REPORT-005",
+            "REQ-REPORT-001",
+            "REQ-REPORT-002",
+            "REQ-REPORT-003"
+          ],
+          "sql": "SELECT req_id, target_kind, target_path, target_symbol, relation, rationale\n        FROM sdd_spec_links\n        WHERE req_id IN (%s, %s, %s, %s, %s)\n        ORDER BY req_id, target_kind, target_path, target_symbol"
+        },
+        {
+          "params": [
+            "ledger/report.py",
+            "monthly_report"
+          ],
+          "sql": "SELECT path, qualname, symbol_kind, line_start, line_end, signature, docstring, source, sha256\n        FROM sdd_code_symbols\n        WHERE path = %s AND qualname = %s"
+        },
+        {
+          "params": [
+            "ledger/report.py",
+            "monthly_report"
+          ],
+          "sql": "SELECT DISTINCT req_id FROM sdd_spec_links\n                WHERE target_kind = 'code' AND target_path = %s AND target_symbol = %s\n                ORDER BY req_id"
+        },
+        {
+          "params": [
+            "REQ-REPORT-001",
+            "REQ-REPORT-002",
+            "REQ-REPORT-003",
+            "REQ-REPORT-004",
+            "REQ-REPORT-005"
+          ],
+          "sql": "SELECT req_id, target_kind, target_path, target_symbol, relation, rationale\n        FROM sdd_spec_links\n        WHERE req_id IN (%s, %s, %s, %s, %s)\n        ORDER BY req_id, target_kind, target_path, target_symbol"
+        },
+        {
+          "params": [
+            "tests/test_cli.py",
+            "test_cli_report_includes_refund_fields"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_cli.py",
+            "test_cli_report_prints_positive_month"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_csv_io.py",
+            "test_load_transactions_reads_bom_and_blank_lines"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_csv_io.py",
+            "test_load_transactions_rejects_bad_amount"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_csv_io.py",
+            "test_load_transactions_rejects_wrong_header"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_applies_min_amount"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_filters_month"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_groups_positive_expenses"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_handles_empty_month"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_separates_refunds"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_sorts_categories"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [],
+          "sql": "SELECT path, kind, sha256, imported_at FROM sdd_documents ORDER BY path, kind"
+        }
+      ],
+      "task_id": "TASK-001",
+      "task_sha256": "285ca5fca9769c8cacc75667e9daf2926015d7691c95d0b2ffb44e5f556ce20c"
+    },
+    {
+      "created_at": "2026-10-29 12:43:25",
+      "id": 3,
+      "matched_reqs": "REQ-REPORT-004,REQ-REPORT-005,REQ-REPORT-001,REQ-REPORT-002,REQ-REPORT-003",
+      "params": [
+        [],
+        [
+          "REQ-REPORT-004",
+          "REQ-REPORT-005",
+          "REQ-REPORT-001",
+          "REQ-REPORT-002",
+          "REQ-REPORT-003"
+        ],
+        [
+          "REQ-REPORT-004",
+          "REQ-REPORT-005",
+          "REQ-REPORT-001",
+          "REQ-REPORT-002",
+          "REQ-REPORT-003"
+        ],
+        [
+          "ledger/report.py",
+          "monthly_report"
+        ],
+        [
+          "ledger/report.py",
+          "monthly_report"
+        ],
+        [
+          "REQ-REPORT-001",
+          "REQ-REPORT-002",
+          "REQ-REPORT-003",
+          "REQ-REPORT-004",
+          "REQ-REPORT-005"
+        ],
+        [
+          "tests/test_cli.py",
+          "test_cli_report_includes_refund_fields"
+        ],
+        [
+          "tests/test_cli.py",
+          "test_cli_report_prints_positive_month"
+        ],
+        [
+          "tests/test_csv_io.py",
+          "test_load_transactions_reads_bom_and_blank_lines"
+        ],
+        [
+          "tests/test_csv_io.py",
+          "test_load_transactions_rejects_bad_amount"
+        ],
+        [
+          "tests/test_csv_io.py",
+          "test_load_transactions_rejects_wrong_header"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_applies_min_amount"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_filters_month"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_groups_positive_expenses"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_handles_empty_month"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_separates_refunds"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_sorts_categories"
+        ],
+        []
+      ],
+      "response_sha256": "b6b9b5eddbe73b51ed810f59b4863347d78f1912921db7561a26ad99853075e3",
+      "statements": [
+        {
+          "params": [],
+          "sql": "SELECT req_id, keyword FROM sdd_spec_keywords ORDER BY req_id, keyword"
+        },
+        {
+          "params": [
+            "REQ-REPORT-004",
+            "REQ-REPORT-005",
+            "REQ-REPORT-001",
+            "REQ-REPORT-002",
+            "REQ-REPORT-003"
+          ],
+          "sql": "SELECT req_id, doc_path, title, body, source, line_start, line_end, sha256, imported_at\n        FROM sdd_spec_entries\n        WHERE req_id IN (%s, %s, %s, %s, %s)\n        ORDER BY req_id"
+        },
+        {
+          "params": [
+            "REQ-REPORT-004",
+            "REQ-REPORT-005",
+            "REQ-REPORT-001",
+            "REQ-REPORT-002",
+            "REQ-REPORT-003"
+          ],
+          "sql": "SELECT req_id, target_kind, target_path, target_symbol, relation, rationale\n        FROM sdd_spec_links\n        WHERE req_id IN (%s, %s, %s, %s, %s)\n        ORDER BY req_id, target_kind, target_path, target_symbol"
+        },
+        {
+          "params": [
+            "ledger/report.py",
+            "monthly_report"
+          ],
+          "sql": "SELECT path, qualname, symbol_kind, line_start, line_end, signature, docstring, source, sha256\n        FROM sdd_code_symbols\n        WHERE path = %s AND qualname = %s"
+        },
+        {
+          "params": [
+            "ledger/report.py",
+            "monthly_report"
+          ],
+          "sql": "SELECT DISTINCT req_id FROM sdd_spec_links\n                WHERE target_kind = 'code' AND target_path = %s AND target_symbol = %s\n                ORDER BY req_id"
+        },
+        {
+          "params": [
+            "REQ-REPORT-001",
+            "REQ-REPORT-002",
+            "REQ-REPORT-003",
+            "REQ-REPORT-004",
+            "REQ-REPORT-005"
+          ],
+          "sql": "SELECT req_id, target_kind, target_path, target_symbol, relation, rationale\n        FROM sdd_spec_links\n        WHERE req_id IN (%s, %s, %s, %s, %s)\n        ORDER BY req_id, target_kind, target_path, target_symbol"
+        },
+        {
+          "params": [
+            "tests/test_cli.py",
+            "test_cli_report_includes_refund_fields"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_cli.py",
+            "test_cli_report_prints_positive_month"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_csv_io.py",
+            "test_load_transactions_reads_bom_and_blank_lines"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_csv_io.py",
+            "test_load_transactions_rejects_bad_amount"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_csv_io.py",
+            "test_load_transactions_rejects_wrong_header"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_applies_min_amount"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_filters_month"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_groups_positive_expenses"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_handles_empty_month"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_separates_refunds"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_sorts_categories"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [],
+          "sql": "SELECT path, kind, sha256, imported_at FROM sdd_documents ORDER BY path, kind"
+        }
+      ],
+      "task_id": "TASK-001",
+      "task_sha256": "285ca5fca9769c8cacc75667e9daf2926015d7691c95d0b2ffb44e5f556ce20c"
+    },
+    {
+      "created_at": "2026-10-29 12:45:24",
+      "id": 4,
+      "matched_reqs": "REQ-REPORT-004,REQ-REPORT-005,REQ-REPORT-001,REQ-REPORT-002,REQ-REPORT-003",
+      "params": [
+        [],
+        [
+          "REQ-REPORT-004",
+          "REQ-REPORT-005",
+          "REQ-REPORT-001",
+          "REQ-REPORT-002",
+          "REQ-REPORT-003"
+        ],
+        [
+          "REQ-REPORT-004",
+          "REQ-REPORT-005",
+          "REQ-REPORT-001",
+          "REQ-REPORT-002",
+          "REQ-REPORT-003"
+        ],
+        [
+          "ledger/report.py",
+          "monthly_report"
+        ],
+        [
+          "ledger/report.py",
+          "monthly_report"
+        ],
+        [
+          "REQ-REPORT-001",
+          "REQ-REPORT-002",
+          "REQ-REPORT-003",
+          "REQ-REPORT-004",
+          "REQ-REPORT-005"
+        ],
+        [
+          "tests/test_cli.py",
+          "test_cli_report_includes_refund_fields"
+        ],
+        [
+          "tests/test_cli.py",
+          "test_cli_report_prints_positive_month"
+        ],
+        [
+          "tests/test_csv_io.py",
+          "test_load_transactions_reads_bom_and_blank_lines"
+        ],
+        [
+          "tests/test_csv_io.py",
+          "test_load_transactions_rejects_bad_amount"
+        ],
+        [
+          "tests/test_csv_io.py",
+          "test_load_transactions_rejects_wrong_header"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_applies_min_amount"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_filters_month"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_groups_positive_expenses"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_handles_empty_month"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_separates_refunds"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_sorts_categories"
+        ],
+        []
+      ],
+      "response_sha256": "5a120399f1fb630b3f99b47425fdc531abf571922058c664e6a5cff1779c58d6",
+      "statements": [
+        {
+          "params": [],
+          "sql": "SELECT req_id, keyword FROM sdd_spec_keywords ORDER BY req_id, keyword"
+        },
+        {
+          "params": [
+            "REQ-REPORT-004",
+            "REQ-REPORT-005",
+            "REQ-REPORT-001",
+            "REQ-REPORT-002",
+            "REQ-REPORT-003"
+          ],
+          "sql": "SELECT req_id, doc_path, title, body, source, line_start, line_end, sha256, imported_at\n        FROM sdd_spec_entries\n        WHERE req_id IN (%s, %s, %s, %s, %s)\n        ORDER BY req_id"
+        },
+        {
+          "params": [
+            "REQ-REPORT-004",
+            "REQ-REPORT-005",
+            "REQ-REPORT-001",
+            "REQ-REPORT-002",
+            "REQ-REPORT-003"
+          ],
+          "sql": "SELECT req_id, target_kind, target_path, target_symbol, relation, rationale\n        FROM sdd_spec_links\n        WHERE req_id IN (%s, %s, %s, %s, %s)\n        ORDER BY req_id, target_kind, target_path, target_symbol"
+        },
+        {
+          "params": [
+            "ledger/report.py",
+            "monthly_report"
+          ],
+          "sql": "SELECT path, qualname, symbol_kind, line_start, line_end, signature, docstring, source, sha256\n        FROM sdd_code_symbols\n        WHERE path = %s AND qualname = %s"
+        },
+        {
+          "params": [
+            "ledger/report.py",
+            "monthly_report"
+          ],
+          "sql": "SELECT DISTINCT req_id FROM sdd_spec_links\n                WHERE target_kind = 'code' AND target_path = %s AND target_symbol = %s\n                ORDER BY req_id"
+        },
+        {
+          "params": [
+            "REQ-REPORT-001",
+            "REQ-REPORT-002",
+            "REQ-REPORT-003",
+            "REQ-REPORT-004",
+            "REQ-REPORT-005"
+          ],
+          "sql": "SELECT req_id, target_kind, target_path, target_symbol, relation, rationale\n        FROM sdd_spec_links\n        WHERE req_id IN (%s, %s, %s, %s, %s)\n        ORDER BY req_id, target_kind, target_path, target_symbol"
+        },
+        {
+          "params": [
+            "tests/test_cli.py",
+            "test_cli_report_includes_refund_fields"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_cli.py",
+            "test_cli_report_prints_positive_month"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_csv_io.py",
+            "test_load_transactions_reads_bom_and_blank_lines"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_csv_io.py",
+            "test_load_transactions_rejects_bad_amount"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_csv_io.py",
+            "test_load_transactions_rejects_wrong_header"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_applies_min_amount"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_filters_month"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_groups_positive_expenses"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_handles_empty_month"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_separates_refunds"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_sorts_categories"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [],
+          "sql": "SELECT path, kind, sha256, imported_at FROM sdd_documents ORDER BY path, kind"
+        }
+      ],
+      "task_id": "TASK-001",
+      "task_sha256": "285ca5fca9769c8cacc75667e9daf2926015d7691c95d0b2ffb44e5f556ce20c"
+    },
+    {
+      "created_at": "2026-10-29 14:43:36",
+      "id": 5,
+      "matched_reqs": "REQ-REPORT-004,REQ-REPORT-005,REQ-REPORT-001,REQ-REPORT-002,REQ-REPORT-003",
+      "params": [
+        [],
+        [
+          "REQ-REPORT-004",
+          "REQ-REPORT-005",
+          "REQ-REPORT-001",
+          "REQ-REPORT-002",
+          "REQ-REPORT-003"
+        ],
+        [
+          "REQ-REPORT-004",
+          "REQ-REPORT-005",
+          "REQ-REPORT-001",
+          "REQ-REPORT-002",
+          "REQ-REPORT-003"
+        ],
+        [
+          "ledger/report.py",
+          "monthly_report"
+        ],
+        [
+          "ledger/report.py",
+          "monthly_report"
+        ],
+        [
+          "REQ-REPORT-001",
+          "REQ-REPORT-002",
+          "REQ-REPORT-003",
+          "REQ-REPORT-004",
+          "REQ-REPORT-005"
+        ],
+        [
+          "tests/test_cli.py",
+          "test_cli_report_includes_refund_fields"
+        ],
+        [
+          "tests/test_cli.py",
+          "test_cli_report_prints_positive_month"
+        ],
+        [
+          "tests/test_csv_io.py",
+          "test_load_transactions_reads_bom_and_blank_lines"
+        ],
+        [
+          "tests/test_csv_io.py",
+          "test_load_transactions_rejects_bad_amount"
+        ],
+        [
+          "tests/test_csv_io.py",
+          "test_load_transactions_rejects_wrong_header"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_applies_min_amount"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_filters_month"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_groups_positive_expenses"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_handles_empty_month"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_separates_refunds"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_sorts_categories"
+        ],
+        []
+      ],
+      "response_sha256": "1d93b61f0ea0ba974e82fcecdabf9451db858adadbdaa7be376764bd9698f0bb",
+      "statements": [
+        {
+          "params": [],
+          "sql": "SELECT req_id, keyword FROM sdd_spec_keywords ORDER BY req_id, keyword"
+        },
+        {
+          "params": [
+            "REQ-REPORT-004",
+            "REQ-REPORT-005",
+            "REQ-REPORT-001",
+            "REQ-REPORT-002",
+            "REQ-REPORT-003"
+          ],
+          "sql": "SELECT req_id, doc_path, title, body, source, line_start, line_end, sha256, imported_at\n        FROM sdd_spec_entries\n        WHERE req_id IN (%s, %s, %s, %s, %s)\n        ORDER BY req_id"
+        },
+        {
+          "params": [
+            "REQ-REPORT-004",
+            "REQ-REPORT-005",
+            "REQ-REPORT-001",
+            "REQ-REPORT-002",
+            "REQ-REPORT-003"
+          ],
+          "sql": "SELECT req_id, target_kind, target_path, target_symbol, relation, rationale\n        FROM sdd_spec_links\n        WHERE req_id IN (%s, %s, %s, %s, %s)\n        ORDER BY req_id, target_kind, target_path, target_symbol"
+        },
+        {
+          "params": [
+            "ledger/report.py",
+            "monthly_report"
+          ],
+          "sql": "SELECT path, qualname, symbol_kind, line_start, line_end, signature, docstring, source, sha256\n        FROM sdd_code_symbols\n        WHERE path = %s AND qualname = %s"
+        },
+        {
+          "params": [
+            "ledger/report.py",
+            "monthly_report"
+          ],
+          "sql": "SELECT DISTINCT req_id FROM sdd_spec_links\n                WHERE target_kind = 'code' AND target_path = %s AND target_symbol = %s\n                ORDER BY req_id"
+        },
+        {
+          "params": [
+            "REQ-REPORT-001",
+            "REQ-REPORT-002",
+            "REQ-REPORT-003",
+            "REQ-REPORT-004",
+            "REQ-REPORT-005"
+          ],
+          "sql": "SELECT req_id, target_kind, target_path, target_symbol, relation, rationale\n        FROM sdd_spec_links\n        WHERE req_id IN (%s, %s, %s, %s, %s)\n        ORDER BY req_id, target_kind, target_path, target_symbol"
+        },
+        {
+          "params": [
+            "tests/test_cli.py",
+            "test_cli_report_includes_refund_fields"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_cli.py",
+            "test_cli_report_prints_positive_month"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_csv_io.py",
+            "test_load_transactions_reads_bom_and_blank_lines"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_csv_io.py",
+            "test_load_transactions_rejects_bad_amount"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_csv_io.py",
+            "test_load_transactions_rejects_wrong_header"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_applies_min_amount"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_filters_month"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_groups_positive_expenses"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_handles_empty_month"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_separates_refunds"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_sorts_categories"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [],
+          "sql": "SELECT path, kind, sha256, imported_at FROM sdd_documents ORDER BY path, kind"
+        }
+      ],
+      "task_id": "TASK-001",
+      "task_sha256": "285ca5fca9769c8cacc75667e9daf2926015d7691c95d0b2ffb44e5f556ce20c"
+    },
+    {
+      "created_at": "2026-10-29 14:43:50",
+      "id": 6,
+      "matched_reqs": "REQ-REPORT-004,REQ-REPORT-005,REQ-REPORT-001,REQ-REPORT-002,REQ-REPORT-003",
+      "params": [
+        [],
+        [
+          "REQ-REPORT-004",
+          "REQ-REPORT-005",
+          "REQ-REPORT-001",
+          "REQ-REPORT-002",
+          "REQ-REPORT-003"
+        ],
+        [
+          "REQ-REPORT-004",
+          "REQ-REPORT-005",
+          "REQ-REPORT-001",
+          "REQ-REPORT-002",
+          "REQ-REPORT-003"
+        ],
+        [
+          "ledger/report.py",
+          "monthly_report"
+        ],
+        [
+          "ledger/report.py",
+          "monthly_report"
+        ],
+        [
+          "REQ-REPORT-001",
+          "REQ-REPORT-002",
+          "REQ-REPORT-003",
+          "REQ-REPORT-004",
+          "REQ-REPORT-005"
+        ],
+        [
+          "tests/test_cli.py",
+          "test_cli_report_includes_refund_fields"
+        ],
+        [
+          "tests/test_cli.py",
+          "test_cli_report_prints_positive_month"
+        ],
+        [
+          "tests/test_csv_io.py",
+          "test_load_transactions_reads_bom_and_blank_lines"
+        ],
+        [
+          "tests/test_csv_io.py",
+          "test_load_transactions_rejects_bad_amount"
+        ],
+        [
+          "tests/test_csv_io.py",
+          "test_load_transactions_rejects_wrong_header"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_applies_min_amount"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_filters_month"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_groups_positive_expenses"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_handles_empty_month"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_separates_refunds"
+        ],
+        [
+          "tests/test_report.py",
+          "test_monthly_report_sorts_categories"
+        ],
+        []
+      ],
+      "response_sha256": "1d93b61f0ea0ba974e82fcecdabf9451db858adadbdaa7be376764bd9698f0bb",
+      "statements": [
+        {
+          "params": [],
+          "sql": "SELECT req_id, keyword FROM sdd_spec_keywords ORDER BY req_id, keyword"
+        },
+        {
+          "params": [
+            "REQ-REPORT-004",
+            "REQ-REPORT-005",
+            "REQ-REPORT-001",
+            "REQ-REPORT-002",
+            "REQ-REPORT-003"
+          ],
+          "sql": "SELECT req_id, doc_path, title, body, source, line_start, line_end, sha256, imported_at\n        FROM sdd_spec_entries\n        WHERE req_id IN (%s, %s, %s, %s, %s)\n        ORDER BY req_id"
+        },
+        {
+          "params": [
+            "REQ-REPORT-004",
+            "REQ-REPORT-005",
+            "REQ-REPORT-001",
+            "REQ-REPORT-002",
+            "REQ-REPORT-003"
+          ],
+          "sql": "SELECT req_id, target_kind, target_path, target_symbol, relation, rationale\n        FROM sdd_spec_links\n        WHERE req_id IN (%s, %s, %s, %s, %s)\n        ORDER BY req_id, target_kind, target_path, target_symbol"
+        },
+        {
+          "params": [
+            "ledger/report.py",
+            "monthly_report"
+          ],
+          "sql": "SELECT path, qualname, symbol_kind, line_start, line_end, signature, docstring, source, sha256\n        FROM sdd_code_symbols\n        WHERE path = %s AND qualname = %s"
+        },
+        {
+          "params": [
+            "ledger/report.py",
+            "monthly_report"
+          ],
+          "sql": "SELECT DISTINCT req_id FROM sdd_spec_links\n                WHERE target_kind = 'code' AND target_path = %s AND target_symbol = %s\n                ORDER BY req_id"
+        },
+        {
+          "params": [
+            "REQ-REPORT-001",
+            "REQ-REPORT-002",
+            "REQ-REPORT-003",
+            "REQ-REPORT-004",
+            "REQ-REPORT-005"
+          ],
+          "sql": "SELECT req_id, target_kind, target_path, target_symbol, relation, rationale\n        FROM sdd_spec_links\n        WHERE req_id IN (%s, %s, %s, %s, %s)\n        ORDER BY req_id, target_kind, target_path, target_symbol"
+        },
+        {
+          "params": [
+            "tests/test_cli.py",
+            "test_cli_report_includes_refund_fields"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_cli.py",
+            "test_cli_report_prints_positive_month"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_csv_io.py",
+            "test_load_transactions_reads_bom_and_blank_lines"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_csv_io.py",
+            "test_load_transactions_rejects_bad_amount"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_csv_io.py",
+            "test_load_transactions_rejects_wrong_header"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_applies_min_amount"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_filters_month"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_groups_positive_expenses"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_handles_empty_month"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_separates_refunds"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [
+            "tests/test_report.py",
+            "test_monthly_report_sorts_categories"
+          ],
+          "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+        },
+        {
+          "params": [],
+          "sql": "SELECT path, kind, sha256, imported_at FROM sdd_documents ORDER BY path, kind"
+        }
+      ],
+      "task_id": "TASK-001",
+      "task_sha256": "285ca5fca9769c8cacc75667e9daf2926015d7691c95d0b2ffb44e5f556ce20c"
+    }
+  ],
+  "schema": "sdd.database-evidence.v1"
+}

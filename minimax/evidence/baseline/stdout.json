@@ -1,0 +1,94 @@
+{
+  "schema": "sdd.baseline.v1",
+  "created_at": "2026-10-29T12:42:20+00:00",
+  "ok": true,
+  "context": "evidence/context/initial.json",
+  "context_sha256": "518923a7e872e3984b5cac556d3d24fd57ba1a02ca2d1dc0ae2ca7bf95875b77",
+  "database_version": "5.7.25-OceanBase seekdb-v1.4.0.0",
+  "git": {
+    "head": "e1ba2abcea315b23dba64891af61a0443ef52bfe",
+    "status_porcelain": "",
+    "branch": "feat/eco-minimax"
+  },
+  "target_tests": [
+    "tests/test_cli.py::test_cli_report_includes_refund_fields",
+    "tests/test_report.py::test_monthly_report_applies_min_amount",
+    "tests/test_report.py::test_monthly_report_separates_refunds"
+  ],
+  "regression_tests": [
+    "tests/test_cli.py::test_cli_report_prints_positive_month",
+    "tests/test_csv_io.py::test_load_transactions_reads_bom_and_blank_lines",
+    "tests/test_csv_io.py::test_load_transactions_rejects_bad_amount",
+    "tests/test_csv_io.py::test_load_transactions_rejects_wrong_header",
+    "tests/test_report.py::test_monthly_report_filters_month",
+    "tests/test_report.py::test_monthly_report_groups_positive_expenses",
+    "tests/test_report.py::test_monthly_report_handles_empty_month",
+    "tests/test_report.py::test_monthly_report_sorts_categories"
+  ],
+  "test_file_hashes": {
+    "tests/conftest.py": "3cf5e16fb2c315bf6d0d6bad981d930f9af7951d546d8f2338131f772eaec507",
+    "tests/test_cli.py": "c0e58bbdfb90bf848e5e65f3b93c2f37284026f0df99ebf7ae3c30aa6040fe05",
+    "tests/test_csv_io.py": "729001a85d510c201391e0295de30bf44c3a344987761385d924261db5c5c7b6",
+    "tests/test_report.py": "573c1a1a4aa56d17157f904e52dc88ac6c70a7d00491237377868f0c20654031"
+  },
+  "code_snapshots": {
+    "ledger/report.py": {
+      "snapshot": "evidence/baseline/code/ledger/report.py",
+      "sha256": "c29d6bda638df6326f60d36e704a7d31c14b258241cd85d809537f1dbaf7f2a9"
+    }
+  },
+  "results": {
+    "target": {
+      "command": [
+        "D:\\OceanBase\\.venvs\\minimax\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_cli.py::test_cli_report_includes_refund_fields",
+        "tests/test_report.py::test_monthly_report_applies_min_amount",
+        "tests/test_report.py::test_monthly_report_separates_refunds"
+      ],
+      "exit_code": 1,
+      "failed": 3,
+      "passed": 0,
+      "failed_node_ids": [
+        "tests/test_cli.py::test_cli_report_includes_refund_fields",
+        "tests/test_report.py::test_monthly_report_applies_min_amount",
+        "tests/test_report.py::test_monthly_report_separates_refunds"
+      ],
+      "log": "evidence/baseline/target-tests.txt"
+    },
+    "regression": {
+      "command": [
+        "D:\\OceanBase\\.venvs\\minimax\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_cli.py::test_cli_report_prints_positive_month",
+        "tests/test_csv_io.py::test_load_transactions_reads_bom_and_blank_lines",
+        "tests/test_csv_io.py::test_load_transactions_rejects_bad_amount",
+        "tests/test_csv_io.py::test_load_transactions_rejects_wrong_header",
+        "tests/test_report.py::test_monthly_report_filters_month",
+        "tests/test_report.py::test_monthly_report_groups_positive_expenses",
+        "tests/test_report.py::test_monthly_report_handles_empty_month",
+        "tests/test_report.py::test_monthly_report_sorts_categories"
+      ],
+      "exit_code": 0,
+      "failed": 0,
+      "passed": 8,
+      "log": "evidence/baseline/regression-tests.txt"
+    },
+    "full": {
+      "command": [
+        "D:\\OceanBase\\.venvs\\minimax\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "exit_code": 1,
+      "failed": 3,
+      "passed": 8,
+      "log": "evidence/baseline/full-suite.txt"
+    }
+  }
+}

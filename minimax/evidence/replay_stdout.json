@@ -1,0 +1,57 @@
+{
+  "after": {
+    "full_exit_code": 0,
+    "full_log": "evidence\\replay\\after-full.txt",
+    "full_passed": 11,
+    "regression_exit_code": 0,
+    "regression_log": "evidence\\replay\\after-regression.txt",
+    "regression_passed": 8,
+    "target_exit_code": 0,
+    "target_log": "evidence\\replay\\after-target.txt",
+    "target_passed": 3
+  },
+  "baseline_commit": "e1ba2abcea315b23dba64891af61a0443ef52bfe",
+  "before": {
+    "regression_exit_code": 0,
+    "regression_log": "evidence\\replay\\before-regression.txt",
+    "regression_passed": 8,
+    "target_exit_code": 1,
+    "target_failed": 3,
+    "target_failed_node_ids": [
+      "tests/test_cli.py::test_cli_report_includes_refund_fields",
+      "tests/test_report.py::test_monthly_report_applies_min_amount",
+      "tests/test_report.py::test_monthly_report_separates_refunds"
+    ],
+    "target_log": "evidence\\replay\\before-target.txt"
+  },
+  "checks": {
+    "after_passed": true,
+    "baseline_test_hashes_match": true,
+    "before_failed_as_expected": true,
+    "test_files_unchanged": true
+  },
+  "ok": true,
+  "regression_tests": [
+    "tests/test_cli.py::test_cli_report_prints_positive_month",
+    "tests/test_csv_io.py::test_load_transactions_reads_bom_and_blank_lines",
+    "tests/test_csv_io.py::test_load_transactions_rejects_bad_amount",
+    "tests/test_csv_io.py::test_load_transactions_rejects_wrong_header",
+    "tests/test_report.py::test_monthly_report_filters_month",
+    "tests/test_report.py::test_monthly_report_groups_positive_expenses",
+    "tests/test_report.py::test_monthly_report_handles_empty_month",
+    "tests/test_report.py::test_monthly_report_sorts_categories"
+  ],
+  "schema": "sdd.replay.v1",
+  "source_snapshot": "evidence\\baseline\\code\\ledger\\report.py",
+  "target_tests": [
+    "tests/test_cli.py::test_cli_report_includes_refund_fields",
+    "tests/test_report.py::test_monthly_report_applies_min_amount",
+    "tests/test_report.py::test_monthly_report_separates_refunds"
+  ],
+  "test_file_hashes": {
+    "tests/conftest.py": "3cf5e16fb2c315bf6d0d6bad981d930f9af7951d546d8f2338131f772eaec507",
+    "tests/test_cli.py": "c0e58bbdfb90bf848e5e65f3b93c2f37284026f0df99ebf7ae3c30aa6040fe05",
+    "tests/test_csv_io.py": "729001a85d510c201391e0295de30bf44c3a344987761385d924261db5c5c7b6",
+    "tests/test_report.py": "573c1a1a4aa56d17157f904e52dc88ac6c70a7d00491237377868f0c20654031"
+  }
+}

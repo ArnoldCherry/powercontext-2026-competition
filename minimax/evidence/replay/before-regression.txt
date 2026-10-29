@@ -1,0 +1,8 @@
+$ D:\OceanBase\.venvs\minimax\Scripts\python.exe -m pytest -q tests/test_cli.py::test_cli_report_prints_positive_month tests/test_csv_io.py::test_load_transactions_reads_bom_and_blank_lines tests/test_csv_io.py::test_load_transactions_rejects_bad_amount tests/test_csv_io.py::test_load_transactions_rejects_wrong_header tests/test_report.py::test_monthly_report_filters_month tests/test_report.py::test_monthly_report_groups_positive_expenses tests/test_report.py::test_monthly_report_handles_empty_month tests/test_report.py::test_monthly_report_sorts_categories
+cwd: D:\database\pc-parallel\minimax\minimax\sample_ledger
+python: 3.11.9
+duration_seconds: 0.3
+exit_code: 0
+
+........                                                                 [100%]
+8 passed in 0.04s

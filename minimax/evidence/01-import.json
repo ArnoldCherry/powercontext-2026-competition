@@ -1,0 +1,486 @@
+{
+  "database": "5.7.25-OceanBase seekdb-v1.4.0.0",
+  "imported_at": "2026-10-29T12:42:14Z",
+  "manifest_sha256": "f94745537e3e54fdc27157d231f799f3b3275ec7992a1959bb91762fa79431be",
+  "documents": [
+    {
+      "path": "specs/reporting.md",
+      "kind": "spec",
+      "sha256": "c03b38c87be8f8db68e2edda8e06cc782038c04267750281b28982b0f6b0058f"
+    },
+    {
+      "path": "specs/traceability.json",
+      "kind": "trace",
+      "sha256": "d7910c5710653cd91247b6a2cbb42acfd08065ab0833ee8dd4ab259daa9394f8"
+    },
+    {
+      "path": "ledger/__init__.py",
+      "kind": "code",
+      "sha256": "b3379e55d68b46218c71b1b9119cfb772ca982c7cf8121b8e028f9f2062673a5"
+    },
+    {
+      "path": "ledger/__main__.py",
+      "kind": "code",
+      "sha256": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d"
+    },
+    {
+      "path": "ledger/cli.py",
+      "kind": "code",
+      "sha256": "cf8e0d2e2c2cbfedf0afce2bdf2ed0576816b6eff688eed6eac7e076226a2581"
+    },
+    {
+      "path": "ledger/csv_io.py",
+      "kind": "code",
+      "sha256": "e4e430f81e50815b06f3f4ba67604bf4e695d54c1b0f820ff77233818ceee38a"
+    },
+    {
+      "path": "ledger/models.py",
+      "kind": "code",
+      "sha256": "e9f97a8ff1926c9c9943ad5b80e1a259d7f5ed72aef4037563d25c01653d6729"
+    },
+    {
+      "path": "ledger/report.py",
+      "kind": "code",
+      "sha256": "c29d6bda638df6326f60d36e704a7d31c14b258241cd85d809537f1dbaf7f2a9"
+    },
+    {
+      "path": "tests/test_cli.py",
+      "kind": "test",
+      "sha256": "c0e58bbdfb90bf848e5e65f3b93c2f37284026f0df99ebf7ae3c30aa6040fe05"
+    },
+    {
+      "path": "tests/test_csv_io.py",
+      "kind": "test",
+      "sha256": "729001a85d510c201391e0295de30bf44c3a344987761385d924261db5c5c7b6"
+    },
+    {
+      "path": "tests/test_report.py",
+      "kind": "test",
+      "sha256": "573c1a1a4aa56d17157f904e52dc88ac6c70a7d00491237377868f0c20654031"
+    }
+  ],
+  "specs": [
+    {
+      "req_id": "REQ-REPORT-001",
+      "title": "按分类汇总正数支出",
+      "path": "specs/reporting.md",
+      "line_start": 5,
+      "line_end": 7,
+      "sha256": "467b2bbe8b30c08452c5d9ca0fece1478f606a23a199ebfe075e12e75977c2fa"
+    },
+    {
+      "req_id": "REQ-REPORT-002",
+      "title": "只统计指定月份",
+      "path": "specs/reporting.md",
+      "line_start": 9,
+      "line_end": 11,
+      "sha256": "bc3d4958e41d77e794ae7383384d1e6180d45ef42916aed4c25b3de714118420"
+    },
+    {
+      "req_id": "REQ-REPORT-003",
+      "title": "分类合计稳定排序",
+      "path": "specs/reporting.md",
+      "line_start": 13,
+      "line_end": 15,
+      "sha256": "3a512051bcaf09574d4cf6857e1739445388369039a2c8a6367c562f213303b8"
+    },
+    {
+      "req_id": "REQ-REPORT-004",
+      "title": "退款与支出分离",
+      "path": "specs/reporting.md",
+      "line_start": 17,
+      "line_end": 19,
+      "sha256": "69471a22f0a5650f6a8be2157e6a03b03ba0656e1d37874006a94486f19e5a74"
+    },
+    {
+      "req_id": "REQ-REPORT-005",
+      "title": "按最低金额过滤支出",
+      "path": "specs/reporting.md",
+      "line_start": 21,
+      "line_end": 27,
+      "sha256": "504099fd78447608f16d2c24d62cfa483628f77f2d4b7a7314532bccd1215150"
+    }
+  ],
+  "code_symbols": [
+    {
+      "path": "ledger/cli.py",
+      "symbol": "_jsonable",
+      "sha256": "a6933547da398e44c8facbe10e248db89e4fd55eadc99f4501e7b9b138d2737d"
+    },
+    {
+      "path": "ledger/cli.py",
+      "symbol": "build_parser",
+      "sha256": "de8f4930e24bf2ee1af14c3e128e4f6d7a4f152726195fe7d8015f1c1470c504"
+    },
+    {
+      "path": "ledger/cli.py",
+      "symbol": "main",
+      "sha256": "1d9a9542c2d32661b2794727608b773035fb4fbc52633097805b06daf84a345b"
+    },
+    {
+      "path": "ledger/csv_io.py",
+      "symbol": "load_transactions",
+      "sha256": "5c2924e62609094c0671ed605fdbfd966723061601ccdfb742c2c60f3ed5515b"
+    },
+    {
+      "path": "ledger/models.py",
+      "symbol": "LedgerError",
+      "sha256": "9435d05b1e604879f7fbfa4fc3be6ac6bc41d2686eda4bdd44d4cf408b9debda"
+    },
+    {
+      "path": "ledger/models.py",
+      "symbol": "Transaction",
+      "sha256": "02d463288d6fae95e18dabcc15145d0c62f37af705b9b2dbcae93c2750031bcb"
+    },
+    {
+      "path": "ledger/report.py",
+      "symbol": "monthly_report",
+      "sha256": "26cc9f50fa949c93c778ca7d620153822d3d3de6acded1dc7bc58701b830b98f"
+    }
+  ],
+  "tests": [
+    {
+      "path": "tests/test_cli.py",
+      "name": "test_cli_report_prints_positive_month",
+      "markers": [
+        {
+          "name": "pytest.mark.sdd",
+          "args": [
+            "REQ-REPORT-001"
+          ],
+          "kwargs": {
+            "kind": "regression"
+          }
+        }
+      ],
+      "sha256": "4bf2de369b217345a29567623ab0ee284331b6a23b1030230f57b2716d6462bd"
+    },
+    {
+      "path": "tests/test_cli.py",
+      "name": "test_cli_report_includes_refund_fields",
+      "markers": [
+        {
+          "name": "pytest.mark.sdd",
+          "args": [
+            "REQ-REPORT-004"
+          ],
+          "kwargs": {
+            "kind": "target"
+          }
+        }
+      ],
+      "sha256": "1bc18eec18beef20602656849ab7e3bf1986779b05fc5532df07c2abccb792c5"
+    },
+    {
+      "path": "tests/test_csv_io.py",
+      "name": "test_load_transactions_reads_bom_and_blank_lines",
+      "markers": [
+        {
+          "name": "pytest.mark.sdd",
+          "args": [
+            "REQ-REPORT-001"
+          ],
+          "kwargs": {
+            "kind": "regression"
+          }
+        }
+      ],
+      "sha256": "67037c073e62c2aa015b792e6f4b447c050eb9fddef7d7287839e784167f6ce6"
+    },
+    {
+      "path": "tests/test_csv_io.py",
+      "name": "test_load_transactions_rejects_bad_amount",
+      "markers": [
+        {
+          "name": "pytest.mark.sdd",
+          "args": [
+            "REQ-REPORT-001"
+          ],
+          "kwargs": {
+            "kind": "regression"
+          }
+        }
+      ],
+      "sha256": "78cfd898bd2e129c3a77561fdba59790704ab3bc2876b325e879134d9204bde2"
+    },
+    {
+      "path": "tests/test_csv_io.py",
+      "name": "test_load_transactions_rejects_wrong_header",
+      "markers": [
+        {
+          "name": "pytest.mark.sdd",
+          "args": [
+            "REQ-REPORT-001"
+          ],
+          "kwargs": {
+            "kind": "regression"
+          }
+        }
+      ],
+      "sha256": "ef82f376bfabad76a01aff3a0e259100897766de2fc21d9f234bf84a580837b7"
+    },
+    {
+      "path": "tests/test_report.py",
+      "name": "test_monthly_report_groups_positive_expenses",
+      "markers": [
+        {
+          "name": "pytest.mark.sdd",
+          "args": [
+            "REQ-REPORT-001"
+          ],
+          "kwargs": {
+            "kind": "regression"
+          }
+        }
+      ],
+      "sha256": "3cc6ffc45c92616f85b2e41d5bf9d57ffc17375293d192bf1bcf5151974e96aa"
+    },
+    {
+      "path": "tests/test_report.py",
+      "name": "test_monthly_report_filters_month",
+      "markers": [
+        {
+          "name": "pytest.mark.sdd",
+          "args": [
+            "REQ-REPORT-002"
+          ],
+          "kwargs": {
+            "kind": "regression"
+          }
+        }
+      ],
+      "sha256": "d075d7e209011c78ad01fb8b1a9b3b936d2edfb4ed10cba2af83b1deca9ac9f7"
+    },
+    {
+      "path": "tests/test_report.py",
+      "name": "test_monthly_report_sorts_categories",
+      "markers": [
+        {
+          "name": "pytest.mark.sdd",
+          "args": [
+            "REQ-REPORT-003"
+          ],
+          "kwargs": {
+            "kind": "regression"
+          }
+        }
+      ],
+      "sha256": "06211fdb7ea50cac24c11e5302a0841427ca442d69888a3155a08516dd3e2c37"
+    },
+    {
+      "path": "tests/test_report.py",
+      "name": "test_monthly_report_handles_empty_month",
+      "markers": [
+        {
+          "name": "pytest.mark.sdd",
+          "args": [
+            "REQ-REPORT-002"
+          ],
+          "kwargs": {
+            "kind": "regression"
+          }
+        }
+      ],
+      "sha256": "4d6aa2e73a825042ba7b330516a718a6eec183ad91f35e5f2415ddceaddb4eb4"
+    },
+    {
+      "path": "tests/test_report.py",
+      "name": "test_monthly_report_separates_refunds",
+      "markers": [
+        {
+          "name": "pytest.mark.sdd",
+          "args": [
+            "REQ-REPORT-004"
+          ],
+          "kwargs": {
+            "kind": "target"
+          }
+        }
+      ],
+      "sha256": "8af3669d32964828dcc6564b929f2c089eb01d7f1cc9ee38a64f910612526ced"
+    },
+    {
+      "path": "tests/test_report.py",
+      "name": "test_monthly_report_applies_min_amount",
+      "markers": [
+        {
+          "name": "pytest.mark.sdd",
+          "args": [
+            "REQ-REPORT-005"
+          ],
+          "kwargs": {
+            "kind": "target"
+          }
+        }
+      ],
+      "sha256": "1b191f562c16ddc788d5c7a2c608eda0628c70036cf46c7888f1dded5737e18e"
+    }
+  ],
+  "links": [
+    {
+      "req_id": "REQ-REPORT-001",
+      "target_kind": "code",
+      "target_path": "ledger/report.py",
+      "target_symbol": "monthly_report",
+      "relation": "implements",
+      "rationale": "月报分类汇总入口",
+      "trace_path": "specs/traceability.json"
+    },
+    {
+      "req_id": "REQ-REPORT-001",
+      "target_kind": "test",
+      "target_path": "tests/test_report.py",
+      "target_symbol": "test_monthly_report_groups_positive_expenses",
+      "relation": "regression",
+      "rationale": "正数支出的分类合计必须保持",
+      "trace_path": "specs/traceability.json"
+    },
+    {
+      "req_id": "REQ-REPORT-001",
+      "target_kind": "test",
+      "target_path": "tests/test_cli.py",
+      "target_symbol": "test_cli_report_prints_positive_month",
+      "relation": "regression",
+      "rationale": "CLI 输出兼容性",
+      "trace_path": "specs/traceability.json"
+    },
+    {
+      "req_id": "REQ-REPORT-001",
+      "target_kind": "test",
+      "target_path": "tests/test_csv_io.py",
+      "target_symbol": "test_load_transactions_reads_bom_and_blank_lines",
+      "relation": "regression",
+      "rationale": "CSV 输入是月报上游兼容面",
+      "trace_path": "specs/traceability.json"
+    },
+    {
+      "req_id": "REQ-REPORT-001",
+      "target_kind": "test",
+      "target_path": "tests/test_csv_io.py",
+      "target_symbol": "test_load_transactions_rejects_bad_amount",
+      "relation": "regression",
+      "rationale": "坏金额必须继续报错",
+      "trace_path": "specs/traceability.json"
+    },
+    {
+      "req_id": "REQ-REPORT-001",
+      "target_kind": "test",
+      "target_path": "tests/test_csv_io.py",
+      "target_symbol": "test_load_transactions_rejects_wrong_header",
+      "relation": "regression",
+      "rationale": "表头契约不得回退",
+      "trace_path": "specs/traceability.json"
+    },
+    {
+      "req_id": "REQ-REPORT-002",
+      "target_kind": "code",
+      "target_path": "ledger/report.py",
+      "target_symbol": "monthly_report",
+      "relation": "implements",
+      "rationale": "月份筛选入口",
+      "trace_path": "specs/traceability.json"
+    },
+    {
+      "req_id": "REQ-REPORT-002",
+      "target_kind": "test",
+      "target_path": "tests/test_report.py",
+      "target_symbol": "test_monthly_report_filters_month",
+      "relation": "regression",
+      "rationale": "跨月数据不得混入",
+      "trace_path": "specs/traceability.json"
+    },
+    {
+      "req_id": "REQ-REPORT-002",
+      "target_kind": "test",
+      "target_path": "tests/test_report.py",
+      "target_symbol": "test_monthly_report_handles_empty_month",
+      "relation": "regression",
+      "rationale": "空月份必须返回空汇总",
+      "trace_path": "specs/traceability.json"
+    },
+    {
+      "req_id": "REQ-REPORT-003",
+      "target_kind": "code",
+      "target_path": "ledger/report.py",
+      "target_symbol": "monthly_report",
+      "relation": "implements",
+      "rationale": "分类排序入口",
+      "trace_path": "specs/traceability.json"
+    },
+    {
+      "req_id": "REQ-REPORT-003",
+      "target_kind": "test",
+      "target_path": "tests/test_report.py",
+      "target_symbol": "test_monthly_report_sorts_categories",
+      "relation": "regression",
+      "rationale": "分类顺序必须稳定",
+      "trace_path": "specs/traceability.json"
+    },
+    {
+      "req_id": "REQ-REPORT-004",
+      "target_kind": "code",
+      "target_path": "ledger/report.py",
+      "target_symbol": "monthly_report",
+      "relation": "implements",
+      "rationale": "退款分离逻辑入口",
+      "trace_path": "specs/traceability.json"
+    },
+    {
+      "req_id": "REQ-REPORT-004",
+      "target_kind": "test",
+      "target_path": "tests/test_report.py",
+      "target_symbol": "test_monthly_report_separates_refunds",
+      "relation": "verifies",
+      "rationale": "退款不得冲减分类与 total",
+      "trace_path": "specs/traceability.json"
+    },
+    {
+      "req_id": "REQ-REPORT-004",
+      "target_kind": "test",
+      "target_path": "tests/test_cli.py",
+      "target_symbol": "test_cli_report_includes_refund_fields",
+      "relation": "verifies",
+      "rationale": "CLI 必须输出 refund_total 和 net_total",
+      "trace_path": "specs/traceability.json"
+    },
+    {
+      "req_id": "REQ-REPORT-005",
+      "target_kind": "code",
+      "target_path": "ledger/report.py",
+      "target_symbol": "monthly_report",
+      "relation": "implements",
+      "rationale": "最低金额过滤入口",
+      "trace_path": "specs/traceability.json"
+    },
+    {
+      "req_id": "REQ-REPORT-005",
+      "target_kind": "test",
+      "target_path": "tests/test_report.py",
+      "target_symbol": "test_monthly_report_applies_min_amount",
+      "relation": "verifies",
+      "rationale": "阈值包含边界且退款不受影响",
+      "trace_path": "specs/traceability.json"
+    }
+  ],
+  "target_tests": [
+    "tests/test_cli.py::test_cli_report_includes_refund_fields",
+    "tests/test_report.py::test_monthly_report_applies_min_amount",
+    "tests/test_report.py::test_monthly_report_separates_refunds"
+  ],
+  "regression_tests": [
+    "tests/test_cli.py::test_cli_report_prints_positive_month",
+    "tests/test_csv_io.py::test_load_transactions_reads_bom_and_blank_lines",
+    "tests/test_csv_io.py::test_load_transactions_rejects_bad_amount",
+    "tests/test_csv_io.py::test_load_transactions_rejects_wrong_header",
+    "tests/test_report.py::test_monthly_report_filters_month",
+    "tests/test_report.py::test_monthly_report_groups_positive_expenses",
+    "tests/test_report.py::test_monthly_report_handles_empty_month",
+    "tests/test_report.py::test_monthly_report_sorts_categories"
+  ],
+  "counts": {
+    "specs": 5,
+    "code_symbols": 7,
+    "tests": 11,
+    "links": 16
+  }
+}

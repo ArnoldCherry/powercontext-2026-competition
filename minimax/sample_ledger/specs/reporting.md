@@ -16,7 +16,7 @@
 
 ## REQ-REPORT-004 退款与支出分离
 
-金额为负数的流水是退款。退款 MUST NOT 进入 `categories` 或 `total`；月报 MUST 输出 `refund_total`（当月退款绝对值之和）和 `net_total`（`total - refund_total`）。金额为零的流水忽略。
+金额为负数的流水是退款。退款 MUST NOT 进入 `categories` 或 `total`；月报 MUST 输出 `refund_total`（当月退款绝对值之和）和 `net_total`（`total - refund_total`）。金额为零的流水忽略。若退款总额超过支出总额，`net_total` 仍按公式输出负值，不得截断为 0。
 
 ## REQ-REPORT-005 按最低金额过滤支出
 

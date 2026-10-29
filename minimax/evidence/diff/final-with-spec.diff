@@ -1,0 +1,54 @@
+diff --git a/minimax/sample_ledger/ledger/report.py b/minimax/sample_ledger/ledger/report.py
+index 6f8fe491..e88e7e08 100644
+--- a/minimax/sample_ledger/ledger/report.py
++++ b/minimax/sample_ledger/ledger/report.py
+@@ -10,20 +10,32 @@ def monthly_report(
+     month: str,
+     min_amount: Decimal | None = None,
+ ) -> dict[str, object]:
+-    """Summarize one YYYY-MM month into category totals."""
++    """Summarize one YYYY-MM month into expense and refund totals."""
+     selected = [
+         transaction
+         for transaction in transactions
+         if transaction.occurred_on.strftime("%Y-%m") == month
+     ]
++
+     totals: dict[str, Decimal] = {}
++    refund_total = Decimal("0")
++
+     for transaction in selected:
+-        totals[transaction.category] = (
+-            totals.get(transaction.category, Decimal("0")) + transaction.amount
+-        )
++        amount = transaction.amount
++        if amount < Decimal("0"):
++            refund_total += -amount
++        elif amount > Decimal("0") and (
++            min_amount is None or amount >= min_amount
++        ):
++            totals[transaction.category] = (
++                totals.get(transaction.category, Decimal("0")) + amount
++            )
++
+     total = sum(totals.values(), Decimal("0"))
+     return {
+         "month": month,
+         "categories": dict(sorted(totals.items())),
+         "total": total,
++        "refund_total": refund_total,
++        "net_total": total - refund_total,
+     }
+diff --git a/minimax/sample_ledger/specs/reporting.md b/minimax/sample_ledger/specs/reporting.md
+index a986dd23..5be6ec31 100644
+--- a/minimax/sample_ledger/specs/reporting.md
++++ b/minimax/sample_ledger/specs/reporting.md
+@@ -16,7 +16,7 @@
+ 
+ ## REQ-REPORT-004 退款与支出分离
+ 
+-金额为负数的流水是退款。退款 MUST NOT 进入 `categories` 或 `total`；月报 MUST 输出 `refund_total`（当月退款绝对值之和）和 `net_total`（`total - refund_total`）。金额为零的流水忽略。
++金额为负数的流水是退款。退款 MUST NOT 进入 `categories` 或 `total`；月报 MUST 输出 `refund_total`（当月退款绝对值之和）和 `net_total`（`total - refund_total`）。金额为零的流水忽略。若退款总额超过支出总额，`net_total` 仍按公式输出负值，不得截断为 0。
+ 
+ ## REQ-REPORT-005 按最低金额过滤支出
+ 

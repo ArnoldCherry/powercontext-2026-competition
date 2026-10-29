@@ -1,0 +1,58 @@
+{
+  "schema": "sdd.minimax-record.v1",
+  "created_at": "2026-10-29T14:43:13+00:00",
+  "model": "MiniMax-M3",
+  "base_url": "https://api.minimaxi.com/v1",
+  "group_id_set": false,
+  "target_file": "ledger/report.py",
+  "target_file_before_sha256": "c29d6bda638df6326f60d36e704a7d31c14b258241cd85d809537f1dbaf7f2a9",
+  "target_file_after_sha256": "c9b39e8c4ce8d276d21abef6bfdd38cddc935e2d995ac2810e2d01092421f056",
+  "model_output_sha256": "c9b39e8c4ce8d276d21abef6bfdd38cddc935e2d995ac2810e2d01092421f056",
+  "diff_sha256": "cd93baac78d2d92b953c87fcd60c913fea6db20dadd683b5abe29d00e154aa93",
+  "context_sha256": "518923a7e872e3984b5cac556d3d24fd57ba1a02ca2d1dc0ae2ca7bf95875b77",
+  "attempts": [
+    {
+      "attempt": 1,
+      "status": "tests-passed",
+      "response_sha256": "59179baecee416179291d079a0394e17a7f1ecfe690594efdb5acb6dd77cee9f",
+      "output_sha256": "c9b39e8c4ce8d276d21abef6bfdd38cddc935e2d995ac2810e2d01092421f056",
+      "usage": {
+        "total_tokens": 4515,
+        "total_characters": 0,
+        "prompt_tokens": 3769,
+        "completion_tokens": 746,
+        "completion_tokens_details": {
+          "reasoning_tokens": 490
+        },
+        "prompt_tokens_details": {
+          "cached_tokens": 128
+        }
+      },
+      "latency_seconds": 8.199,
+      "exit_code": 0,
+      "test_log": "D:\\database\\pc-parallel\\minimax\\minimax\\evidence\\minimax\\attempt-01\\test-output.txt"
+    }
+  ],
+  "test_node_ids": [
+    "tests/test_cli.py::test_cli_report_includes_refund_fields",
+    "tests/test_report.py::test_monthly_report_applies_min_amount",
+    "tests/test_report.py::test_monthly_report_separates_refunds",
+    "tests/test_cli.py::test_cli_report_prints_positive_month",
+    "tests/test_csv_io.py::test_load_transactions_reads_bom_and_blank_lines",
+    "tests/test_csv_io.py::test_load_transactions_rejects_bad_amount",
+    "tests/test_csv_io.py::test_load_transactions_rejects_wrong_header",
+    "tests/test_report.py::test_monthly_report_filters_month",
+    "tests/test_report.py::test_monthly_report_groups_positive_expenses",
+    "tests/test_report.py::test_monthly_report_handles_empty_month",
+    "tests/test_report.py::test_monthly_report_sorts_categories"
+  ],
+  "request_files": [
+    "D:\\database\\pc-parallel\\minimax\\minimax\\evidence\\minimax\\attempt-01\\request.json"
+  ],
+  "response_files": [
+    "D:\\database\\pc-parallel\\minimax\\minimax\\evidence\\minimax\\attempt-01\\response.json"
+  ],
+  "final_diff": "D:\\database\\pc-parallel\\minimax\\minimax\\evidence\\minimax\\final\\diff.patch",
+  "final_context": "D:\\database\\pc-parallel\\minimax\\minimax\\evidence\\minimax\\final\\context.json",
+  "record_path": "D:\\database\\pc-parallel\\minimax\\minimax\\evidence\\minimax\\final\\record.json"
+}

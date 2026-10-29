@@ -79,6 +79,7 @@ def _write_json(path: Path, data: object) -> None:
     path.write_text(
         json.dumps(data, ensure_ascii=False, indent=2, sort_keys=True, default=str),
         encoding="utf-8",
+        newline="\n",
     )
 
 
@@ -158,7 +159,7 @@ def cmd_context(args: argparse.Namespace) -> int:
         _write_json(output, context)
         markdown = render_markdown(context)
         markdown_path = output.with_suffix(".md")
-        markdown_path.write_text(markdown, encoding="utf-8")
+        markdown_path.write_text(markdown, encoding="utf-8", newline="\n")
         record = None
         if args.record:
             task_id = context["task"]["task_id"]
@@ -434,7 +435,7 @@ def cmd_verify(args: argparse.Namespace) -> int:
         )
         diff_path = settings.evidence_dir / "diff" / "final.diff"
         diff_path.parent.mkdir(parents=True, exist_ok=True)
-        diff_path.write_text(diff, encoding="utf-8")
+        diff_path.write_text(diff, encoding="utf-8", newline="\n")
         summary = {
             "schema": "sdd.verification.v1",
             "created_at": _timestamp(),
@@ -623,12 +624,12 @@ def cmd_spec_update(args: argparse.Namespace) -> int:
             raise RuntimeError("updated spec is identical to the current spec")
         update_dir = settings.evidence_dir / "spec-update"
         update_dir.mkdir(parents=True, exist_ok=True)
-        (update_dir / "reporting.before.md").write_text(before_text, encoding="utf-8")
-        (update_dir / "reporting.updated.md").write_text(after_text, encoding="utf-8")
+        (update_dir / "reporting.before.md").write_text(before_text, encoding="utf-8", newline="\n")
+        (update_dir / "reporting.updated.md").write_text(after_text, encoding="utf-8", newline="\n")
         before_context_path = Path(args.before_context) if args.before_context else settings.evidence_dir / "context" / "initial.json"
         before_context = load_context(before_context_path) if before_context_path.is_file() else None
 
-        target.write_text(after_text, encoding="utf-8")
+        target.write_text(after_text, encoding="utf-8", newline="\n")
         summary = import_project(connection, settings.project_root)
         _write_json(settings.runtime_dir / "import-summary-after-update.json", summary)
         context = build_context(
@@ -640,7 +641,7 @@ def cmd_spec_update(args: argparse.Namespace) -> int:
         after_json = update_dir / "after.json"
         after_md = update_dir / "after.md"
         _write_json(after_json, context)
-        after_md.write_text(render_markdown(context), encoding="utf-8")
+        after_md.write_text(render_markdown(context), encoding="utf-8", newline="\n")
 
         def pick(specs: list[dict]) -> dict:
             return next((spec for spec in specs if spec["req_id"] == "REQ-REPORT-004"), {})

@@ -1,0 +1,17 @@
+{
+  "ok": true,
+  "output": "D:\\database\\pc-parallel\\minimax\\minimax\\evidence\\database\\query-log.json",
+  "version": "5.7.25-OceanBase seekdb-v1.4.0.0",
+  "tables": 8,
+  "queries": 6,
+  "counts": {
+    "sdd_code_symbols": 7,
+    "sdd_documents": 11,
+    "sdd_import_runs": 7,
+    "sdd_query_log": 6,
+    "sdd_spec_entries": 5,
+    "sdd_spec_keywords": 29,
+    "sdd_spec_links": 16,
+    "sdd_test_cases": 11
+  }
+}

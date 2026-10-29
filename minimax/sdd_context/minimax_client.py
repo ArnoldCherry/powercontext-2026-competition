@@ -192,15 +192,21 @@ Keep the existing public function name and signature. Do not edit any other file
 
 
 def extract_python(content: str) -> str:
+    content = re.sub(r"<think>.*?</think>", "", content, flags=re.DOTALL | re.IGNORECASE)
     blocks = re.findall(r"```(?:python|py)?\s*\n(.*?)```", content, re.DOTALL | re.IGNORECASE)
     candidates = [block.strip("\n") for block in blocks] or [content.strip()]
-    for candidate in sorted(candidates, key=len, reverse=True):
+    valid: list[str] = []
+    for candidate in candidates:
         try:
             ast.parse(candidate)
         except SyntaxError:
             continue
-        if "def monthly_report" in candidate or "from __future__" in candidate:
-            return candidate
+        valid.append(candidate)
+    preferred = [candidate for candidate in valid if "def monthly_report" in candidate]
+    if preferred:
+        return preferred[-1]
+    if valid:
+        return max(valid, key=len)
     raise MiniMaxError("MiniMax output did not contain a valid Python file")
 
 
@@ -266,6 +272,7 @@ def assist(
                 indent=2,
             ),
             encoding="utf-8",
+            newline="\n",
         )
         try:
             candidate = extract_python(response["content"])
@@ -289,8 +296,8 @@ def assist(
             continue
 
         applied = _normalize_python(candidate)
-        (directory / "model-output.py").write_text(applied, encoding="utf-8")
-        target_file.write_text(applied, encoding="utf-8")
+        (directory / "model-output.py").write_text(applied, encoding="utf-8", newline="\n")
+        target_file.write_text(applied, encoding="utf-8", newline="\n")
         test_result = run_pytest(
             settings.project_root,
             target_ids + regression_ids,
@@ -325,7 +332,7 @@ def assist(
         ]
 
     if current == original or attempts[-1]["status"] != "tests-passed":
-        target_file.write_text(original, encoding="utf-8")
+        target_file.write_text(original, encoding="utf-8", newline="\n")
         raise MiniMaxError(
             "MiniMax did not produce a passing revision; original file restored. "
             f"attempts={json.dumps(attempts, ensure_ascii=False)}"
@@ -338,9 +345,9 @@ def assist(
     (final_dir / "context.json").write_text(
         json.dumps(context, ensure_ascii=False, indent=2), encoding="utf-8"
     )
-    (final_dir / "before.py").write_text(original, encoding="utf-8")
-    (final_dir / "after.py").write_text(current, encoding="utf-8")
-    (final_dir / "diff.patch").write_text(diff, encoding="utf-8")
+    (final_dir / "before.py").write_text(original, encoding="utf-8", newline="\n")
+    (final_dir / "after.py").write_text(current, encoding="utf-8", newline="\n")
+    (final_dir / "diff.patch").write_text(diff, encoding="utf-8", newline="\n")
     record = {
         "schema": "sdd.minimax-record.v1",
         "created_at": _timestamp(),

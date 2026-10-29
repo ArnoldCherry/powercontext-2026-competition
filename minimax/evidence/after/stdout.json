@@ -1,0 +1,73 @@
+{
+  "schema": "sdd.verification.v1",
+  "created_at": "2026-10-29T14:43:24+00:00",
+  "ok": true,
+  "context": "evidence/context/initial.json",
+  "context_sha256": "518923a7e872e3984b5cac556d3d24fd57ba1a02ca2d1dc0ae2ca7bf95875b77",
+  "results": {
+    "target": {
+      "command": [
+        "D:\\OceanBase\\.venvs\\minimax\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_cli.py::test_cli_report_includes_refund_fields",
+        "tests/test_report.py::test_monthly_report_applies_min_amount",
+        "tests/test_report.py::test_monthly_report_separates_refunds"
+      ],
+      "exit_code": 0,
+      "passed": 3,
+      "failed": 0,
+      "log": "evidence/after/target-tests.txt"
+    },
+    "regression": {
+      "command": [
+        "D:\\OceanBase\\.venvs\\minimax\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_cli.py::test_cli_report_prints_positive_month",
+        "tests/test_csv_io.py::test_load_transactions_reads_bom_and_blank_lines",
+        "tests/test_csv_io.py::test_load_transactions_rejects_bad_amount",
+        "tests/test_csv_io.py::test_load_transactions_rejects_wrong_header",
+        "tests/test_report.py::test_monthly_report_filters_month",
+        "tests/test_report.py::test_monthly_report_groups_positive_expenses",
+        "tests/test_report.py::test_monthly_report_handles_empty_month",
+        "tests/test_report.py::test_monthly_report_sorts_categories"
+      ],
+      "exit_code": 0,
+      "passed": 8,
+      "failed": 0,
+      "log": "evidence/after/regression-tests.txt"
+    },
+    "full": {
+      "command": [
+        "D:\\OceanBase\\.venvs\\minimax\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "exit_code": 0,
+      "passed": 11,
+      "failed": 0,
+      "log": "evidence/after/full-suite.txt"
+    }
+  },
+  "checks": {
+    "test_files_unchanged": true,
+    "target_set_unchanged": true,
+    "regression_set_unchanged": true,
+    "diff_non_empty": true,
+    "minimax_record_corresponds": true,
+    "correspondence_notes": []
+  },
+  "test_file_hashes": {
+    "tests/conftest.py": "3cf5e16fb2c315bf6d0d6bad981d930f9af7951d546d8f2338131f772eaec507",
+    "tests/test_cli.py": "c0e58bbdfb90bf848e5e65f3b93c2f37284026f0df99ebf7ae3c30aa6040fe05",
+    "tests/test_csv_io.py": "729001a85d510c201391e0295de30bf44c3a344987761385d924261db5c5c7b6",
+    "tests/test_report.py": "573c1a1a4aa56d17157f904e52dc88ac6c70a7d00491237377868f0c20654031"
+  },
+  "diff": "evidence/diff/final.diff",
+  "diff_sha256": "cd93baac78d2d92b953c87fcd60c913fea6db20dadd683b5abe29d00e154aa93",
+  "minimax_record": "evidence/minimax/final/record.json"
+}

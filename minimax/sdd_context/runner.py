@@ -36,6 +36,8 @@ def run_pytest(
             cwd=project_root,
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
             timeout=timeout,
             env=env,
         )
@@ -57,7 +59,7 @@ def run_pytest(
     )
     if output_path is not None:
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        output_path.write_text(text, encoding="utf-8")
+        output_path.write_text(text, encoding="utf-8", newline="\n")
     return {
         "command": command,
         "cwd": str(project_root),
@@ -97,7 +99,12 @@ def error_count(pytest_output: str) -> int:
 def git_info(project_root: Path) -> dict:
     def run(*args: str) -> str:
         completed = subprocess.run(
-            ["git", *args], cwd=project_root, capture_output=True, text=True
+            ["git", *args],
+            cwd=project_root,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
         )
         return (completed.stdout or completed.stderr or "").strip()
 
@@ -112,5 +119,12 @@ def git_diff(project_root: Path, paths: list[str] | None = None) -> str:
     command = ["git", "diff", "--binary"]
     if paths:
         command.extend(["--", *paths])
-    completed = subprocess.run(command, cwd=project_root, capture_output=True, text=True)
+    completed = subprocess.run(
+        command,
+        cwd=project_root,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
     return completed.stdout or ""

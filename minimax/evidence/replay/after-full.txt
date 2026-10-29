@@ -1,0 +1,8 @@
+$ D:\OceanBase\.venvs\minimax\Scripts\python.exe -m pytest -q
+cwd: D:\database\pc-parallel\minimax\minimax\sample_ledger
+python: 3.11.9
+duration_seconds: 0.285
+exit_code: 0
+
+...........                                                              [100%]
+11 passed in 0.04s

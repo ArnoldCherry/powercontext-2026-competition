@@ -76,6 +76,7 @@ class PowerContextClient:
         state_file.write_text(
             json.dumps({"scope_id": scope_id, "task_id": task_id, "created_at": _timestamp()}),
             encoding="utf-8",
+            newline="\n",
         )
         return scope_id
 

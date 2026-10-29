@@ -1,0 +1,22 @@
+{
+  "after_body": "金额为负数的流水是退款。退款 MUST NOT 进入 `categories` 或 `total`；月报 MUST 输出 `refund_total`（当月退款绝对值之和）和 `net_total`（`total - refund_total`）。金额为零的流水忽略。若退款总额超过支出总额，`net_total` 仍按公式输出负值，不得截断为 0。",
+  "after_context": "evidence/spec-update/after.json",
+  "after_context_sha256": "1d93b61f0ea0ba974e82fcecdabf9451db858adadbdaa7be376764bd9698f0bb",
+  "after_sha256": "a1063d56e040bd95fd1a62a80c1516ea2870e7c23818254109a487e8c4bc510a",
+  "before_body": "金额为负数的流水是退款。退款 MUST NOT 进入 `categories` 或 `total`；月报 MUST 输出 `refund_total`（当月退款绝对值之和）和 `net_total`（`total - refund_total`）。金额为零的流水忽略。",
+  "before_context": "evidence/context/initial.json",
+  "before_context_sha256": "518923a7e872e3984b5cac556d3d24fd57ba1a02ca2d1dc0ae2ca7bf95875b77",
+  "before_sha256": "69471a22f0a5650f6a8be2157e6a03b03ba0656e1d37874006a94486f19e5a74",
+  "created_at": "2026-10-29T14:43:36+00:00",
+  "matched_req_ids": [
+    "REQ-REPORT-004",
+    "REQ-REPORT-005",
+    "REQ-REPORT-001",
+    "REQ-REPORT-002",
+    "REQ-REPORT-003"
+  ],
+  "ok": true,
+  "schema": "sdd.spec-update.v1",
+  "sources_verified": true,
+  "spec_update_applied": true
+}

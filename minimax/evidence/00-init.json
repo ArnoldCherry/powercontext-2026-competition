@@ -1,0 +1,25 @@
+{
+  "ok": true,
+  "seekdb": {
+    "host": "127.0.0.1",
+    "port": 2881,
+    "database": "sdd_context",
+    "version": "5.7.25-OceanBase seekdb-v1.4.0.0",
+    "tables": [
+      "sdd_code_symbols",
+      "sdd_documents",
+      "sdd_import_runs",
+      "sdd_query_log",
+      "sdd_spec_entries",
+      "sdd_spec_keywords",
+      "sdd_spec_links",
+      "sdd_test_cases"
+    ]
+  },
+  "powercontext": {
+    "url": "http://127.0.0.1:17429",
+    "scope_id": "scp_1qe98dqbhewyfxj5jjktxzcccr"
+  },
+  "project": "D:\\database\\pc-parallel\\minimax\\minimax\\sample_ledger",
+  "task": "TASK-001"
+}

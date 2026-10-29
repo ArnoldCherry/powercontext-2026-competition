@@ -1,0 +1,651 @@
+{
+  "database": {
+    "documents": [
+      {
+        "kind": "code",
+        "path": "ledger/cli.py",
+        "sha256": "cf8e0d2e2c2cbfedf0afce2bdf2ed0576816b6eff688eed6eac7e076226a2581"
+      },
+      {
+        "kind": "code",
+        "path": "ledger/csv_io.py",
+        "sha256": "e4e430f81e50815b06f3f4ba67604bf4e695d54c1b0f820ff77233818ceee38a"
+      },
+      {
+        "kind": "code",
+        "path": "ledger/models.py",
+        "sha256": "e9f97a8ff1926c9c9943ad5b80e1a259d7f5ed72aef4037563d25c01653d6729"
+      },
+      {
+        "kind": "code",
+        "path": "ledger/report.py",
+        "sha256": "c29d6bda638df6326f60d36e704a7d31c14b258241cd85d809537f1dbaf7f2a9"
+      },
+      {
+        "kind": "code",
+        "path": "ledger/__init__.py",
+        "sha256": "b3379e55d68b46218c71b1b9119cfb772ca982c7cf8121b8e028f9f2062673a5"
+      },
+      {
+        "kind": "code",
+        "path": "ledger/__main__.py",
+        "sha256": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d"
+      },
+      {
+        "kind": "spec",
+        "path": "specs/reporting.md",
+        "sha256": "c03b38c87be8f8db68e2edda8e06cc782038c04267750281b28982b0f6b0058f"
+      },
+      {
+        "kind": "trace",
+        "path": "specs/traceability.json",
+        "sha256": "d7910c5710653cd91247b6a2cbb42acfd08065ab0833ee8dd4ab259daa9394f8"
+      },
+      {
+        "kind": "test",
+        "path": "tests/test_cli.py",
+        "sha256": "c0e58bbdfb90bf848e5e65f3b93c2f37284026f0df99ebf7ae3c30aa6040fe05"
+      },
+      {
+        "kind": "test",
+        "path": "tests/test_csv_io.py",
+        "sha256": "729001a85d510c201391e0295de30bf44c3a344987761385d924261db5c5c7b6"
+      },
+      {
+        "kind": "test",
+        "path": "tests/test_report.py",
+        "sha256": "573c1a1a4aa56d17157f904e52dc88ac6c70a7d00491237377868f0c20654031"
+      }
+    ],
+    "version": "5.7.25-OceanBase seekdb-v1.4.0.0"
+  },
+  "generated_at": "2026-10-29T12:42:15+00:00",
+  "query": {
+    "context_sha256": "518923a7e872e3984b5cac556d3d24fd57ba1a02ca2d1dc0ae2ca7bf95875b77",
+    "matched_req_ids": [
+      "REQ-REPORT-004",
+      "REQ-REPORT-005",
+      "REQ-REPORT-001",
+      "REQ-REPORT-002",
+      "REQ-REPORT-003"
+    ],
+    "statements": [
+      {
+        "params": [],
+        "sql": "SELECT req_id, keyword FROM sdd_spec_keywords ORDER BY req_id, keyword"
+      },
+      {
+        "params": [
+          "REQ-REPORT-004",
+          "REQ-REPORT-005",
+          "REQ-REPORT-001",
+          "REQ-REPORT-002",
+          "REQ-REPORT-003"
+        ],
+        "sql": "SELECT req_id, doc_path, title, body, source, line_start, line_end, sha256, imported_at\n        FROM sdd_spec_entries\n        WHERE req_id IN (%s, %s, %s, %s, %s)\n        ORDER BY req_id"
+      },
+      {
+        "params": [
+          "REQ-REPORT-004",
+          "REQ-REPORT-005",
+          "REQ-REPORT-001",
+          "REQ-REPORT-002",
+          "REQ-REPORT-003"
+        ],
+        "sql": "SELECT req_id, target_kind, target_path, target_symbol, relation, rationale\n        FROM sdd_spec_links\n        WHERE req_id IN (%s, %s, %s, %s, %s)\n        ORDER BY req_id, target_kind, target_path, target_symbol"
+      },
+      {
+        "params": [
+          "ledger/report.py",
+          "monthly_report"
+        ],
+        "sql": "SELECT path, qualname, symbol_kind, line_start, line_end, signature, docstring, source, sha256\n        FROM sdd_code_symbols\n        WHERE path = %s AND qualname = %s"
+      },
+      {
+        "params": [
+          "ledger/report.py",
+          "monthly_report"
+        ],
+        "sql": "SELECT DISTINCT req_id FROM sdd_spec_links\n                WHERE target_kind = 'code' AND target_path = %s AND target_symbol = %s\n                ORDER BY req_id"
+      },
+      {
+        "params": [
+          "REQ-REPORT-001",
+          "REQ-REPORT-002",
+          "REQ-REPORT-003",
+          "REQ-REPORT-004",
+          "REQ-REPORT-005"
+        ],
+        "sql": "SELECT req_id, target_kind, target_path, target_symbol, relation, rationale\n        FROM sdd_spec_links\n        WHERE req_id IN (%s, %s, %s, %s, %s)\n        ORDER BY req_id, target_kind, target_path, target_symbol"
+      },
+      {
+        "params": [
+          "tests/test_cli.py",
+          "test_cli_report_includes_refund_fields"
+        ],
+        "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+      },
+      {
+        "params": [
+          "tests/test_cli.py",
+          "test_cli_report_prints_positive_month"
+        ],
+        "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+      },
+      {
+        "params": [
+          "tests/test_csv_io.py",
+          "test_load_transactions_reads_bom_and_blank_lines"
+        ],
+        "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+      },
+      {
+        "params": [
+          "tests/test_csv_io.py",
+          "test_load_transactions_rejects_bad_amount"
+        ],
+        "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+      },
+      {
+        "params": [
+          "tests/test_csv_io.py",
+          "test_load_transactions_rejects_wrong_header"
+        ],
+        "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+      },
+      {
+        "params": [
+          "tests/test_report.py",
+          "test_monthly_report_applies_min_amount"
+        ],
+        "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+      },
+      {
+        "params": [
+          "tests/test_report.py",
+          "test_monthly_report_filters_month"
+        ],
+        "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+      },
+      {
+        "params": [
+          "tests/test_report.py",
+          "test_monthly_report_groups_positive_expenses"
+        ],
+        "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+      },
+      {
+        "params": [
+          "tests/test_report.py",
+          "test_monthly_report_handles_empty_month"
+        ],
+        "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+      },
+      {
+        "params": [
+          "tests/test_report.py",
+          "test_monthly_report_separates_refunds"
+        ],
+        "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+      },
+      {
+        "params": [
+          "tests/test_report.py",
+          "test_monthly_report_sorts_categories"
+        ],
+        "sql": "SELECT path, name, line_start, line_end, markers, docstring, source, sha256\n        FROM sdd_test_cases\n        WHERE path = %s AND name = %s"
+      },
+      {
+        "params": [],
+        "sql": "SELECT path, kind, sha256, imported_at FROM sdd_documents ORDER BY path, kind"
+      }
+    ]
+  },
+  "schema": "sdd.context.v1",
+  "sources": {
+    "code": [
+      {
+        "docstring": "Summarize one YYYY-MM month into category totals.",
+        "file_sha256": "c29d6bda638df6326f60d36e704a7d31c14b258241cd85d809537f1dbaf7f2a9",
+        "kind": "function",
+        "line_end": 29,
+        "line_start": 8,
+        "path": "ledger/report.py",
+        "related_req_ids": [
+          "REQ-REPORT-001",
+          "REQ-REPORT-002",
+          "REQ-REPORT-003",
+          "REQ-REPORT-004",
+          "REQ-REPORT-005"
+        ],
+        "req_ids": [
+          "REQ-REPORT-001",
+          "REQ-REPORT-002",
+          "REQ-REPORT-003",
+          "REQ-REPORT-004",
+          "REQ-REPORT-005"
+        ],
+        "sha256": "26cc9f50fa949c93c778ca7d620153822d3d3de6acded1dc7bc58701b830b98f",
+        "signature": "def monthly_report(transactions: list[Transaction], month: str, min_amount: Decimal | None=None) -> dict[str, object]",
+        "source": "def monthly_report(\n    transactions: list[Transaction],\n    month: str,\n    min_amount: Decimal | None = None,\n) -> dict[str, object]:\n    \"\"\"Summarize one YYYY-MM month into category totals.\"\"\"\n    selected = [\n        transaction\n        for transaction in transactions\n        if transaction.occurred_on.strftime(\"%Y-%m\") == month\n    ]\n    totals: dict[str, Decimal] = {}\n    for transaction in selected:\n        totals[transaction.category] = (\n            totals.get(transaction.category, Decimal(\"0\")) + transaction.amount\n        )\n    total = sum(totals.values(), Decimal(\"0\"))\n    return {\n        \"month\": month,\n        \"categories\": dict(sorted(totals.items())),\n        \"total\": total,\n    }",
+        "symbol": "monthly_report"
+      }
+    ],
+    "specs": [
+      {
+        "body": "金额为负数的流水是退款。退款 MUST NOT 进入 `categories` 或 `total`；月报 MUST 输出 `refund_total`（当月退款绝对值之和）和 `net_total`（`total - refund_total`）。金额为零的流水忽略。",
+        "imported_at": "2026-10-29T12:42:14Z",
+        "line_end": 19,
+        "line_start": 17,
+        "matched_keywords": [
+          "net_total",
+          "refund",
+          "refund_total",
+          "负数",
+          "退款"
+        ],
+        "path": "specs/reporting.md",
+        "req_id": "REQ-REPORT-004",
+        "score": 41,
+        "sha256": "69471a22f0a5650f6a8be2157e6a03b03ba0656e1d37874006a94486f19e5a74",
+        "source": "## REQ-REPORT-004 退款与支出分离\n\n金额为负数的流水是退款。退款 MUST NOT 进入 `categories` 或 `total`；月报 MUST 输出 `refund_total`（当月退款绝对值之和）和 `net_total`（`total - refund_total`）。金额为零的流水忽略。",
+        "title": "退款与支出分离"
+      },
+      {
+        "body": "当传入 `min_amount` 时，只有金额大于等于 `min_amount` 的正数支出进入 `categories` 和 `total`；该阈值包含边界。退款不受 `min_amount` 影响，仍计入 `refund_total`。\n\n## 兼容性约束\n\n现有 CSV 解析、月份过滤、正数支出分类汇总和分类排序行为 MUST 保持不变。不得修改 `tests/` 中的断言或预期值。",
+        "imported_at": "2026-10-29T12:42:14Z",
+        "line_end": 27,
+        "line_start": 21,
+        "matched_keywords": [
+          "min_amount",
+          "最低金额",
+          "过滤",
+          "阈值"
+        ],
+        "path": "specs/reporting.md",
+        "req_id": "REQ-REPORT-005",
+        "score": 26,
+        "sha256": "504099fd78447608f16d2c24d62cfa483628f77f2d4b7a7314532bccd1215150",
+        "source": "## REQ-REPORT-005 按最低金额过滤支出\n\n当传入 `min_amount` 时，只有金额大于等于 `min_amount` 的正数支出进入 `categories` 和 `total`；该阈值包含边界。退款不受 `min_amount` 影响，仍计入 `refund_total`。\n\n## 兼容性约束\n\n现有 CSV 解析、月份过滤、正数支出分类汇总和分类排序行为 MUST 保持不变。不得修改 `tests/` 中的断言或预期值。",
+        "title": "按最低金额过滤支出"
+      },
+      {
+        "body": "月报 MUST 按 `category` 对当月支出分组，`categories` 的值为该分类正数支出之和。`total` 为所有入账支出之和。",
+        "imported_at": "2026-10-29T12:42:14Z",
+        "line_end": 7,
+        "line_start": 5,
+        "matched_keywords": [
+          "total",
+          "分类",
+          "支出",
+          "月报",
+          "汇总"
+        ],
+        "path": "specs/reporting.md",
+        "req_id": "REQ-REPORT-001",
+        "score": 23,
+        "sha256": "467b2bbe8b30c08452c5d9ca0fece1478f606a23a199ebfe075e12e75977c2fa",
+        "source": "## REQ-REPORT-001 按分类汇总正数支出\n\n月报 MUST 按 `category` 对当月支出分组，`categories` 的值为该分类正数支出之和。`total` 为所有入账支出之和。",
+        "title": "按分类汇总正数支出"
+      },
+      {
+        "body": "月报 MUST 只统计 `occurred_on` 的 `YYYY-MM` 等于请求月份的流水，其他月份不得进入任何合计。",
+        "imported_at": "2026-10-29T12:42:14Z",
+        "line_end": 11,
+        "line_start": 9,
+        "matched_keywords": [
+          "月份",
+          "过滤"
+        ],
+        "path": "specs/reporting.md",
+        "req_id": "REQ-REPORT-002",
+        "score": 8,
+        "sha256": "bc3d4958e41d77e794ae7383384d1e6180d45ef42916aed4c25b3de714118420",
+        "source": "## REQ-REPORT-002 只统计指定月份\n\n月报 MUST 只统计 `occurred_on` 的 `YYYY-MM` 等于请求月份的流水，其他月份不得进入任何合计。",
+        "title": "只统计指定月份"
+      },
+      {
+        "body": "`categories` MUST 按分类名升序输出，保证 JSON 结果稳定，便于自动化比对。",
+        "imported_at": "2026-10-29T12:42:14Z",
+        "line_end": 15,
+        "line_start": 13,
+        "matched_keywords": [
+          "排序"
+        ],
+        "path": "specs/reporting.md",
+        "req_id": "REQ-REPORT-003",
+        "score": 4,
+        "sha256": "3a512051bcaf09574d4cf6857e1739445388369039a2c8a6367c562f213303b8",
+        "source": "## REQ-REPORT-003 分类合计稳定排序\n\n`categories` MUST 按分类名升序输出，保证 JSON 结果稳定，便于自动化比对。",
+        "title": "分类合计稳定排序"
+      }
+    ],
+    "tests": [
+      {
+        "docstring": "",
+        "file_sha256": "c0e58bbdfb90bf848e5e65f3b93c2f37284026f0df99ebf7ae3c30aa6040fe05",
+        "kind": "target",
+        "line_end": 49,
+        "line_start": 32,
+        "markers": [
+          {
+            "args": [
+              "REQ-REPORT-004"
+            ],
+            "kwargs": {
+              "kind": "target"
+            },
+            "name": "pytest.mark.sdd"
+          }
+        ],
+        "name": "test_cli_report_includes_refund_fields",
+        "path": "tests/test_cli.py",
+        "req_ids": [
+          "REQ-REPORT-004"
+        ],
+        "sha256": "1bc18eec18beef20602656849ab7e3bf1986779b05fc5532df07c2abccb792c5",
+        "source": "def test_cli_report_includes_refund_fields(tmp_path, capsys):\n    csv_path = write_csv(\n        tmp_path / \"mixed.csv\",\n        \"2026-01-03,food,40.00,lunch\\n\"\n        \"2026-01-05,food,60.00,groceries\\n\"\n        \"2026-01-10,food,-15.00,refund\\n\",\n    )\n\n    exit_code = main(\n        [\"report\", \"--csv\", csv_path, \"--month\", \"2026-01\", \"--min-amount\", \"10\"]\n    )\n\n    assert exit_code == 0\n    payload = json.loads(capsys.readouterr().out)\n    assert payload[\"categories\"] == {\"food\": \"100.00\"}\n    assert payload[\"total\"] == \"100.00\"\n    assert payload[\"refund_total\"] == \"15.00\"\n    assert payload[\"net_total\"] == \"85.00\""
+      },
+      {
+        "docstring": "",
+        "file_sha256": "573c1a1a4aa56d17157f904e52dc88ac6c70a7d00491237377868f0c20654031",
+        "kind": "target",
+        "line_end": 69,
+        "line_start": 60,
+        "markers": [
+          {
+            "args": [
+              "REQ-REPORT-005"
+            ],
+            "kwargs": {
+              "kind": "target"
+            },
+            "name": "pytest.mark.sdd"
+          }
+        ],
+        "name": "test_monthly_report_applies_min_amount",
+        "path": "tests/test_report.py",
+        "req_ids": [
+          "REQ-REPORT-005"
+        ],
+        "sha256": "1b191f562c16ddc788d5c7a2c608eda0628c70036cf46c7888f1dded5737e18e",
+        "source": "def test_monthly_report_applies_min_amount(mixed_transactions):\n    report = monthly_report(mixed_transactions, \"2026-01\", min_amount=Decimal(\"10\"))\n\n    assert report[\"categories\"] == {\n        \"food\": Decimal(\"100.00\"),\n        \"travel\": Decimal(\"50.00\"),\n    }\n    assert report[\"total\"] == Decimal(\"150.00\")\n    assert report.get(\"refund_total\") == Decimal(\"15.00\")\n    assert report.get(\"net_total\") == Decimal(\"135.00\")"
+      },
+      {
+        "docstring": "",
+        "file_sha256": "573c1a1a4aa56d17157f904e52dc88ac6c70a7d00491237377868f0c20654031",
+        "kind": "target",
+        "line_end": 56,
+        "line_start": 46,
+        "markers": [
+          {
+            "args": [
+              "REQ-REPORT-004"
+            ],
+            "kwargs": {
+              "kind": "target"
+            },
+            "name": "pytest.mark.sdd"
+          }
+        ],
+        "name": "test_monthly_report_separates_refunds",
+        "path": "tests/test_report.py",
+        "req_ids": [
+          "REQ-REPORT-004"
+        ],
+        "sha256": "8af3669d32964828dcc6564b929f2c089eb01d7f1cc9ee38a64f910612526ced",
+        "source": "def test_monthly_report_separates_refunds(mixed_transactions):\n    report = monthly_report(mixed_transactions, \"2026-01\")\n\n    assert report[\"categories\"] == {\n        \"food\": Decimal(\"100.00\"),\n        \"travel\": Decimal(\"50.00\"),\n        \"books\": Decimal(\"5.00\"),\n    }\n    assert report[\"total\"] == Decimal(\"155.00\")\n    assert report.get(\"refund_total\") == Decimal(\"15.00\")\n    assert report.get(\"net_total\") == Decimal(\"140.00\")"
+      },
+      {
+        "docstring": "",
+        "file_sha256": "c0e58bbdfb90bf848e5e65f3b93c2f37284026f0df99ebf7ae3c30aa6040fe05",
+        "kind": "regression",
+        "line_end": 28,
+        "line_start": 16,
+        "markers": [
+          {
+            "args": [
+              "REQ-REPORT-001"
+            ],
+            "kwargs": {
+              "kind": "regression"
+            },
+            "name": "pytest.mark.sdd"
+          }
+        ],
+        "name": "test_cli_report_prints_positive_month",
+        "path": "tests/test_cli.py",
+        "req_ids": [
+          "REQ-REPORT-001"
+        ],
+        "sha256": "4bf2de369b217345a29567623ab0ee284331b6a23b1030230f57b2716d6462bd",
+        "source": "def test_cli_report_prints_positive_month(tmp_path, capsys):\n    csv_path = write_csv(\n        tmp_path / \"positive.csv\",\n        \"2026-01-03,food,40.00,lunch\\n2026-01-05,food,60.00,groceries\\n\",\n    )\n\n    exit_code = main([\"report\", \"--csv\", csv_path, \"--month\", \"2026-01\"])\n\n    assert exit_code == 0\n    payload = json.loads(capsys.readouterr().out)\n    assert payload[\"month\"] == \"2026-01\"\n    assert payload[\"categories\"] == {\"food\": \"100.00\"}\n    assert payload[\"total\"] == \"100.00\""
+      },
+      {
+        "docstring": "",
+        "file_sha256": "729001a85d510c201391e0295de30bf44c3a344987761385d924261db5c5c7b6",
+        "kind": "regression",
+        "line_end": 23,
+        "line_start": 10,
+        "markers": [
+          {
+            "args": [
+              "REQ-REPORT-001"
+            ],
+            "kwargs": {
+              "kind": "regression"
+            },
+            "name": "pytest.mark.sdd"
+          }
+        ],
+        "name": "test_load_transactions_reads_bom_and_blank_lines",
+        "path": "tests/test_csv_io.py",
+        "req_ids": [
+          "REQ-REPORT-001"
+        ],
+        "sha256": "67037c073e62c2aa015b792e6f4b447c050eb9fddef7d7287839e784167f6ce6",
+        "source": "def test_load_transactions_reads_bom_and_blank_lines(tmp_path):\n    csv_path = tmp_path / \"ledger.csv\"\n    csv_path.write_bytes(\n        \"\\ufeffdate,category,amount,note\\n\"\n        \"2026-01-03,food,40.00,lunch\\n\"\n        \"\\n\"\n        \"2026-01-05,food,60.00,groceries\\n\".encode(\"utf-8\")\n    )\n\n    transactions = load_transactions(csv_path)\n\n    assert len(transactions) == 2\n    assert transactions[1].category == \"food\"\n    assert transactions[1].amount == Decimal(\"60.00\")"
+      },
+      {
+        "docstring": "",
+        "file_sha256": "729001a85d510c201391e0295de30bf44c3a344987761385d924261db5c5c7b6",
+        "kind": "regression",
+        "line_end": 32,
+        "line_start": 27,
+        "markers": [
+          {
+            "args": [
+              "REQ-REPORT-001"
+            ],
+            "kwargs": {
+              "kind": "regression"
+            },
+            "name": "pytest.mark.sdd"
+          }
+        ],
+        "name": "test_load_transactions_rejects_bad_amount",
+        "path": "tests/test_csv_io.py",
+        "req_ids": [
+          "REQ-REPORT-001"
+        ],
+        "sha256": "78cfd898bd2e129c3a77561fdba59790704ab3bc2876b325e879134d9204bde2",
+        "source": "def test_load_transactions_rejects_bad_amount(tmp_path):\n    csv_path = tmp_path / \"broken.csv\"\n    csv_path.write_text(\"date,category,amount,note\\n2026-01-03,food,abc,lunch\\n\", encoding=\"utf-8\")\n\n    with pytest.raises(LedgerError, match=\"line 2\"):\n        load_transactions(csv_path)"
+      },
+      {
+        "docstring": "",
+        "file_sha256": "729001a85d510c201391e0295de30bf44c3a344987761385d924261db5c5c7b6",
+        "kind": "regression",
+        "line_end": 41,
+        "line_start": 36,
+        "markers": [
+          {
+            "args": [
+              "REQ-REPORT-001"
+            ],
+            "kwargs": {
+              "kind": "regression"
+            },
+            "name": "pytest.mark.sdd"
+          }
+        ],
+        "name": "test_load_transactions_rejects_wrong_header",
+        "path": "tests/test_csv_io.py",
+        "req_ids": [
+          "REQ-REPORT-001"
+        ],
+        "sha256": "ef82f376bfabad76a01aff3a0e259100897766de2fc21d9f234bf84a580837b7",
+        "source": "def test_load_transactions_rejects_wrong_header(tmp_path):\n    csv_path = tmp_path / \"wrong.csv\"\n    csv_path.write_text(\"date,kind,amount,note\\n2026-01-03,food,1.00,x\\n\", encoding=\"utf-8\")\n\n    with pytest.raises(LedgerError, match=\"expected columns\"):\n        load_transactions(csv_path)"
+      },
+      {
+        "docstring": "",
+        "file_sha256": "573c1a1a4aa56d17157f904e52dc88ac6c70a7d00491237377868f0c20654031",
+        "kind": "regression",
+        "line_end": 27,
+        "line_start": 21,
+        "markers": [
+          {
+            "args": [
+              "REQ-REPORT-002"
+            ],
+            "kwargs": {
+              "kind": "regression"
+            },
+            "name": "pytest.mark.sdd"
+          }
+        ],
+        "name": "test_monthly_report_filters_month",
+        "path": "tests/test_report.py",
+        "req_ids": [
+          "REQ-REPORT-002"
+        ],
+        "sha256": "d075d7e209011c78ad01fb8b1a9b3b936d2edfb4ed10cba2af83b1deca9ac9f7",
+        "source": "def test_monthly_report_filters_month(positive_transactions):\n    january = monthly_report(positive_transactions, \"2026-01\")\n    february = monthly_report(positive_transactions, \"2026-02\")\n\n    assert january[\"total\"] == Decimal(\"155.00\")\n    assert february[\"categories\"] == {\"food\": Decimal(\"99.00\")}\n    assert february[\"total\"] == Decimal(\"99.00\")"
+      },
+      {
+        "docstring": "",
+        "file_sha256": "573c1a1a4aa56d17157f904e52dc88ac6c70a7d00491237377868f0c20654031",
+        "kind": "regression",
+        "line_end": 17,
+        "line_start": 9,
+        "markers": [
+          {
+            "args": [
+              "REQ-REPORT-001"
+            ],
+            "kwargs": {
+              "kind": "regression"
+            },
+            "name": "pytest.mark.sdd"
+          }
+        ],
+        "name": "test_monthly_report_groups_positive_expenses",
+        "path": "tests/test_report.py",
+        "req_ids": [
+          "REQ-REPORT-001"
+        ],
+        "sha256": "3cc6ffc45c92616f85b2e41d5bf9d57ffc17375293d192bf1bcf5151974e96aa",
+        "source": "def test_monthly_report_groups_positive_expenses(positive_transactions):\n    report = monthly_report(positive_transactions, \"2026-01\")\n\n    assert report[\"categories\"] == {\n        \"books\": Decimal(\"5.00\"),\n        \"food\": Decimal(\"100.00\"),\n        \"travel\": Decimal(\"50.00\"),\n    }\n    assert report[\"total\"] == Decimal(\"155.00\")"
+      },
+      {
+        "docstring": "",
+        "file_sha256": "573c1a1a4aa56d17157f904e52dc88ac6c70a7d00491237377868f0c20654031",
+        "kind": "regression",
+        "line_end": 42,
+        "line_start": 38,
+        "markers": [
+          {
+            "args": [
+              "REQ-REPORT-002"
+            ],
+            "kwargs": {
+              "kind": "regression"
+            },
+            "name": "pytest.mark.sdd"
+          }
+        ],
+        "name": "test_monthly_report_handles_empty_month",
+        "path": "tests/test_report.py",
+        "req_ids": [
+          "REQ-REPORT-002"
+        ],
+        "sha256": "4d6aa2e73a825042ba7b330516a718a6eec183ad91f35e5f2415ddceaddb4eb4",
+        "source": "def test_monthly_report_handles_empty_month(positive_transactions):\n    report = monthly_report(positive_transactions, \"2025-12\")\n\n    assert report[\"categories\"] == {}\n    assert report[\"total\"] == Decimal(\"0\")"
+      },
+      {
+        "docstring": "",
+        "file_sha256": "573c1a1a4aa56d17157f904e52dc88ac6c70a7d00491237377868f0c20654031",
+        "kind": "regression",
+        "line_end": 34,
+        "line_start": 31,
+        "markers": [
+          {
+            "args": [
+              "REQ-REPORT-003"
+            ],
+            "kwargs": {
+              "kind": "regression"
+            },
+            "name": "pytest.mark.sdd"
+          }
+        ],
+        "name": "test_monthly_report_sorts_categories",
+        "path": "tests/test_report.py",
+        "req_ids": [
+          "REQ-REPORT-003"
+        ],
+        "sha256": "06211fdb7ea50cac24c11e5302a0841427ca442d69888a3155a08516dd3e2c37",
+        "source": "def test_monthly_report_sorts_categories(positive_transactions):\n    report = monthly_report(positive_transactions, \"2026-01\")\n\n    assert list(report[\"categories\"]) == [\"books\", \"food\", \"travel\"]"
+      }
+    ]
+  },
+  "state": {
+    "completed": [],
+    "entries": [],
+    "pending": [
+      "context",
+      "baseline",
+      "patch",
+      "validation"
+    ],
+    "prepared": {
+      "content": null,
+      "content_bytes": 0,
+      "schema": "powercontext.prepared-context.v1",
+      "status": "empty"
+    },
+    "provider": "PowerContext HTTP",
+    "scope_id": "scp_1qe98dqbhewyfxj5jjktxzcccr",
+    "search": {
+      "hits": [],
+      "memory": null,
+      "mode": null
+    },
+    "task_id": "TASK-001",
+    "validation_results": []
+  },
+  "task": {
+    "body": "用户在做 2026 年 1 月的账本月报，发现退款被当成负数支出冲减了分类合计，而且 `--min-amount` 参数没有生效。\n\n请修改月报实现，使退款（负数金额）不再进入 `categories` 和 `total`，改为输出 `refund_total` 与 `net_total`；同时让 `min_amount` 过滤生效，只保留金额大于等于阈值的正数支出。退款仍要计入 `refund_total`。\n\n必须保持现有的 CSV 解析、月份过滤、正数支出分类汇总和分类排序行为，不得修改测试文件或测试预期。",
+    "path": "tasks/TASK-001.md",
+    "sha256": "285ca5fca9769c8cacc75667e9daf2926015d7691c95d0b2ffb44e5f556ce20c",
+    "task_id": "TASK-001",
+    "title": "月报分离退款并支持最低金额过滤"
+  },
+  "validation": {
+    "issues": [],
+    "test_file_hashes": [
+      [
+        "tests/test_cli.py",
+        "c0e58bbdfb90bf848e5e65f3b93c2f37284026f0df99ebf7ae3c30aa6040fe05"
+      ],
+      [
+        "tests/test_csv_io.py",
+        "729001a85d510c201391e0295de30bf44c3a344987761385d924261db5c5c7b6"
+      ],
+      [
+        "tests/test_report.py",
+        "573c1a1a4aa56d17157f904e52dc88ac6c70a7d00491237377868f0c20654031"
+      ]
+    ],
+    "verified": true
+  }
+}
