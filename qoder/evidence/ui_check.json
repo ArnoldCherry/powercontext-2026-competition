@@ -1,0 +1,96 @@
+{
+  "checked_at": "2026-10-29T20:35:43+08:00",
+  "results": [
+    {
+      "name": "页面标题来自记忆偏好",
+      "ok": true,
+      "detail": "生态赛交付看板 · Qoder × OceanBase"
+    },
+    {
+      "name": "任务卡片数量",
+      "ok": true,
+      "detail": 11
+    },
+    {
+      "name": "记忆状态在线",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "进展时间线可见",
+      "ok": true,
+      "detail": 10
+    },
+    {
+      "name": "状态选择后任务更新",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "状态可恢复为待提交",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "按状态筛选阻塞任务",
+      "ok": true,
+      "detail": "显示 1 / 11 个任务 · 阻塞与待提交优先"
+    },
+    {
+      "name": "阻塞任务为 DS-04",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "关键词搜索 PDF",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "清除筛选恢复全部任务",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "编辑弹窗展示任务数据",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "保存偏好后标题更新",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "刷新后标题由记忆恢复",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "刷新后方向偏好生效",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "刷新后仅显示 Qoder 任务",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "恢复默认偏好后显示全部任务",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "移动端无横向溢出",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "浏览器控制台无错误",
+      "ok": true,
+      "detail": []
+    }
+  ],
+  "console_errors": []
+}

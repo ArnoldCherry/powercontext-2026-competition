@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>生态赛交付看板 · Qoder × OceanBase</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="page-glow" aria-hidden="true"></div>
+  <div class="page">
+    <header class="masthead">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+        <div>
+          <p class="eyebrow">QODER × OCEANBASE / 2026 生态赛</p>
+          <h1 id="board-title">生态赛交付看板</h1>
+        </div>
+      </div>
+      <div class="masthead-actions">
+        <span id="memory-badge" class="memory-badge is-pending">
+          <span class="pulse"></span>记忆连接中
+        </span>
+        <button id="refresh-btn" class="button ghost" type="button">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16.3 6.3A7 7 0 1 0 17 10h-2a5 5 0 1 1-1-3l-2.2 2.2H17V3.4l-2.3 2.3z"/></svg>
+          刷新
+        </button>
+        <button id="new-task-btn" class="button primary" type="button">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M9 3h2v6h6v2h-6v6H9v-6H3V9h6V3z"/></svg>
+          新增任务
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section class="kpi-grid" id="kpi-grid" aria-label="任务概览">
+        <article class="kpi"><p>总任务</p><strong id="kpi-total">–</strong><span>覆盖全部赛道</span></article>
+        <article class="kpi"><p>进行中</p><strong id="kpi-doing">–</strong><span>正在推进</span></article>
+        <article class="kpi kpi-blocked"><p>阻塞</p><strong id="kpi-blocked">–</strong><span>需要介入</span></article>
+        <article class="kpi kpi-ready"><p>待提交</p><strong id="kpi-ready">–</strong><span>可交未交</span></article>
+        <article class="kpi kpi-done"><p>已完成</p><strong id="kpi-done">–</strong><span id="kpi-rate">完成率 –</span></article>
+        <article class="kpi kpi-score"><p>累计得分</p><strong id="kpi-score">–</strong><span id="kpi-scored">已评分任务 0 个</span></article>
+      </section>
+
+      <div class="columns">
+        <section class="board" aria-label="任务列表">
+          <div id="attention" class="attention" hidden></div>
+
+          <div class="toolbar">
+            <label class="search-field">
+              <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M8.5 3a5.5 5.5 0 0 1 4.3 8.9l3.9 3.9-1.4 1.4-3.9-3.9A5.5 5.5 0 1 1 8.5 3zm0 2a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z"/></svg>
+              <input id="search-input" type="search" placeholder="搜索任务、仓库、下一步…" autocomplete="off">
+            </label>
+            <select id="filter-direction" aria-label="按方向筛选"></select>
+            <select id="filter-difficulty" aria-label="按难度筛选"></select>
+            <select id="filter-status" aria-label="按状态筛选"></select>
+            <button id="clear-filters" class="button quiet" type="button">清除筛选</button>
+          </div>
+
+          <div class="list-head">
+            <p id="result-count">正在加载任务…</p>
+            <div class="legend" aria-hidden="true">
+              <span><i class="dot blocked"></i>阻塞</span>
+              <span><i class="dot ready"></i>待提交</span>
+              <span><i class="dot done"></i>完成</span>
+            </div>
+          </div>
+
+          <div id="task-list" class="task-list"></div>
+        </section>
+
+        <aside class="memory-panel" aria-label="PowerContext 记忆">
+          <div class="memory-head">
+            <div>
+              <p class="eyebrow light">POWERCONTEXT MEMORY</p>
+              <h2>记忆接力</h2>
+            </div>
+            <span id="memory-panel-badge" class="memory-badge is-pending">连接中</span>
+          </div>
+          <p class="memory-copy">
+            筛选偏好和每次状态变更都会写入 PowerContext。刷新页面或重启服务后，看板会自动恢复这些上下文。
+          </p>
+
+          <form id="pref-form" class="pref-form">
+            <label>看板标题
+              <input id="pref-title" maxlength="60" required>
+            </label>
+            <div class="field-row">
+              <label>默认方向
+                <select id="pref-direction"></select>
+              </label>
+              <label>默认状态
+                <select id="pref-status"></select>
+              </label>
+            </div>
+            <button class="button memory-button" type="submit">保存为长期偏好</button>
+          </form>
+
+          <div class="memory-rule"></div>
+
+          <div class="timeline-head">
+            <h3>最近进展</h3>
+            <span id="progress-count">0 条</span>
+          </div>
+          <ol id="progress-list" class="timeline"></ol>
+          <p id="memory-error" class="memory-error" hidden></p>
+          <p id="scope-label" class="scope-label"></p>
+        </aside>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <span>由 Qoder 开发 · 任务数据存于 SQLite · 偏好与进展存于 PowerContext</span>
+      <span id="generated-at"></span>
+    </footer>
+  </div>
+
+  <dialog id="task-dialog" class="dialog">
+    <form id="task-form" method="dialog" novalidate>
+      <div class="dialog-head">
+        <div>
+          <p class="eyebrow" id="dialog-eyebrow">EDIT TASK</p>
+          <h2 id="dialog-title">编辑任务</h2>
+        </div>
+        <button type="button" class="icon-button" id="dialog-close" aria-label="关闭">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5.3 4 4 5.3 8.7 10 4 14.7 5.3 16 10 11.3 14.7 16 16 14.7 11.3 10 16 5.3 14.7 4 10 8.7 5.3 4z"/></svg>
+        </button>
+      </div>
+
+      <div class="form-grid">
+        <label>任务编号 <input name="id" id="field-id" pattern="[A-Za-z0-9][A-Za-z0-9._-]{0,31}" required></label>
+        <label class="span-2">任务标题 <input name="title" id="field-title" maxlength="160" required></label>
+        <label>方向 <input name="direction" id="field-direction" maxlength="40" list="direction-options" required></label>
+        <label>难度
+          <select name="difficulty" id="field-difficulty">
+            <option value="S">S · 高</option>
+            <option value="A">A · 中高</option>
+            <option value="B">B · 常规</option>
+          </select>
+        </label>
+        <label>状态
+          <select name="status" id="field-status">
+            <option value="todo">待开始</option>
+            <option value="doing">进行中</option>
+            <option value="blocked">阻塞</option>
+            <option value="ready">待提交</option>
+            <option value="submitted">已提交</option>
+            <option value="scored">已评分</option>
+          </select>
+        </label>
+        <label>负责人 <input name="owner" id="field-owner" maxlength="40" placeholder="DS-06"></label>
+        <label>优先级
+          <select name="priority" id="field-priority">
+            <option value="P0">P0</option>
+            <option value="P1">P1</option>
+            <option value="P2">P2</option>
+          </select>
+        </label>
+        <label class="span-2">仓库 <input name="repo" id="field-repo" maxlength="300" placeholder="owner/repo"></label>
+        <label>分支 <input name="branch" id="field-branch" maxlength="200" placeholder="feat/..."></label>
+        <label>Commit <input name="commit_hash" id="field-commit" maxlength="80" placeholder="完整或短 SHA"></label>
+        <label>提交编号 <input name="task_number" id="field-task-number" maxlength="80"></label>
+        <label>得分 <input name="score" id="field-score" type="number" min="0" max="100" step="0.1"></label>
+        <label class="span-2">提交网址 <input name="submission_url" id="field-submission-url" maxlength="2000" placeholder="https://..."></label>
+        <label class="span-2">下一步 <input name="next_action" id="field-next" maxlength="500" placeholder="明确可执行的下一步"></label>
+        <label class="span-2">证据链接（每行一条，格式：说明 | 网址）
+          <textarea name="evidence" id="field-evidence" rows="3" placeholder="验收截图 | https://..."></textarea>
+        </label>
+        <label class="span-2">备注
+          <textarea name="notes" id="field-notes" rows="2" maxlength="4000"></textarea>
+        </label>
+      </div>
+
+      <p id="form-error" class="form-error" hidden></p>
+      <div class="dialog-actions">
+        <button type="button" class="button ghost" id="dialog-cancel">取消</button>
+        <button type="submit" class="button primary" id="dialog-save">保存任务</button>
+      </div>
+    </form>
+  </dialog>
+
+  <datalist id="direction-options"></datalist>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="/static/app.js"></script>
+</body>
+</html>
