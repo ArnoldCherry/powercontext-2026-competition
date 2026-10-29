@@ -134,12 +134,15 @@ class ContextPackDelta:
         if type(prefix_items) is not int or prefix_items < 0:
             raise ContextPackError("delta prefix_items must be a non-negative integer")
         appended = _decode_items(payload["appended"], "Context Pack delta appended")
-        return cls(
+        delta = cls(
             base_digest=base_digest,
             target_digest=target_digest,
             prefix_items=prefix_items,
             appended=appended,
         )
+        if delta.to_bytes() != data:
+            raise ContextPackError("Context Pack delta JSON is not canonical")
+        return delta
 
 
 def apply_context_pack_delta(base: ContextPack, delta: ContextPackDelta) -> ContextPack:
@@ -181,7 +184,10 @@ def _chunk_text(content: str, chunk_bytes: int) -> tuple[bytes, ...]:
     current: list[str] = []
     current_size = 0
     for character in content:
-        encoded = character.encode("utf-8")
+        try:
+            encoded = character.encode("utf-8")
+        except UnicodeEncodeError as error:
+            raise ContextPackError("context content must be valid Unicode") from error
         size = len(encoded)
         if size > chunk_bytes:
             raise ContextPackError("chunk_bytes cannot form a valid UTF-8 boundary")
@@ -220,7 +226,10 @@ def _digest(unsigned: dict[str, object]) -> str:
 
 
 def _canonical_json(value: object) -> bytes:
-    return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+    try:
+        return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+    except UnicodeEncodeError as error:
+        raise ContextPackError("Context Pack JSON must be valid Unicode") from error
 
 
 def _load_json(data: bytes, label: str) -> dict[str, object]:
