@@ -219,6 +219,91 @@ def test_search_targets_named_document_statement_page() -> None:
     assert citations[0].entry_id == "entry-2"
 
 
+def _record_factory(memory_ref: ArtifactRef):
+    def record(index: int, text: str) -> SimpleNamespace:
+        return SimpleNamespace(
+            citation=MemoryCitation(
+                memory_ref=memory_ref,
+                entry_id=f"entry-{index}",
+                entry_version_id=f"version-{index}",
+            ),
+            entry=SimpleNamespace(text=text),
+        )
+
+    return record
+
+
+def test_search_scopes_to_named_document() -> None:
+    memory_ref = ArtifactRef(family="memory", artifact_id="memory-3", revision=1)
+    record = _record_factory(memory_ref)
+    records = (
+        record(1, "PEPSICO_2022_10K\ngeography countries and territories"),
+        record(2, "PEPSICO_2022_10K\nConsolidated Statement of Income net revenue 2022"),
+        record(3, "BOEING_2022_10K\nnet revenue net revenue net revenue gross profit"),
+        record(4, "BOEING_2022_10K\nConsolidated Statement of Income net revenue 2022"),
+        record(5, "BOEING_2022_10K\ncustomer concentration and liquidity"),
+    )
+    memory = SimpleNamespace(list=_listing(records))
+
+    citations = asyncio.run(
+        search_pdf_pages(memory, "What is PepsiCo's FY2022 net revenue in the income statement?", limit=5)
+    )
+    assert citations
+    assert {citation.entry_id for citation in citations} <= {"entry-1", "entry-2"}
+
+
+def test_canonical_statement_title_beats_index_page() -> None:
+    memory_ref = ArtifactRef(family="memory", artifact_id="memory-4", revision=1)
+    record = _record_factory(memory_ref)
+    records = (
+        record(
+            1,
+            "PEPSICO_2022_10K\nindex to consolidated financial statements consolidated statements of income "
+            "balance sheet cash flow statement",
+        ),
+        record(2, "PEPSICO_2022_10K\nConsolidated Statement of Income net revenue 2022 operating profit"),
+        record(3, "PEPSICO_2022_10K\nunrelated packaging disclosure"),
+    )
+    memory = SimpleNamespace(list=_listing(records))
+
+    citations = asyncio.run(search_pdf_pages(memory, "What is PepsiCo's FY2022 net revenue?", limit=2))
+    assert citations[0].entry_id == "entry-2"
+
+
+def test_geography_section_page_is_retained() -> None:
+    memory_ref = ArtifactRef(family="memory", artifact_id="memory-5", revision=1)
+    record = _record_factory(memory_ref)
+    records = [
+        record(index, f"PEPSICO_2022_10K\nmore than 200 countries and territories disclosure number {index}")
+        for index in range(1, 8)
+    ]
+    records.append(
+        record(
+            8,
+            "PEPSICO_2022_10K\nAfrica, Middle East and South Asia (AMESA), which includes all of our "
+            "beverage and convenient food businesses in Africa, the Middle East and South Asia",
+        )
+    )
+    memory = SimpleNamespace(list=_listing(tuple(records)))
+
+    citations = asyncio.run(search_pdf_pages(memory, "What are PepsiCo's geographies in FY2022?", limit=10))
+    assert "entry-8" in {citation.entry_id for citation in citations}
+
+
+def test_numeric_document_name_matches_3m() -> None:
+    memory_ref = ArtifactRef(family="memory", artifact_id="memory-6", revision=1)
+    record = _record_factory(memory_ref)
+    records = (
+        record(1, "3M_2022_10K\ntotal net revenue 2022"),
+        record(2, "PEPSICO_2022_10K\ntotal net revenue 2022"),
+    )
+    memory = SimpleNamespace(list=_listing(records))
+
+    citations = asyncio.run(search_pdf_pages(memory, "What was 3M's FY2022 revenue?", limit=2))
+    assert citations
+    assert {citation.entry_id for citation in citations} == {"entry-1"}
+
+
 def _listing(records):
     async def list_entries():
         return SimpleNamespace(entries=records)
