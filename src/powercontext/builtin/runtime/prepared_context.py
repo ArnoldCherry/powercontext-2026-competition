@@ -34,6 +34,12 @@ from powercontext.builtin.runtime.prepared_code import (
     PreparedCodeCandidate,
     assemble_code,
 )
+from powercontext.builtin.runtime.prepared_evidence import (
+    EvidenceEntry,
+    EvidenceFragment,
+    EvidenceSelection,
+    select_evidence,
+)
 from powercontext.builtin.runtime.prepared_text import (
     TRUST_POLICY,
     ContextTextItem,
@@ -106,6 +112,7 @@ class PreparedContextBuild:
     origins: tuple[PreparedContextOrigin, ...]
     omissions: PreparedContextOmissions = PreparedContextOmissions()
     code_origins: tuple[CodeEvidenceRef, ...] = ()
+    fragments: tuple[PreparedContextFragment, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -115,6 +122,16 @@ class MemoryEntryAddress:
     memory: ArtifactAddress
     entry_id: str
     entry_version_id: str
+
+
+@dataclass(frozen=True)
+class PreparedContextFragment:
+    """One literal character interval selected from an exact Memory entry version."""
+
+    address: MemoryEntryAddress
+    start: int
+    end: int
+    text: str
 
 
 PreparedContextOrigin = MemoryCitation | ArtifactRef | MemoryEntryAddress | ArtifactAddress
@@ -211,6 +228,14 @@ class PreparedContextBuilder:
         profile_candidates: Sequence[PreparedProfileCandidate] = (),
         code_candidates: Sequence[PreparedCodeCandidate] = (),
     ) -> PreparedContextBuild:
+        if sum(len(candidates.hits) for candidates in memory_candidates) > self.memory_candidate_limit:
+            raise PreparedContextInvariantError("memory-candidate-limit")
+        if request.evidence_selection:
+            return self._build_evidence_result(
+                request=request,
+                current_scope_id=current_scope_id,
+                memory_candidates=memory_candidates,
+            )
         if request.include_code:
 
             def historical(history_request: PrepareContextRequest, entries: int) -> PreparedContextBuild:
@@ -228,8 +253,6 @@ class PreparedContextBuilder:
 
             return assemble_code(request, code_candidates, self.entry_limit, historical)
 
-        if sum(len(candidates.hits) for candidates in memory_candidates) > self.memory_candidate_limit:
-            raise PreparedContextInvariantError("memory-candidate-limit")
         if len(topic_memory_hits) > self.topic_memory_candidate_limit:
             raise PreparedContextInvariantError("topic-memory-candidate-limit")
         if sum(len(candidates.hits) for candidates in experience_candidates) > self.experience_candidate_limit:
@@ -254,6 +277,47 @@ class PreparedContextBuilder:
             context=PreparedContext(status="ready", content=content, content_bytes=content_bytes),
             origins=origins,
             omissions=omissions,
+        )
+
+    def _build_evidence_result(
+        self,
+        *,
+        request: PrepareContextRequest,
+        current_scope_id: str | None,
+        memory_candidates: Sequence[PreparedMemoryCandidates],
+    ) -> PreparedContextBuild:
+        selection = self._select_evidence(request, current_scope_id, memory_candidates)
+        if selection.content is None:
+            return PreparedContextBuild(context=self.empty(), origins=(), omissions=_evidence_omissions(selection))
+        fragments = tuple(
+            PreparedContextFragment(
+                address=_evidence_origin(fragment),
+                start=fragment.start,
+                end=fragment.end,
+                text=fragment.text,
+            )
+            for fragment in selection.fragments
+        )
+        content_bytes = len(selection.content.encode("utf-8"))
+        if content_bytes > request.max_bytes:
+            raise PreparedContextInvariantError("output-budget")
+        return PreparedContextBuild(
+            context=PreparedContext(status="ready", content=selection.content, content_bytes=content_bytes),
+            origins=tuple(fragment.address for fragment in fragments),
+            omissions=_evidence_omissions(selection),
+            fragments=fragments,
+        )
+
+    def _select_evidence(
+        self,
+        request: PrepareContextRequest,
+        current_scope_id: str | None,
+        memory_candidates: Sequence[PreparedMemoryCandidates],
+    ) -> EvidenceSelection:
+        return select_evidence(
+            query=request.query,
+            max_bytes=request.max_bytes,
+            entries=_evidence_entries(memory_candidates, current_scope_id),
         )
 
     def probe_budget(
@@ -312,6 +376,15 @@ class PreparedContextBuilder:
         probe's counters always describe the selection the build would actually perform.
         """
 
+        if request.evidence_selection:
+            selection = self._select_evidence(request, current_scope_id, memory_candidates)
+            if selection.content is None:
+                return None, (), _evidence_omissions(selection)
+            return (
+                selection.content,
+                tuple(_evidence_origin(fragment) for fragment in selection.fragments),
+                _evidence_omissions(selection),
+            )
         if request.assembly is not None:
             return self._select_text(
                 request,
@@ -658,6 +731,56 @@ class PreparedContextBuilder:
         if best is None:
             return _EntryFit(dropped_no_fitting_truncation=True)
         return _EntryFit(entry=best)
+
+
+def _evidence_entries(
+    memory_candidates: Sequence[PreparedMemoryCandidates],
+    current_scope_id: str | None,
+) -> tuple[EvidenceEntry, ...]:
+    groups: list[tuple[EvidenceEntry, ...]] = []
+    for candidates in memory_candidates:
+        if candidates.hits and candidates.memory_ref is None:
+            raise PreparedContextInvariantError("memory-ref-missing")
+        scope_id = candidates.scope_id or current_scope_id
+        group: list[EvidenceEntry] = []
+        seen: set[tuple[str, str]] = set()
+        for hit in candidates.hits:
+            if hit.memory_ref != candidates.memory_ref:
+                raise PreparedContextInvariantError("memory-ref-mismatch")
+            identity = (hit.entry_id, hit.entry_version_id)
+            if identity in seen:
+                continue
+            seen.add(identity)
+            if not hit.entry_id.strip() or not hit.entry_version_id.strip() or not hit.text.strip():
+                continue
+            if not scope_id:
+                raise PreparedContextInvariantError("memory-scope-missing")
+            group.append(
+                EvidenceEntry(
+                    scope_id=scope_id,
+                    memory_ref=hit.memory_ref,
+                    entry_id=hit.entry_id,
+                    entry_version_id=hit.entry_version_id,
+                    text=hit.text,
+                )
+            )
+        groups.append(tuple(group))
+    return _interleave_groups(tuple(groups))
+
+
+def _evidence_origin(fragment: EvidenceFragment) -> MemoryEntryAddress:
+    return MemoryEntryAddress(
+        memory=ArtifactAddress(scope_id=fragment.entry.scope_id, artifact=fragment.entry.memory_ref),
+        entry_id=fragment.entry.entry_id,
+        entry_version_id=fragment.entry.entry_version_id,
+    )
+
+
+def _evidence_omissions(selection: EvidenceSelection) -> PreparedContextOmissions:
+    return PreparedContextOmissions(
+        dropped_items=selection.dropped,
+        dropped_no_fitting_truncation=selection.dropped,
+    )
 
 
 def _interleave(
