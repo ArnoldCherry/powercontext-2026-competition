@@ -97,6 +97,50 @@ WHERE m.scope_id = :scope_id
 ORDER BY l2_distance(m.embedding, :query_vector) APPROXIMATE
 LIMIT :candidate_limit
 """
+# One statement per hybrid search: each branch keeps its native index, limit,
+# scope and tag predicate so the database ranks and filters both channels.
+_OCEANBASE_HYBRID_SEARCH_SQL = """
+SELECT channel, memory_artifact_id, entry_id, entry_version_id, text, distance, score
+FROM (
+    (SELECT 'fts' AS channel,
+            m.memory_artifact_id,
+            m.entry_id,
+            m.entry_version_id,
+            v.text,
+            CAST(NULL AS DOUBLE) AS distance,
+            MATCH(m.searchable_text) AGAINST (:analyzed_query) AS score
+     FROM pc_memory_entry_heads AS m
+     JOIN pc_memory_entry_versions AS v
+       ON v.scope_id = m.scope_id
+      AND v.memory_artifact_id = m.memory_artifact_id
+      AND v.entry_version_id = m.entry_version_id
+     WHERE m.scope_id = :scope_id
+       AND m.memory_artifact_id IN :memory_artifact_ids
+       AND MATCH(m.searchable_text) AGAINST (:analyzed_query)
+       /* tag-filter */
+     ORDER BY score DESC, m.memory_artifact_id, m.entry_id, m.entry_version_id
+     LIMIT :candidate_limit)
+    UNION ALL
+    (SELECT 'vector' AS channel,
+            m.memory_artifact_id,
+            m.entry_id,
+            m.entry_version_id,
+            v.text,
+            l2_distance(m.embedding, :query_vector) AS distance,
+            CAST(NULL AS DOUBLE) AS score
+     FROM pc_memory_vector_entries AS m
+     JOIN pc_memory_entry_versions AS v
+       ON v.scope_id = m.scope_id
+      AND v.memory_artifact_id = m.memory_artifact_id
+      AND v.entry_version_id = m.entry_version_id
+     WHERE m.scope_id = :scope_id
+       AND m.memory_artifact_id IN :memory_artifact_ids
+       /* tag-filter */
+     ORDER BY l2_distance(m.embedding, :query_vector) APPROXIMATE
+     LIMIT :candidate_limit)
+) AS hybrid
+ORDER BY channel, score DESC, distance ASC, memory_artifact_id, entry_id, entry_version_id
+"""
 
 
 class OceanBaseMemoryFTSIndex:
@@ -493,6 +537,133 @@ class OceanBaseMemoryVectorIndex:
                 )
             )
         return tuple(hydrated)
+
+
+class OceanBaseMemorySearchIndex:
+    """Native OceanBase FTS and vector projections with a single hybrid query."""
+
+    def __init__(self, profile: EmbeddingProfile) -> None:
+        self._fts = OceanBaseMemoryFTSIndex()
+        self._vector = OceanBaseMemoryVectorIndex(profile)
+        self.profile = profile
+        self.capabilities = MemoryCapabilities(
+            fts=True,
+            vector=True,
+            hybrid=True,
+            tag_filter=True,
+            embedding_profile=profile,
+        )
+        self.tables = self._vector.tables
+        self._hybrid_search_sql = text(_OCEANBASE_HYBRID_SEARCH_SQL).bindparams(
+            bindparam("memory_artifact_ids", expanding=True),
+            bindparam("query_vector", type_=VECTOR(profile.dimension)),
+        )
+        # Tag-filtered searches keep the existing exact-distance shape: APPROXIMATE
+        # over a tag pre-filter returned only a subset of the tagged rows here.
+        self._tagged_hybrid_search_sql = text(
+            _OCEANBASE_HYBRID_SEARCH_SQL.replace("/* tag-filter */", memory_tag_sql("m")).replace(" APPROXIMATE", "")
+        ).bindparams(
+            bindparam("memory_artifact_ids", expanding=True),
+            bindparam("query_vector", type_=VECTOR(profile.dimension)),
+            bindparam("tag_keys", expanding=True),
+            bindparam("tag_hashes", expanding=True),
+        )
+
+    async def initialize(self, connection: AsyncConnection, /) -> None:
+        await self._fts.initialize(connection)
+        await self._vector.initialize(connection)
+
+    async def replace(
+        self,
+        connection: AsyncConnection,
+        scope_id: str,
+        memory_ref: ArtifactRef,
+        projections: tuple[MemoryProjection, ...],
+        /,
+    ) -> None:
+        await self._fts.replace(connection, scope_id, memory_ref, projections)
+        await self._vector.replace(connection, scope_id, memory_ref, projections)
+
+    async def delete(
+        self,
+        connection: AsyncConnection,
+        scope_id: str,
+        memory_ref: ArtifactRef,
+        entry_ids: tuple[str, ...],
+        /,
+    ) -> None:
+        await self._fts.delete(connection, scope_id, memory_ref, entry_ids)
+        await self._vector.delete(connection, scope_id, memory_ref, entry_ids)
+
+    async def upsert(
+        self,
+        connection: AsyncConnection,
+        scope_id: str,
+        memory_ref: ArtifactRef,
+        projections: tuple[MemoryProjection, ...],
+        /,
+    ) -> None:
+        await self._fts.upsert(connection, scope_id, memory_ref, projections)
+        await self._vector.upsert(connection, scope_id, memory_ref, projections)
+
+    async def search(
+        self,
+        connection: AsyncConnection,
+        scope_id: str,
+        request: MemorySearchRequest,
+        /,
+    ) -> MemorySearchChannels:
+        if request.mode == "fts":
+            return await self._fts.search(connection, scope_id, request)
+        if request.mode == "vector":
+            return await self._vector.search(connection, scope_id, request)
+        if request.mode != "hybrid":
+            return MemorySearchChannels()
+        if request.embedding_profile != self.profile or request.query_vector is None:
+            raise CapabilityNotSupportedError("embedding-profile")
+        rows = (
+            (
+                await connection.execute(
+                    self._hybrid_search_sql if request.tag_filter is None else self._tagged_hybrid_search_sql,
+                    {
+                        "scope_id": scope_id,
+                        "memory_artifact_ids": tuple(memory.artifact_id for memory in request.memories),
+                        "analyzed_query": request.analyzed_query,
+                        "query_vector": validate_embedding(
+                            request.query_vector,
+                            dimension=self.profile.dimension,
+                        ),
+                        "candidate_limit": request.candidate_limit,
+                        **memory_tag_parameters(request.tag_filter),
+                    },
+                )
+            )
+            .mappings()
+            .all()
+        )
+        return MemorySearchChannels(
+            fts=memory_channel_hits((row for row in rows if row["channel"] == "fts"), request.memories),
+            vector=memory_channel_hits((row for row in rows if row["channel"] == "vector"), request.memories),
+        )
+
+    async def vector_complete(
+        self,
+        connection: AsyncConnection,
+        scope_id: str,
+        memories: tuple[ArtifactRef, ...],
+        profile: EmbeddingProfile,
+        /,
+    ) -> bool:
+        return await self._vector.vector_complete(connection, scope_id, memories, profile)
+
+    async def hydrate(
+        self,
+        connection: AsyncConnection,
+        scope_id: str,
+        projections: tuple[MemoryProjection, ...],
+        /,
+    ) -> tuple[MemoryProjection, ...]:
+        return await self._vector.hydrate(connection, scope_id, projections)
 
 
 def _embedding_hash(profile: EmbeddingProfile, entry_hash: str) -> str:
