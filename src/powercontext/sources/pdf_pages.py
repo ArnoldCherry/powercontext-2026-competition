@@ -257,8 +257,10 @@ _SYNONYMS: dict[str, tuple[str, ...]] = {
     "earn": ("incom", "profit"),
     "employe": ("workforc", "headcount"),
     "eps": ("earn", "share", "incom"),
+    "concentrat": ("account",),
+    "customer": ("client", "consumer", "airline", "government"),
     "expenditur": ("capex", "capit"),
-    "geograph": ("countr", "territor"),
+    "geograph": ("countr", "territor", "region"),
     "headcount": ("employe", "workforc"),
     "incom": ("earn", "profit"),
     "lawsuit": ("litigat", "legal"),
@@ -268,6 +270,8 @@ _SYNONYMS: dict[str, tuple[str, ...]] = {
     "profit": ("incom", "earn"),
     "regulator": ("legal",),
     "repurchas": ("buyback",),
+    "retain": ("retent",),
+    "retent": ("retain",),
     "restructur": ("severanc", "productiv", "impair"),
     "revenu": ("sal",),
     "sal": ("revenu",),
@@ -304,8 +308,24 @@ _STATEMENT_TRIGGERS: dict[str, frozenset[str]] = {
     "equity": frozenset({"dividend", "repurchas", "stock", "share", "equit"}),
 }
 
-_GEOGRAPHY = re.compile(r"countries and territories")
+_GEOGRAPHY = re.compile(
+    r"countries and territories|north america|latin america|asia pacific|middle east|"
+    r"emea|apac|lacc|united states|europe|africa|china|japan|region"
+)
 _LEGAL = re.compile(r"legal proceedings|litigation|lawsuits?|regulatory proceedings")
+_SEGMENT = re.compile(r"segment data|reportable segments?|segment information|business segments?|segment results")
+_TAX = re.compile(r"effective tax rate|tax rate|provision for income taxes?|income tax expense")
+_RETENTION = re.compile(r"retention|retain|churn|card member retention")
+_CONCENTRATION = re.compile(r"concentration|customer.{0,80}accounted|accounted.{0,80}revenue")
+_CUSTOMER = re.compile(r"customer|client|consumer|airline|government")
+_GEOGRAPHY_STRONG = re.compile(
+    r"(?:africa|asia pacific|middle east|europe|latin america|north america).{0,100}(?:business|segment|countries)"
+)
+_CUSTOMER_STRONG = re.compile(
+    r"limited number of commercial airlines|u\.s\. government|"
+    r"revenues?.{0,80}(?:customers|government)|customer.{0,80}(?:accounted|represented)"
+)
+_RETENTION_STRONG = re.compile(r"card member retention|retention remained high|retain(?:ed)? (?:card )?members?")
 
 _ABBREVIATIONS: tuple[tuple[re.Pattern[str], tuple[str, ...]], ...] = (
     (re.compile(r"\bd\s*&\s*a\b"), ("depreciat", "amortizat")),
@@ -479,6 +499,7 @@ class _PageRecord:
     body_terms: tuple[str, ...]
     body_counts: Counter[str]
     prefix: str
+    prefix_terms: frozenset[str]
     lower_text: str
     order: int
 
@@ -494,6 +515,11 @@ class _Cues:
     statements: tuple[str, ...]
     geography: bool
     legal: bool
+    segment: bool
+    tax: bool
+    retention: bool
+    concentration: bool
+    customer: bool
 
 
 async def search_pdf_pages(
@@ -513,7 +539,12 @@ async def search_pdf_pages(
         return ()
     cues = _question_cues(question)
     target_documents = _target_documents(records, concepts)
-    ranked = _rank_pages(records, concepts, _question_bigrams(question), cues, target_documents)
+    candidate_records = records
+    if target_documents:
+        scoped_records = tuple(record for record in records if record.document_id in target_documents)
+        if scoped_records:
+            candidate_records = scoped_records
+    ranked = _rank_pages(candidate_records, concepts, _question_bigrams(question), cues, target_documents)
     if not target_documents:
         target_documents = _best_document(ranked)
     return _select_citations(ranked, limit, cues, target_documents)
@@ -530,7 +561,12 @@ async def _stored_pages(
     if callable(lister):
         page = await lister()
         records = tuple(
-            _page_record(record.citation, record.entry.text, order)
+            _page_record(
+                record.citation,
+                record.entry.text,
+                order,
+                _document_id_from_sources(getattr(record.entry, "sources", ())),
+            )
             for order, record in enumerate(page.entries)
             if record.entry.text.strip()
         )
@@ -555,8 +591,37 @@ async def _stored_pages(
     )
 
 
-def _page_record(citation: MemoryCitation, text: str, order: int, /) -> _PageRecord:
+def _document_id_from_sources(sources: object) -> str | None:
+    for reference in sources or ():
+        source_id = getattr(reference, "source_id", "")
+        if getattr(reference, "source_type", "") != PDF_PAGE_SOURCE_NAME:
+            continue
+        prefix = f"{PDF_PAGE_SOURCE_NAME}:"
+        if not source_id.startswith(prefix):
+            continue
+        rest = source_id[len(prefix) :]
+        length, separator, identity = rest.partition(":")
+        if not separator or not length.isdigit():
+            continue
+        document_length = int(length)
+        if len(identity) <= document_length or identity[document_length] != ":":
+            continue
+        return identity[:document_length]
+    return None
+
+
+def _page_record(
+    citation: MemoryCitation,
+    text: str,
+    order: int,
+    source_document_id: str | None = None,
+    /,
+) -> _PageRecord:
     document_id, body = _split_page_text(text)
+    if source_document_id:
+        first, separator, rest = text.partition("\n")
+        document_id = source_document_id
+        body = rest if separator and first == source_document_id else text
     body_terms = _terms(body)
     return _PageRecord(
         citation=citation,
@@ -566,6 +631,7 @@ def _page_record(citation: MemoryCitation, text: str, order: int, /) -> _PageRec
         body_terms=body_terms,
         body_counts=Counter(body_terms),
         prefix=" ".join(body[:240].split()).casefold(),
+        prefix_terms=frozenset(_terms(" ".join(body[:240].split()))),
         lower_text=body.casefold(),
         order=order,
     )
@@ -676,12 +742,20 @@ def _rank_pages(
         score = _lexical_score(record, length, average_length, concepts, idf)
         matched = [concept.primary for concept in concepts if _matches(record, concept)]
         coverage = sum(concept_idf[name] for name in matched) / total_idf
-        phrases = sum(0.5 for left, right in bigrams if _has_bigram(record, left, right))
+        phrases = sum(0.8 for left, right in bigrams if _has_bigram(record, left, right))
+        heading = sum(
+            concept_idf[concept.primary] * 0.8
+            for concept in concepts
+            if any(variant in record.prefix_terms for variant in concept.variants)
+        )
         document_bonus = _document_bonus(record, matched)
         structural_bonus = 0.0
         if not target_documents or record.document_id in target_documents:
             structural_bonus = _structural_bonus(record, cues)
-        ranked.append((score + (3.0 * coverage * total_idf) + phrases + document_bonus + structural_bonus, record))
+        ranked.append((
+            score + (3.0 * coverage * total_idf) + phrases + heading + document_bonus + structural_bonus,
+            record,
+        ))
     ranked.sort(key=lambda item: (-item[0], item[1].order))
     return ranked
 
@@ -689,46 +763,64 @@ def _rank_pages(
 def _question_cues(question: str) -> _Cues:
     cleaned = _strip_instructions(question).casefold()
     terms = set(_expanded_question_terms(question))
-    statements: list[str] = []
-
-    def add(statement: str) -> None:
-        if statement not in statements:
-            statements.append(statement)
-
-    income_phrases = re.search(
-        r"operating (?:income|expenses?|profit)|cost of (?:sales|revenue|goods)|income tax", cleaned
+    return _Cues(
+        statements=_requested_statements(cleaned, terms),
+        geography=bool(terms.intersection({"geograph", "countr", "territor", "region"})),
+        legal=bool(terms.intersection({"leg", "litigat", "battl", "lawsuit"})),
+        segment=bool(terms.intersection({"segment", "categor"}))
+        or bool(re.search(r"product categories?|service categories?|reportable segments?", cleaned)),
+        tax=bool(re.search(r"effective tax rate|tax rate|income tax|provision for income tax", cleaned)),
+        retention=bool(terms.intersection({"retain", "retent", "churn"})),
+        concentration=bool(re.search(r"customer concentration|customer.{0,40}accounted|concentrat", cleaned)),
+        customer="customer" in terms,
     )
-    income_terms = {
-        "incom",
-        "revenu",
-        "sal",
-        "gross",
-        "margin",
-        "eps",
-        "earn",
-        "profit",
-        "tax",
-        "interest",
-        "outstand",
-        "research",
-        "develop",
-        "advertis",
-        "pension",
-        "sell",
-        "administrativ",
-    }
-    if income_phrases or terms.intersection(income_terms):
-        add("income")
-    if ("cash" in terms and "flow" in terms) or terms.intersection({
-        "capex",
-        "depreciat",
-        "amortizat",
-        "dividend",
-        "repurchas",
-        "invest",
-        "financ",
-    }):
-        add("cashflow")
+
+
+def _requested_statements(cleaned: str, terms: set[str]) -> tuple[str, ...]:
+    statements: list[str] = []
+    if _income_requested(cleaned, terms):
+        statements.append("income")
+    if _cashflow_requested(terms):
+        statements.append("cashflow")
+    if _balance_requested(cleaned, terms):
+        statements.append("balance")
+    if _equity_requested(terms):
+        statements.append("equity")
+    return tuple(statements)
+
+
+def _income_requested(cleaned: str, terms: set[str]) -> bool:
+    phrases = re.search(r"operating (?:income|expenses?|profit)|cost of (?:sales|revenue|goods)|income tax", cleaned)
+    return bool(phrases) or bool(
+        terms.intersection({
+            "incom",
+            "revenu",
+            "sal",
+            "gross",
+            "margin",
+            "eps",
+            "earn",
+            "profit",
+            "tax",
+            "interest",
+            "outstand",
+            "research",
+            "develop",
+            "advertis",
+            "pension",
+            "sell",
+            "administrativ",
+        })
+    )
+
+
+def _cashflow_requested(terms: set[str]) -> bool:
+    return ("cash" in terms and "flow" in terms) or bool(
+        terms.intersection({"capex", "depreciat", "amortizat", "dividend", "repurchas", "invest", "financ"})
+    )
+
+
+def _balance_requested(cleaned: str, terms: set[str]) -> bool:
     if terms.intersection({
         "asset",
         "liabil",
@@ -740,29 +832,50 @@ def _question_cues(question: str) -> _Cues:
         "debt",
         "borrow",
     }):
-        add("balance")
+        return True
     if "balanc" in terms and "sheet" in terms:
-        add("balance")
+        return True
     if ("work" in terms and "capit" in terms) or ("cash" in terms and "equivalent" in terms):
-        add("balance")
-    if "equit" in terms and terms.intersection({"dividend", "repurchas", "stock", "share"}):
-        add("equity")
-    if terms.intersection({"dividend", "repurchas"}):
-        add("equity")
-    geography = bool(terms.intersection({"geograph", "countr", "territor"}))
-    legal = bool(terms.intersection({"leg", "litigat", "battl", "lawsuit"}))
-    return _Cues(statements=tuple(statements), geography=geography, legal=legal)
+        return True
+    return bool(
+        terms.intersection({"liquid", "quick"})
+        or re.search(r"liquidity|quick ratio|current ratio|working capital|balance sheet", cleaned)
+    )
+
+
+def _equity_requested(terms: set[str]) -> bool:
+    return bool(terms.intersection({"dividend", "repurchas"})) or (
+        "equit" in terms and bool(terms.intersection({"dividend", "repurchas", "stock", "share"}))
+    )
 
 
 def _target_documents(records: tuple[_PageRecord, ...], concepts: tuple[_Concept, ...]) -> frozenset[str]:
     targets: set[str] = set()
+    aliases = {"amex": "americanexpress", "jpm": "jpmorgan", "gs": "goldmansachs"}
     for record in records:
-        if any(
-            len(concept.primary) >= 3 and not concept.primary.isdigit() and concept.primary in record.document_terms
-            for concept in concepts
-        ):
+        if any(_document_term_matches(concept.primary, record.document_terms, aliases) for concept in concepts):
             targets.add(record.document_id)
     return frozenset(targets)
+
+
+def _document_term_matches(term: str, document_terms: frozenset[str], aliases: dict[str, str]) -> bool:
+    if term.isdigit():
+        return term not in {"10"} and not 1900 <= int(term) <= 2100 and term in document_terms
+    if len(term) < 3:
+        return False
+    if term in document_terms:
+        return True
+    if len(term) < 4:
+        return False
+    alias = aliases.get(term)
+    if alias is not None and (_stem(alias) in document_terms or alias in document_terms):
+        return True
+    for document_term in document_terms:
+        if len(document_term) >= 4 and (
+            document_term.startswith(term) or document_term.endswith(term) or term in document_term
+        ):
+            return True
+    return False
 
 
 def _best_document(ranked: list[tuple[float, _PageRecord]]) -> frozenset[str]:
@@ -776,18 +889,70 @@ def _best_document(ranked: list[tuple[float, _PageRecord]]) -> frozenset[str]:
 
 
 def _structural_bonus(record: _PageRecord, cues: _Cues) -> float:
+    return _statement_bonus(record, cues) + _section_bonus(record, cues)
+
+
+def _statement_bonus(record: _PageRecord, cues: _Cues) -> float:
     bonus = 0.0
     for statement in cues.statements:
         if _STATEMENT_PATTERNS[statement].search(record.prefix):
             bonus += 4.0
-            continue
-        if len(_STATEMENT_TRIGGERS[statement].intersection(record.body_counts)) >= 2:
+        elif len(_STATEMENT_TRIGGERS[statement].intersection(record.body_counts)) >= 2:
             bonus += 2.0
+    return bonus
+
+
+def _section_bonus(record: _PageRecord, cues: _Cues) -> float:
+    bonus = 0.0
     if cues.geography and _GEOGRAPHY.search(record.lower_text):
         bonus += 8.0
     if cues.legal and _LEGAL.search(record.lower_text):
         bonus += 8.0
+    if cues.segment and _SEGMENT.search(record.lower_text):
+        bonus += 8.0
+    if cues.tax and _TAX.search(record.lower_text):
+        bonus += 8.0
+    if cues.retention and _RETENTION.search(record.lower_text):
+        bonus += 6.0
+    if cues.concentration and _CONCENTRATION.search(record.lower_text):
+        bonus += 8.0
+    if cues.customer and _CUSTOMER.search(record.lower_text):
+        bonus += 3.0
     return bonus
+
+
+def _section_pages(
+    ranked: list[tuple[float, _PageRecord]],
+    cues: _Cues,
+    target_documents: frozenset[str],
+) -> list[_PageRecord]:
+    requested: list[tuple[re.Pattern[str], int]] = []
+    if cues.geography:
+        requested.extend(((_GEOGRAPHY_STRONG, 6), (_GEOGRAPHY, 2)))
+    if cues.customer:
+        requested.extend(((_CUSTOMER_STRONG, 3), (_CUSTOMER, 2)))
+    if cues.retention:
+        requested.extend(((_RETENTION_STRONG, 2), (_RETENTION, 2)))
+    if cues.concentration:
+        requested.append((_CONCENTRATION, 2))
+    if cues.segment:
+        requested.append((_SEGMENT, 1))
+    if cues.tax:
+        requested.append((_TAX, 1))
+    pages: list[_PageRecord] = []
+    seen: set[str] = set()
+    for pattern, count in requested:
+        candidates = [
+            (score, record)
+            for score, record in ranked
+            if (not target_documents or record.document_id in target_documents) and pattern.search(record.lower_text)
+        ]
+        candidates.sort(key=lambda item: -item[0])
+        for _, record in candidates[:count]:
+            if record.citation.entry_id not in seen:
+                seen.add(record.citation.entry_id)
+                pages.append(record)
+    return pages
 
 
 def _statement_pages(
@@ -801,14 +966,14 @@ def _statement_pages(
     seen: set[str] = set()
     for statement in cues.statements:
         candidates = [
-            (score, record)
+            (_STATEMENT_PATTERNS[statement].search(record.prefix).start(), score, record)
             for score, record in ranked
             if (not target_documents or record.document_id in target_documents)
             and _STATEMENT_PATTERNS[statement].search(record.prefix)
         ]
         if not candidates:
             continue
-        record = max(candidates, key=lambda item: item[0])[1]
+        record = min(candidates, key=lambda item: (item[0], -item[1]))[2]
         if record.citation.entry_id not in seen:
             seen.add(record.citation.entry_id)
             pages.append(record)
@@ -877,6 +1042,7 @@ def _select_citations(
     seen_texts: set[str] = set()
     ordered = [
         *_statement_pages(ranked, cues, target_documents),
+        *_section_pages(ranked, cues, target_documents),
         *(record for score, record in ranked if score > 0.0),
     ]
     for record in ordered:
