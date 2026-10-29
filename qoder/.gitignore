@@ -5,3 +5,4 @@ data/
 *.log
 .env
 .pytest_cache/
+*.qoder.site

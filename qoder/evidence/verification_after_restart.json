@@ -1,6 +1,6 @@
 {
   "phase": "after_restart",
-  "started_at": "2026-10-29T20:33:35+08:00",
+  "started_at": "2026-10-29T20:51:36+08:00",
   "checks": [
     {
       "name": "重启后看板数据库可用",
@@ -38,14 +38,14 @@
         "submission_url": "",
         "task_number": "",
         "score": null,
-        "next_action": "运行验证 verifyrun8905470c 并确认重启后可恢复",
+        "next_action": "运行验证 verifyrunc1f341c5 并确认重启后可恢复",
         "notes": "评审可安全修改此任务，不会影响真实交付数据。",
-        "created_at": "2026-10-29T12:31:51+00:00",
-        "updated_at": "2026-10-29T12:33:14+00:00",
+        "created_at": "2026-10-29T12:41:22+00:00",
+        "updated_at": "2026-10-29T12:51:11+00:00",
         "evidence": [
           {
             "label": "验证记录",
-            "url": "https://example.com/verify/verifyrun8905470c"
+            "url": "https://example.com/verify/verifyrunc1f341c5"
           }
         ]
       }
@@ -59,16 +59,16 @@
           "default_direction": "全部",
           "default_status": "全部",
           "default_difficulty": "全部",
-          "saved_at": "2026-10-29T20:33:14+08:00"
+          "saved_at": "2026-10-29T20:51:10+08:00"
         },
         "source": "powercontext",
-        "saved_at": "2026-10-29T20:33:14+08:00",
+        "saved_at": "2026-10-29T20:51:10+08:00",
         "memory": {
           "status": "online",
           "url": "http://127.0.0.1:18801",
           "ready": true,
           "access_mode": "disabled",
-          "scope_id": "scp_7zgzn59vfrnyygz53dyp7rq4bj"
+          "scope_id": "scp_6c5b3q8xkzyma5w264pxf61fgx"
         }
       }
     },
@@ -81,12 +81,12 @@
             "memory_ref": {
               "family": "memory",
               "artifact_id": "memory",
-              "revision": 13
+              "revision": 14
             },
-            "entry_id": "mem_ent_56823872ae4b4257b16ebb5770940ec1",
-            "entry_version_id": "mem_ver_e3213332fb614e8183eda6417cfe5aad"
+            "entry_id": "mem_ent_f2e216ad58bb449bb03edf5c80f7d840",
+            "entry_version_id": "mem_ver_99d7c40e8adb49768c712e4eb3cb1bdd"
           },
-          "text": "[progress] {\"at\": \"2026-10-29T20:33:14+08:00\", \"next\": \"运行验证 verifyrun8905470c 并确认重启后可恢复\", \"status\": \"ready\", \"task\": \"DEMO-01\", \"title\": \"验证样例：状态更新写入记忆\"}",
+          "text": "[progress] {\"at\": \"2026-10-29T20:51:11+08:00\", \"next\": \"运行验证 verifyrunc1f341c5 并确认重启后可恢复\", \"status\": \"ready\", \"task\": \"DEMO-01\", \"title\": \"验证样例：状态更新写入记忆\"}",
           "score": 0.01639344262295082,
           "matched_by": [
             "fts"
@@ -99,8 +99,8 @@
       "ok": true,
       "detail": [
         {
-          "at": "2026-10-29T20:33:14+08:00",
-          "next": "运行验证 verifyrun8905470c 并确认重启后可恢复",
+          "at": "2026-10-29T20:51:11+08:00",
+          "next": "运行验证 verifyrunc1f341c5 并确认重启后可恢复",
           "status": "ready",
           "task": "DEMO-01",
           "title": "验证样例：状态更新写入记忆",
@@ -108,15 +108,15 @@
             "memory_ref": {
               "family": "memory",
               "artifact_id": "memory",
-              "revision": 13
+              "revision": 14
             },
-            "entry_id": "mem_ent_56823872ae4b4257b16ebb5770940ec1",
-            "entry_version_id": "mem_ver_e3213332fb614e8183eda6417cfe5aad"
+            "entry_id": "mem_ent_f2e216ad58bb449bb03edf5c80f7d840",
+            "entry_version_id": "mem_ver_99d7c40e8adb49768c712e4eb3cb1bdd"
           }
         },
         {
-          "at": "2026-10-29T20:32:07+08:00",
-          "next": "运行验证 verifyrun80f144d9 并确认重启后可恢复",
+          "at": "2026-10-29T20:49:02+08:00",
+          "next": "运行验证 verifyrunf916fa26 并确认重启后可恢复",
           "status": "ready",
           "task": "DEMO-01",
           "title": "验证样例：状态更新写入记忆",
@@ -124,14 +124,30 @@
             "memory_ref": {
               "family": "memory",
               "artifact_id": "memory",
-              "revision": 13
+              "revision": 14
             },
-            "entry_id": "mem_ent_1a6ec8369dd1438d80cdc04acf049782",
-            "entry_version_id": "mem_ver_c5ced43d922e4fb587cb5c8a78aa5335"
+            "entry_id": "mem_ent_7ec4eb97d03745fc928d3d2c078d57dc",
+            "entry_version_id": "mem_ver_26877984da214b14a65d768db8b15d63"
           }
         },
         {
-          "at": "2026-10-29T20:01:51+08:00",
+          "at": "2026-10-29T20:41:25+08:00",
+          "next": "发布 Qoder Sites 展示站并回填公开网址",
+          "status": "doing",
+          "task": "DS-06",
+          "title": "Qoder 提效项目与 Sites 发布",
+          "_citation": {
+            "memory_ref": {
+              "family": "memory",
+              "artifact_id": "memory",
+              "revision": 14
+            },
+            "entry_id": "mem_ent_7a2827f992694970a2abb2593e134aad",
+            "entry_version_id": "mem_ver_32822ca23d5e48e298430bf2202b36f9"
+          }
+        },
+        {
+          "at": "2026-10-29T20:11:22+08:00",
           "next": "看板后端与界面完成，接入 PowerContext 记忆",
           "status": "doing",
           "task": "DS-06",
@@ -140,14 +156,14 @@
             "memory_ref": {
               "family": "memory",
               "artifact_id": "memory",
-              "revision": 13
+              "revision": 14
             },
-            "entry_id": "mem_ent_3a7de1ccd6114327abb18b63581bd9fc",
-            "entry_version_id": "mem_ver_addb6ac5ccba444cbef71df8ef0b0ebe"
+            "entry_id": "mem_ent_7fb86c1b262f418ba3c54e7cb1513339",
+            "entry_version_id": "mem_ver_d58dc061ef48412192b1e0b43bf4ebb1"
           }
         },
         {
-          "at": "2026-10-29T19:31:51+08:00",
+          "at": "2026-10-29T19:41:22+08:00",
           "next": "验证样例任务已就绪，等待运行 verify.py",
           "status": "doing",
           "task": "DEMO-01",
@@ -156,45 +172,29 @@
             "memory_ref": {
               "family": "memory",
               "artifact_id": "memory",
-              "revision": 13
+              "revision": 14
             },
-            "entry_id": "mem_ent_feccc70823034072b443d7869b1cac0c",
-            "entry_version_id": "mem_ver_706e157776b746ffacbe7db8392022f3"
-          }
-        },
-        {
-          "at": "2026-10-29T18:31:52+08:00",
-          "next": "证据选择测试被环境占用阻塞，等待端口释放",
-          "status": "blocked",
-          "task": "DS-04",
-          "title": "查询驱动原文证据选择",
-          "_citation": {
-            "memory_ref": {
-              "family": "memory",
-              "artifact_id": "memory",
-              "revision": 13
-            },
-            "entry_id": "mem_ent_e473ddfb3e864cacbee2339d21f8e7f0",
-            "entry_version_id": "mem_ver_9c8382edd6ac48a78d4962db82bced28"
+            "entry_id": "mem_ent_25c6b192c42b4a4bb7df09cf5afa7460",
+            "entry_version_id": "mem_ver_e6175b3c57ed4fe7ab9b2722ee04b472"
           }
         }
       ]
     }
   ],
-  "finished_at": "2026-10-29T20:33:40+08:00",
-  "run_id": "verifyrun8905470c",
+  "finished_at": "2026-10-29T20:51:41+08:00",
+  "run_id": "verifyrunc1f341c5",
   "search_hits": [
     {
       "citation": {
         "memory_ref": {
           "family": "memory",
           "artifact_id": "memory",
-          "revision": 13
+          "revision": 14
         },
-        "entry_id": "mem_ent_56823872ae4b4257b16ebb5770940ec1",
-        "entry_version_id": "mem_ver_e3213332fb614e8183eda6417cfe5aad"
+        "entry_id": "mem_ent_f2e216ad58bb449bb03edf5c80f7d840",
+        "entry_version_id": "mem_ver_99d7c40e8adb49768c712e4eb3cb1bdd"
       },
-      "text": "[progress] {\"at\": \"2026-10-29T20:33:14+08:00\", \"next\": \"运行验证 verifyrun8905470c 并确认重启后可恢复\", \"status\": \"ready\", \"task\": \"DEMO-01\", \"title\": \"验证样例：状态更新写入记忆\"}",
+      "text": "[progress] {\"at\": \"2026-10-29T20:51:11+08:00\", \"next\": \"运行验证 verifyrunc1f341c5 并确认重启后可恢复\", \"status\": \"ready\", \"task\": \"DEMO-01\", \"title\": \"验证样例：状态更新写入记忆\"}",
       "score": 0.01639344262295082,
       "matched_by": [
         "fts"
@@ -207,16 +207,16 @@
       "default_direction": "全部",
       "default_status": "全部",
       "default_difficulty": "全部",
-      "saved_at": "2026-10-29T20:33:14+08:00"
+      "saved_at": "2026-10-29T20:51:10+08:00"
     },
     "source": "powercontext",
-    "saved_at": "2026-10-29T20:33:14+08:00",
+    "saved_at": "2026-10-29T20:51:10+08:00",
     "memory": {
       "status": "online",
       "url": "http://127.0.0.1:18801",
       "ready": true,
       "access_mode": "disabled",
-      "scope_id": "scp_7zgzn59vfrnyygz53dyp7rq4bj"
+      "scope_id": "scp_6c5b3q8xkzyma5w264pxf61fgx"
     }
   }
 }

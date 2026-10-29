@@ -210,7 +210,7 @@ def main() -> int:
     parser.add_argument("--after-restart", action="store_true", help="重启 PowerContext 与看板后执行恢复验证")
     args = parser.parse_args()
 
-    with httpx.Client(base_url=args.base_url.rstrip("/"), timeout=20) as client:
+    with httpx.Client(base_url=args.base_url.rstrip("/"), timeout=20, trust_env=False) as client:
         if args.after_restart:
             return run_after_restart(client)
         return run(client)

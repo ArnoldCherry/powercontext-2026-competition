@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>接力板 · 生态赛交付看板 | Qoder × OceanBase</title>
+  <meta name="description" content="面向多任务并行交付的本地看板：任务、提交证据和 PowerContext 记忆在同一个工作面。用 Qoder 开发，通过 Qoder Sites 发布。">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header" id="site-header">
+    <a class="brand" href="#top" aria-label="接力板首页">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="brand-text"><b>接力板</b><small>RELAY BOARD</small></span>
+    </a>
+    <nav class="nav" aria-label="页面导航">
+      <a href="#problem">问题</a>
+      <a href="#flow">工作流</a>
+      <a href="#memory">技术</a>
+      <a href="#validation">验证</a>
+      <a href="#start">运行</a>
+      <a href="#qoder">Qoder</a>
+    </nav>
+    <a class="header-link" href="https://github.com/ArnoldCherry/powercontext-2026-competition/tree/feat/eco-qoder/qoder" target="_blank" rel="noreferrer">
+      GitHub
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3h8v8h-2V6.4L4.4 13 3 11.6 9.6 5H5V3z"/></svg>
+    </a>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <p class="kicker"><span class="status-dot"></span>2026 OCEANBASE 生态赛 · QODER 赛道</p>
+          <h1>让每一份提交，<br><em>都有证据可循。</em></h1>
+          <p class="lede">
+            接力板是面向多任务并行交付的本地看板。任务、分支、commit、平台编号、得分和证据集中在同一个工作面；
+            PowerContext 记住偏好与每次进展，刷新或重启后仍能接着做。
+          </p>
+          <div class="hero-actions">
+            <a class="button solid" href="#start">查看如何运行</a>
+            <a class="button line" href="https://github.com/ArnoldCherry/powercontext-2026-competition/tree/feat/eco-qoder/qoder" target="_blank" rel="noreferrer">浏览源码</a>
+          </div>
+          <dl class="hero-stats">
+            <div><dt>演示任务</dt><dd>11</dd></div>
+            <div><dt>记忆类型</dt><dd>2</dd></div>
+            <div><dt>重启检查</dt><dd>6/6</dd></div>
+            <div><dt>界面检查</dt><dd>18</dd></div>
+          </dl>
+          <p class="hero-note">本地运行 · 单用户 · 无需模型 API</p>
+        </div>
+
+        <div class="hero-visual">
+          <div class="browser-frame">
+            <div class="browser-bar">
+              <span></span><span></span><span></span>
+              <em>127.0.0.1:18800</em>
+            </div>
+            <img src="assets/ui-hero.png" alt="生态赛交付看板主界面，包含任务卡片、风险提示与 PowerContext 记忆面板" width="1440" height="1000">
+          </div>
+          <div class="float-card" aria-label="PowerContext 进展记忆示例">
+            <span class="float-kicker">POWERCONTEXT · PROGRESS</span>
+            <p><b>DS-06</b><span class="tag">进行中</span></p>
+            <p class="float-next">发布 Qoder Sites 展示站并回填公开网址</p>
+            <time>10/29 20:41</time>
+          </div>
+          <span class="hero-stamp" aria-hidden="true">EVIDENCE<br>FIRST</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section problem" id="problem">
+      <div class="section-head">
+        <p class="kicker">01 / 问题</p>
+        <h2>并行交付里，最贵的不是写代码，<br>是找回上下文。</h2>
+      </div>
+      <div class="pain-grid">
+        <article class="pain-card">
+          <span class="pain-index">A</span>
+          <h3>提交信息散落</h3>
+          <p>分支、commit、平台编号、得分和截图链接分散在聊天与报告里。回填时才发现少了一项。</p>
+        </article>
+        <article class="pain-card">
+          <span class="pain-index">B</span>
+          <h3>状态靠记忆</h3>
+          <p>哪个任务阻塞、哪个已经可交，没有一张全局视图。风险任务不会自己浮到最上面。</p>
+        </article>
+        <article class="pain-card">
+          <span class="pain-index">C</span>
+          <h3>交接要重读</h3>
+          <p>换一个 Agent 或隔一天回来，要从头翻对话才能知道做到哪、下一步是什么。</p>
+        </article>
+      </div>
+      <blockquote class="problem-quote">
+        <span>“</span>代码推了，但没提交；提交了，但证据找不到。<span>”</span>
+        <cite>—— 看板要消灭的状态</cite>
+      </blockquote>
+    </section>
+
+    <section class="section flow" id="flow">
+      <div class="section-head compact">
+        <p class="kicker">02 / 工作流</p>
+        <h2>一块看板，三次接力。</h2>
+        <p class="section-lede">从“做了什么”到“下一步做什么”，信息不再停留在某一次对话里。</p>
+      </div>
+      <ol class="flow-grid">
+        <li class="flow-step">
+          <span class="step-no">01</span>
+          <h3>记录任务与证据</h3>
+          <p>每张卡片承载仓库、分支、commit、提交编号、得分与证据链接。阻塞和待提交自动排在前面。</p>
+          <span class="step-meta">SQLite · 结构化字段</span>
+        </li>
+        <li class="flow-step">
+          <span class="step-no">02</span>
+          <h3>状态变更即写入记忆</h3>
+          <p>切换状态、补证据或回填提交信息时，向 PowerContext 写入一条带任务与时间的进展。</p>
+          <span class="step-meta">PowerContext · memory/remember</span>
+        </li>
+        <li class="flow-step">
+          <span class="step-no">03</span>
+          <h3>下次打开自动恢复</h3>
+          <p>偏好初始化标题与筛选，最近的进展回到时间线。接手者从当前进度继续，而不是从零开始。</p>
+          <span class="step-meta">Bootstrap · 偏好 + 进展</span>
+        </li>
+      </ol>
+    </section>
+
+    <section class="section features" id="features">
+      <div class="section-head compact">
+        <p class="kicker">03 / 能力</p>
+        <h2>为交付收尾而设计。</h2>
+      </div>
+      <div class="feature-grid">
+        <article class="feature">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5m0 14h16M8 15l4-5 3 3 5-7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <h3>风险优先</h3>
+          <p>阻塞、待提交、进行中、待开始、已提交、已评分，按需要处理的顺序排列。</p>
+        </article>
+        <article class="feature">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <h3>提交字段齐全</h3>
+          <p>仓库、分支、commit、提交网址、平台任务编号、得分和证据链接，一个任务一次填全。</p>
+        </article>
+        <article class="feature">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <h3>多维筛选</h3>
+          <p>按方向、难度、状态过滤，按任务、仓库和下一步搜索，视图始终围绕当前关注点。</p>
+        </article>
+        <article class="feature">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4a4 4 0 0 0-4 4v1a3 3 0 0 0-1 5.8V17a3 3 0 0 0 5 2.2A3 3 0 0 0 17 17v-2.2A3 3 0 0 0 16 9V8a4 4 0 0 0-4-4z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          <h3>偏好复用</h3>
+          <p>看板标题、默认方向与状态保存到 PowerContext，下次打开自动回到上次的视图。</p>
+        </article>
+        <article class="feature">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 8v5l3 2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <h3>进展时间线</h3>
+          <p>每次状态变更留下任务、状态、下一步和时间，右侧即可看到最近的交接轨迹。</p>
+        </article>
+        <article class="feature">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-2.8 8.2-7 10-4.2-1.8-7-5.5-7-10V6l7-3z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="m9 12 2 2 4-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <h3>可复现验证</h3>
+          <p>种子数据、接口验证、重启恢复和浏览器交互都有脚本与证据文件，评审核对成本低。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="memory-band" id="memory">
+      <div class="memory-inner">
+        <div class="memory-copy">
+          <p class="kicker light">04 / 技术结合</p>
+          <h2>记忆不是装饰，<br>它在核心链路上。</h2>
+          <p class="memory-lede">
+            项目选用 PowerContext 1.2.0 的基础记忆能力：显式写入、FTS 检索，不需要模型 API。
+            偏好与进展各走同一条读写链路，验证脚本可以按 <code>run_id</code> 精确命中。
+          </p>
+          <ol class="memory-points">
+            <li><b>读取</b><span><code>/api/bootstrap</code> 合并最新偏好到标题与筛选，并返回进展时间线。</span></li>
+            <li><b>写入</b><span><code>PATCH /api/tasks/{id}</code> 或保存偏好时，调用 <code>memory/remember</code>。</span></li>
+            <li><b>证明</b><span><code>/api/memory/search</code> 命中 <code>run_id</code>；服务重启后同一 Scope 仍可读取。</span></li>
+          </ol>
+        </div>
+        <div class="memory-visual">
+          <img src="assets/ui-memory.png" alt="PowerContext 记忆面板，包含偏好表单和最近进展时间线" width="360" height="900">
+          <div class="code-card">
+            <div class="code-head"><span>请求</span><span class="code-dots" aria-hidden="true"><i></i><i></i><i></i></span></div>
+            <pre><code>POST /v1/memory/remember
+{
+  "scope_id": "scp_…",
+  "kind": "progress",
+  "text": "[progress] {\"task\":\"DS-06\",
+           \"status\":\"doing\",
+           \"next\":\"发布 Qoder Sites\"}"
+}</code></pre>
+            <p>PowerContext 1.2.0 · SQLite + FTS · 基础记忆模式</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section validation" id="validation">
+      <div class="section-head compact">
+        <p class="kicker">05 / 验证</p>
+        <h2>验证不是口头承诺。</h2>
+        <p class="section-lede">真实运行、真实重启、真实浏览器。下面的数字和文件都可以在仓库中核对。</p>
+      </div>
+      <div class="validation-grid">
+        <div class="terminal" aria-label="验证输出摘要">
+          <div class="terminal-head">
+            <span class="terminal-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span>scripts/verify.py</span>
+          </div>
+          <pre><code><span class="pass">[PASS]</span> 启动时从 PowerContext 读取偏好
+<span class="pass">[PASS]</span> 偏好写入 / 重新加载后复用
+<span class="pass">[PASS]</span> 状态变更写入 PowerContext
+<span class="pass">[PASS]</span> 可按 run_id 检索进展记忆
+<span class="pass">[PASS]</span> 刷新后任务与进展仍可见
+<span class="dim">--- 重启 PowerContext 与看板 ---</span>
+<span class="pass">[PASS]</span> 重启后任务状态与下一步仍在
+<span class="pass">[PASS]</span> 重启后偏好仍可恢复
+<span class="pass">[PASS]</span> 重启后进展列表仍包含本次验证
+<span class="dim">14 + 6 项接口检查 · 0 项失败</span></code></pre>
+        </div>
+        <div class="validate-side">
+          <div class="stat-block"><strong>14</strong><span>读写检查</span></div>
+          <div class="stat-block"><strong>6/6</strong><span>重启恢复检查</span></div>
+          <div class="stat-block"><strong>18</strong><span>浏览器交互检查</span></div>
+          <div class="stat-block"><strong>0</strong><span>控制台错误</span></div>
+          <div class="evidence-links">
+            <a href="https://github.com/ArnoldCherry/powercontext-2026-competition/blob/feat/eco-qoder/qoder/evidence/verification_write.json" target="_blank" rel="noreferrer">读写验证 JSON <span>↗</span></a>
+            <a href="https://github.com/ArnoldCherry/powercontext-2026-competition/blob/feat/eco-qoder/qoder/evidence/verification_after_restart.json" target="_blank" rel="noreferrer">重启验证 JSON <span>↗</span></a>
+            <a href="https://github.com/ArnoldCherry/powercontext-2026-competition/blob/feat/eco-qoder/qoder/evidence/ui_check.json" target="_blank" rel="noreferrer">界面验证 JSON <span>↗</span></a>
+          </div>
+          <p class="test-note">SQLite 单元测试 4/4 · Ruff 静态检查通过</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section gallery" id="gallery">
+      <div class="section-head compact">
+        <p class="kicker">06 / 界面</p>
+        <h2>界面，不是概念图。</h2>
+        <p class="section-lede">所有截图来自本机真实运行；演示数据由 <code>scripts/seed.py</code> 初始化。</p>
+      </div>
+      <div class="gallery-grid">
+        <figure class="shot shot-wide">
+          <button type="button" data-lightbox="assets/ui-edit-dialog.png" data-alt="编辑 DS-06 任务的弹窗，包含提交字段和证据链接">
+            <img src="assets/ui-edit-dialog.png" alt="编辑 DS-06 任务的弹窗" loading="lazy">
+          </button>
+          <figcaption><span>提交记录</span>一个任务填全仓库、分支、commit、编号、得分与证据。</figcaption>
+        </figure>
+        <figure class="shot shot-phone">
+          <button type="button" data-lightbox="assets/ui-mobile.png" data-alt="移动端任务看板，任务卡片纵向堆叠">
+            <img src="assets/ui-mobile-viewport.png" alt="移动端任务看板" loading="lazy">
+          </button>
+          <figcaption><span>移动端</span>窄屏无横向溢出，任务与记忆面板顺序阅读。</figcaption>
+        </figure>
+        <figure class="shot shot-small">
+          <button type="button" data-lightbox="assets/ui-search-ds06.png" data-alt="搜索 DS-06 后的看板视图">
+            <img src="assets/ui-search-ds06.png" alt="搜索 DS-06 后的看板视图" loading="lazy">
+          </button>
+          <figcaption><span>搜索</span>按任务编号、仓库或下一步快速定位。</figcaption>
+        </figure>
+        <figure class="shot shot-small">
+          <button type="button" data-lightbox="assets/ui-filter-blocked.png" data-alt="筛选阻塞任务后的看板视图">
+            <img src="assets/ui-filter-blocked.png" alt="筛选阻塞任务后的看板视图" loading="lazy">
+          </button>
+          <figcaption><span>风险筛选</span>阻塞任务优先，需要介入的事项不会被埋没。</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section start" id="start">
+      <div class="start-grid">
+        <div class="start-copy">
+          <p class="kicker">07 / 运行</p>
+          <h2>五条命令，跑起来。</h2>
+          <p class="section-lede">依赖安装在本地，PowerContext 使用 SQLite，无需数据库服务或 API Key。</p>
+          <ol class="start-steps">
+            <li><span>01</span>创建虚拟环境并安装依赖</li>
+            <li><span>02</span>启动 PowerContext 服务（终端 A）</li>
+            <li><span>03</span>执行 seed 初始化任务、偏好和进展</li>
+            <li><span>04</span>启动看板（终端 B）</li>
+            <li><span>05</span>打开 <code>127.0.0.1:18800</code></li>
+          </ol>
+          <div class="start-links">
+            <a class="button line" href="https://github.com/ArnoldCherry/powercontext-2026-competition/blob/feat/eco-qoder/qoder/README.md" target="_blank" rel="noreferrer">完整运行说明</a>
+            <a class="button line" href="https://github.com/ArnoldCherry/powercontext-2026-competition/tree/feat/eco-qoder/qoder" target="_blank" rel="noreferrer">源码目录</a>
+          </div>
+          <p class="start-note">Windows 命令如下；Linux / macOS 将 <code>.venv\Scripts\</code> 替换为 <code>.venv/bin/</code>。两终端分别运行 PowerContext 与看板。</p>
+        </div>
+        <div class="start-terminal">
+          <div class="terminal-head">
+            <span class="terminal-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span>quickstart · qoder/</span>
+          </div>
+          <pre><code id="quickstart-code">cd qoder
+python -m venv .venv
+.venv\Scripts\python -m pip install -r requirements.txt
+
+<span class="dim"># 终端 A：PowerContext</span>
+.venv\Scripts\powercontext server run --env-file powercontext.env --port 18801
+
+<span class="dim"># 终端 B：初始化并启动看板</span>
+.venv\Scripts\python scripts\seed.py
+.venv\Scripts\python -m uvicorn board.app:app --port 18800</code></pre>
+          <button class="copy-button" type="button" data-copy-target="quickstart-code">复制命令</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section qoder" id="qoder">
+      <div class="qoder-grid">
+        <div class="qoder-copy">
+          <p class="kicker">08 / QODER</p>
+          <h2>用 Qoder，<br>从需求做到发布。</h2>
+          <p class="section-lede">
+            从需求拆解、PowerContext 服务验证，到 FastAPI / SQLite 实现、Playwright 验证和 Qoder Sites 发布，
+            主要开发工作在本机会话 <code>DS-06.md</code> 中完成。
+          </p>
+          <ul class="qoder-list">
+            <li><b>拆解</b><span>把赛题要求拆成看板字段、记忆链路和验收样例。</span></li>
+            <li><b>实现</b><span>完成 FastAPI 接口、SQLite 存储、原生前端与 PowerContext 客户端。</span></li>
+            <li><b>验证</b><span>运行单元测试、接口验证、重启恢复和浏览器交互检查。</span></li>
+            <li><b>发布</b><span>制作展示站，通过 Qoder Sites 发布为公开访问。</span></li>
+          </ul>
+        </div>
+        <aside class="record-card" aria-label="Qoder 开发记录">
+          <div class="record-head">
+            <span class="status-dot"></span>
+            <span>QODER DEVELOPMENT RECORD</span>
+          </div>
+          <dl>
+            <div><dt>账号 UID</dt><dd class="mono">01a18285-6bd1-78e0-abad-5d5ee482486e</dd></div>
+            <div><dt>开发会话</dt><dd>DS-06.md</dd></div>
+            <div><dt>Session</dt><dd class="mono">e4f5152c…4bcf</dd></div>
+            <div><dt>仓库分支</dt><dd class="mono">feat/eco-qoder</dd></div>
+            <div><dt>实现提交</dt><dd class="mono">89a1400c</dd></div>
+          </dl>
+          <a class="record-link" href="https://github.com/ArnoldCherry/powercontext-2026-competition/blob/feat/eco-qoder/qoder/evidence/qoder-session.md" target="_blank" rel="noreferrer">查看会话记录导出 <span>↗</span></a>
+          <p>本站由 Qoder Sites 发布。</p>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div>
+      <span class="footer-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+      <p><b>接力板</b> · 2026 OceanBase 生态赛 Qoder 赛道</p>
+    </div>
+    <p>基于 <a href="https://github.com/oceanbase/powercontext" target="_blank" rel="noreferrer">PowerContext</a>（Apache-2.0）开发。本站为项目展示页，可运行看板需按运行说明在本地启动。</p>
+    <p class="footer-meta">Qoder UID 01a18285-6bd1-78e0-abad-5d5ee482486e · 2026</p>
+  </footer>
+
+  <dialog class="lightbox" id="lightbox">
+    <button class="lightbox-close" type="button" aria-label="关闭预览">关闭</button>
+    <img alt="">
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Literal
@@ -138,12 +139,15 @@ def _memory_bundle() -> dict[str, Any]:
         scope_id = memory.ensure_scope()
         bundle["scope_id"] = scope_id
         bundle["memory"] = {**health, "scope_id": scope_id}
-        saved = memory.load_preference()
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            preference_future = pool.submit(memory.load_preference)
+            progress_future = pool.submit(memory.recent_progress)
+            saved = preference_future.result()
+            bundle["progress"] = progress_future.result()
         if saved:
             bundle["preferences"] = _merged_preferences(saved)
             bundle["preference_source"] = "powercontext"
             bundle["preference_saved_at"] = saved.get("saved_at")
-        bundle["progress"] = memory.recent_progress()
     except MemoryUnavailable as error:
         bundle["memory"] = {**health, "status": "error", "error": str(error)}
     return bundle

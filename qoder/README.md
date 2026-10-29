@@ -173,10 +173,12 @@ Scope: scp_...
 
 已有实跑结果：
 
-- `evidence/verification_write.json`：全部通过；
-- `evidence/verification_after_restart.json`：全部通过；
-- `evidence/ui_check.json`：18 项全部通过；
-- `evidence/ui-overview.png`、`ui-edit-dialog.png`、`ui-filter-blocked.png`、`ui-mobile.png`：界面截图。
+- `evidence/verification_write.json`：14 项全部通过；
+- `evidence/verification_after_restart.json`：6 项全部通过；
+- `evidence/ui_check.json`：18 项全部通过，控制台错误 0；
+- `evidence/performance.json`：30 轮本地实测，`/api/tasks` p50 1.54 ms，`/api/bootstrap`（含两次 PowerContext 检索）p50 1059.77 ms；
+- `evidence/ui-overview.png`、`ui-edit-dialog.png`、`ui-filter-blocked.png`、`ui-mobile.png`：界面截图；
+- `evidence/qoder-session.md`、`qoder-session.png`：Qoder 开发会话导出与记录截图。
 
 ## 七、数据与目录
 
@@ -193,6 +195,7 @@ qoder/
 │   ├── verify.py           # 读写 + 重启恢复验证
 │   └── ui_check.py         # Playwright 交互验证
 ├── tests/test_store.py     # SQLite 单元测试
+├── site/                   # Qoder Sites 展示站静态源文件
 ├── evidence/               # 截图、验证 JSON、Qoder 会话记录
 ├── powercontext.env        # PowerContext SQLite 配置
 ├── requirements.txt
@@ -205,16 +208,17 @@ qoder/
 - 会话标题：`DS-06.md`；会话 ID：`e4f5152c-33a6-4e62-b861-48f089fe4bcf`
 - Qoder 账号 UID：`01a18285-6bd1-78e0-abad-5d5ee482486e`
 - 主要开发过程：需求拆解 → PowerContext 本地服务验证 → 后端/前端实现 → 单元与接口验证 → 重启恢复验证 → Playwright 界面验证 → Qoder Sites 展示站发布
-- 会话记录导出：`evidence/qoder-session.md`（由本机 Qoder 会话记录生成，含需求、关键实现与验证步骤）
-- 展示站：`<QODER_SITES_URL>`（发布后回填）
+- 会话记录导出：`evidence/qoder-session.md` 与 `evidence/qoder-session.png`（由本机 Qoder 会话记录生成，含需求、关键实现、工具调用统计与验证步骤）
+- 展示站源码：`site/`；线上地址：`<QODER_SITES_URL>`（发布后回填）
 
-> 开发过程截图/录屏建议同时保留 Qoder 中 `DS-06.md` 会话窗口，以便评审核对 Qoder 账号 UID 与站点归属。
+> 评审可在 Qoder 中打开 `DS-06.md` 会话，结合 UID 核对开发过程与站点归属。
 
 ## 九、提交信息
 
 - 仓库：<https://github.com/ArnoldCherry/powercontext-2026-competition>
 - 分支：`feat/eco-qoder`
-- Commit：`<COMMIT_SHA>`（提交后回填）
+- 实现 Commit：`89a1400c5d110ee685871ae6be174561658b0bc3`
+- 后续文档/展示站 Commit：`<FINAL_COMMIT_SHA>`（提交后回填）
 - 代码目录：`qoder/`
 
 ## 十、已知限制

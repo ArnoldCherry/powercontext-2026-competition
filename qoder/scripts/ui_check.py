@@ -26,7 +26,7 @@ def check(name: str, condition: bool, detail: object = "") -> None:
 
 
 def restore_state() -> None:
-    with httpx.Client(base_url=BASE_URL, timeout=20) as client:
+    with httpx.Client(base_url=BASE_URL, timeout=20, trust_env=False) as client:
         client.put(
             "/api/preferences",
             json={

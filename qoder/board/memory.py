@@ -43,6 +43,7 @@ class MemoryService:
                 headers=self.headers,
                 json=payload,
                 timeout=self.settings.request_timeout,
+                trust_env=False,
             )
         except httpx.HTTPError as error:
             raise MemoryUnavailable(f"无法连接 PowerContext: {error}") from error
@@ -71,6 +72,7 @@ class MemoryService:
                 f"{self.settings.powercontext_url}/v1/scopes/{quote(scope_id, safe='')}",
                 headers=self.headers,
                 timeout=self.settings.request_timeout,
+                trust_env=False,
             )
         except httpx.HTTPError as error:
             raise MemoryUnavailable(f"无法连接 PowerContext: {error}") from error

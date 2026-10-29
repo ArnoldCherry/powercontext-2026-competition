@@ -1,0 +1,24 @@
+{
+  "measured_at": "2026-10-29T20:50:20+08:00",
+  "rounds": 30,
+  "endpoints": {
+    "/api/bootstrap": {
+      "p50_ms": 1059.77,
+      "p95_ms": 1405.43,
+      "max_ms": 1438.24,
+      "min_ms": 886.21
+    },
+    "/api/memory/search?q=progress": {
+      "p50_ms": 423.95,
+      "p95_ms": 501.15,
+      "max_ms": 519.63,
+      "min_ms": 376.07
+    },
+    "/api/tasks": {
+      "p50_ms": 1.54,
+      "p95_ms": 2.23,
+      "max_ms": 2.4,
+      "min_ms": 1.25
+    }
+  }
+}
