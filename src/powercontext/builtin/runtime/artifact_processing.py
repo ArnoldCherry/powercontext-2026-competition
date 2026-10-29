@@ -99,6 +99,10 @@ class ArtifactProcessingPendingProvider(Protocol):
         """Return the next keyset position, or None when this pass is complete."""
         ...
 
+    async def pending_count(self, connection: AsyncConnection, scope_id: str, /) -> int:
+        """Return the number of journal entries after this binding's cursor."""
+        ...
+
 
 @dataclass(frozen=True, slots=True)
 class ArtifactProcessingBinding:
@@ -110,6 +114,7 @@ class ArtifactProcessingBinding:
     max_workers: int = 1
     worker_timeout_seconds: float = 600.0
     automatic_processing_interval: timedelta | None = None
+    source_count_threshold: int | None = None
     cron: str | None = None
     timezone: str = "Asia/Shanghai"
     config_prefix: str | None = None
@@ -136,8 +141,17 @@ class ArtifactProcessingBinding:
                 raise ValueError("automatic interval must be positive")  # noqa: TRY003
             if self.cron is not None:
                 raise ValueError("interval and cron cannot both be enabled")  # noqa: TRY003
+        self._validate_source_count_threshold()
         if self.cron is not None:
             CronTrigger.from_crontab(self.cron, timezone=ZoneInfo(self.timezone))
+
+    def _validate_source_count_threshold(self) -> None:
+        if self.source_count_threshold is None:
+            return
+        if type(self.source_count_threshold) is not int or self.source_count_threshold < 1:
+            raise ValueError("source_count_threshold must be a positive integer")  # noqa: TRY003
+        if self.pending_provider is None:
+            raise ValueError("source_count_threshold requires a pending provider")  # noqa: TRY003
 
 
 class _WorkerResultSender(Protocol):
@@ -393,6 +407,7 @@ class _FamilyState:
     retries: dict[str, _RetryState] = field(default_factory=dict)
     requested_after: int = 0
     scan_after: int = 0
+    count_scan_after: int = 0
     scan_generation: int = 0
     scan_in_progress: bool = False
     reconcile_after: str | None = None
@@ -781,6 +796,42 @@ class ArtifactProcessingSupervisor:
         state.next_discovery_at = next_discovery_at
         for scope in admitted:
             self._enqueue(state, scope)
+        if binding.source_count_threshold is not None:
+            await self._discover_count(state)
+
+    async def _discover_count(self, state: _FamilyState) -> None:
+        binding = state.binding
+        threshold = binding.source_count_threshold
+        if threshold is None or binding.pending_provider is None:
+            return
+        capacity = self._fresh_capacity(state)
+        if capacity <= 0:
+            return
+        page_size = min(capacity, _DISCOVERY_PAGE_SIZE)
+        scan_after = state.count_scan_after
+        admitted: list[str] = []
+        async with self._database.transaction() as connection:
+            await self._leases.require_fence(connection, self._require_current_fence())
+            rows = await self._intents.scan(
+                connection,
+                binding.binding_name,
+                after_sequence=scan_after,
+                limit=page_size,
+            )
+            for row in rows:
+                scan_after = row.pending_sequence
+                if row.scope_id in state.queued or row.scope_id in state.running or row.scope_id in state.retries:
+                    continue
+                if row.requested_generation > row.handled_generation:
+                    continue
+                pending = await binding.pending_provider.pending_count(connection, row.scope_id)
+                if pending < threshold:
+                    continue
+                await self._intents.request(connection, row.scope_id, binding.binding_name)
+                admitted.append(row.scope_id)
+        state.count_scan_after = 0 if len(rows) < page_size else scan_after
+        for scope in admitted:
+            self._enqueue(state, scope)
 
     @staticmethod
     def _fresh_capacity(state: _FamilyState) -> int:
@@ -1058,6 +1109,7 @@ class ArtifactProcessingSupervisor:
             state.overflow_not_before = 0.0
             state.retries.clear()
             state.requested_after = state.scan_after = state.scan_generation = 0
+            state.count_scan_after = 0
             state.scan_in_progress = False
             state.discovery_pending = True
 
@@ -1093,6 +1145,8 @@ class ArtifactProcessingSupervisor:
                 continue
             if state.next_schedule_at is not None:
                 deadlines.append(state.next_schedule_at)
+            if state.binding.source_count_threshold is not None and len(state.running) < state.binding.max_workers:
+                deadlines.append(now + self._tick)
             if state.discovery_pending or state.scan_in_progress or not state.reconcile_complete or state.degraded:
                 deadlines.append(max(now, state.next_discovery_at))
         return None if not deadlines else max(0.001, min(deadlines) - now)
@@ -1147,7 +1201,7 @@ def _schedule_deadline(
     trigger = CronTrigger.from_crontab(binding.cron, timezone=ZoneInfo(binding.timezone))
     first = trigger.get_next_fire_time(None, (checkpoint + timedelta(microseconds=1)).replace(tzinfo=UTC))
     if first is None:
-        return None, datetime.max.replace(tzinfo=None)
+        return None, datetime.max.replace(tzinfo=None)  # noqa: DTZ901 - naive DB deadline, not wall time
     first = first.astimezone(UTC).replace(tzinfo=None)
     if first > now:
         return None, first
@@ -1164,7 +1218,7 @@ def _schedule_deadline(
         else:
             hi = mid
     following = trigger.get_next_fire_time(None, (latest + timedelta(microseconds=1)).replace(tzinfo=UTC))
-    return latest, datetime.max.replace(tzinfo=None) if following is None else following.astimezone(UTC).replace(
+    return latest, datetime.max.replace(tzinfo=None) if following is None else following.astimezone(UTC).replace(  # noqa: DTZ901 - naive DB deadline, not wall time
         tzinfo=None
     )
 
