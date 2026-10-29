@@ -157,6 +157,7 @@ cp .env.example .env
 # 假设当前目录是 dify/docker
 cp -r /path/to/powercontext-2026-competition/dify/inn-backend ./inn-backend
 cp /path/to/powercontext-2026-competition/dify/docker-compose.inn.yaml ./docker-compose.inn.yaml
+cp /path/to/powercontext-2026-competition/dify/preflight.sh ./preflight.sh
 ```
 
 `inn-backend` 会启动在 Compose 默认网络，容器名 `inn-backend`；Dify 的 HTTP 节点通过 `http://inn-backend:8000` 访问它。
