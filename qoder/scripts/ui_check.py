@@ -6,6 +6,7 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
 import json
+import os
 from pathlib import Path
 
 import httpx
@@ -13,7 +14,7 @@ from playwright.sync_api import expect, sync_playwright
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 EVIDENCE = PROJECT_ROOT / "evidence"
-BASE_URL = "http://127.0.0.1:18800"
+BASE_URL = os.environ.get("BOARD_URL", "http://127.0.0.1:18800").rstrip("/")
 EDGE = r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
 CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 

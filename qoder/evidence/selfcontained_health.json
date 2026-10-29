@@ -1,0 +1,45 @@
+{
+  "captured_at": "2026-10-29T23:48:08+08:00",
+  "command": "python -m board",
+  "board_port": 18800,
+  "external_18801": "not-listening",
+  "health": {
+    "status": "ok",
+    "database": {
+      "status": "ok",
+      "tasks": 11,
+      "path": "D:\\database\\pc-parallel\\qoder-fix\\qoder\\data\\board.db"
+    },
+    "memory": {
+      "status": "online",
+      "url": "http://127.0.0.1:63149",
+      "ready": true,
+      "access_mode": "disabled",
+      "mode": "managed",
+      "managed": true,
+      "pid": 11184,
+      "data_dir": "D:\\database\\pc-parallel\\qoder-fix\\qoder\\data\\powercontext",
+      "log_path": "D:\\database\\pc-parallel\\qoder-fix\\qoder\\data\\powercontext-managed.log"
+    },
+    "runtime": {
+      "mode": "managed",
+      "url": "http://127.0.0.1:63149",
+      "managed": true,
+      "pid": 11184,
+      "data_dir": "D:\\database\\pc-parallel\\qoder-fix\\qoder\\data\\powercontext",
+      "log_path": "D:\\database\\pc-parallel\\qoder-fix\\qoder\\data\\powercontext-managed.log",
+      "error": null
+    },
+    "startup_error": null,
+    "seed_error": null,
+    "seed": {
+      "task_count": 11,
+      "created_now": 0,
+      "scope_id": "scp_1jprw3p49jdfk67cjnpgyfvy37",
+      "progress_count": 0,
+      "memory_error": null
+    },
+    "scope_id": "scp_1jprw3p49jdfk67cjnpgyfvy37",
+    "time": "2026-10-29T23:48:07+08:00"
+  }
+}

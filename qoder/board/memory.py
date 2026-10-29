@@ -24,10 +24,19 @@ def _now_local() -> str:
 
 
 class MemoryService:
-    def __init__(self, settings: Settings, store: Any) -> None:
+    def __init__(self, settings: Settings, store: Any, unavailable_reason: str | None = None) -> None:
         self.settings = settings
         self.store = store
         self._scope_id: str | None = None
+        self.unavailable_reason = unavailable_reason or (
+            None if settings.powercontext_url else "PowerContext URL 未配置，应用运行时尚未启动。"
+        )
+
+    def _ensure_available(self) -> None:
+        if self.unavailable_reason:
+            raise MemoryUnavailable(self.unavailable_reason)
+        if not self.settings.powercontext_url:
+            raise MemoryUnavailable("PowerContext URL 未配置。")
 
     @property
     def headers(self) -> dict[str, str]:
@@ -36,6 +45,7 @@ class MemoryService:
         return {}
 
     def _call(self, method: str, path: str, payload: dict[str, Any] | None = None) -> dict[str, Any]:
+        self._ensure_available()
         try:
             response = httpx.request(
                 method,
@@ -55,6 +65,12 @@ class MemoryService:
         return response.json()
 
     def health(self) -> dict[str, Any]:
+        if self.unavailable_reason:
+            return {
+                "status": "offline",
+                "url": self.settings.powercontext_url,
+                "error": self.unavailable_reason,
+            }
         try:
             payload = self._call("GET", "/health/ready")
         except MemoryUnavailable as error:
@@ -67,6 +83,7 @@ class MemoryService:
         }
 
     def _scope_exists(self, scope_id: str) -> bool:
+        self._ensure_available()
         try:
             response = httpx.get(
                 f"{self.settings.powercontext_url}/v1/scopes/{quote(scope_id, safe='')}",

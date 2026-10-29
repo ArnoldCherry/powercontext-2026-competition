@@ -1,0 +1,19 @@
+{
+  "port_occupied": {
+    "http": 200,
+    "memory_status": "offline",
+    "startup_error": "PowerContext 端口 18810 已被占用。请设置 POWERCONTEXT_PORT=0 自动选择空闲端口，或释放该端口。",
+    "message_ok": true
+  },
+  "external_unreachable": {
+    "http": 200,
+    "memory_status": "offline",
+    "startup_error": "外部 PowerContext 不可达：http://127.0.0.1:9（[WinError 10061] 由于目标计算机积极拒绝，无法连接。）。请启动服务，或使用默认 POWERCONTEXT_MODE=managed 让应用自动启动。",
+    "message_ok": true
+  },
+  "board_port_occupied": {
+    "returncode": 2,
+    "message_ok": true,
+    "output": "看板端口 18810 已被占用。请设置 BOARD_PORT 为其他空闲端口后重试。\n"
+  }
+}

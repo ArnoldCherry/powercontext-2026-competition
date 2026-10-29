@@ -52,6 +52,19 @@ def run(client: httpx.Client) -> int:
     health = request(client, "GET", "/api/health")
     check(checks, "看板数据库可用", health["database"]["status"] == "ok", health["database"])
     check(checks, "PowerContext 在线", health["memory"]["status"] == "online", health["memory"])
+    runtime = health.get("runtime") or {}
+    check(
+        checks,
+        "PowerContext 由应用自动管理",
+        runtime.get("mode") == "managed" and runtime.get("managed") is True and bool(runtime.get("pid")),
+        runtime,
+    )
+    check(
+        checks,
+        "启动无错误且自动播种完成",
+        not health.get("startup_error") and not health.get("seed_error"),
+        {"startup_error": health.get("startup_error"), "seed_error": health.get("seed_error"), "seed": health.get("seed")},
+    )
 
     bootstrap = request(client, "GET", "/api/bootstrap")
     check(checks, "已加载种子任务", len(bootstrap["tasks"]) >= 10, {"tasks": len(bootstrap["tasks"])})
@@ -162,6 +175,19 @@ def run_after_restart(client: httpx.Client) -> int:
     health = request(client, "GET", "/api/health")
     check(checks, "重启后看板数据库可用", health["database"]["status"] == "ok", health["database"])
     check(checks, "重启后 PowerContext 在线", health["memory"]["status"] == "online", health["memory"])
+    runtime = health.get("runtime") or {}
+    check(
+        checks,
+        "重启后仍由应用自动管理 PowerContext",
+        runtime.get("mode") == "managed" and runtime.get("managed") is True and bool(runtime.get("pid")),
+        runtime,
+    )
+    check(
+        checks,
+        "重启后无启动/播种错误",
+        not health.get("startup_error") and not health.get("seed_error"),
+        {"startup_error": health.get("startup_error"), "seed_error": health.get("seed_error")},
+    )
 
     bootstrap = request(client, "GET", "/api/bootstrap")
     task = find_task(bootstrap["tasks"], state["task_id"])

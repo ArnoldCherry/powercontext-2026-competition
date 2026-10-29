@@ -22,7 +22,7 @@
       <a href="#start">运行</a>
       <a href="#qoder">Qoder</a>
     </nav>
-    <a class="header-link" href="https://github.com/ArnoldCherry/powercontext-2026-competition/tree/feat/eco-qoder/qoder" target="_blank" rel="noreferrer">
+    <a class="header-link" href="https://github.com/ArnoldCherry/powercontext-2026-competition/tree/fix/qoder-self-contained-memory/qoder" target="_blank" rel="noreferrer">
       GitHub
       <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3h8v8h-2V6.4L4.4 13 3 11.6 9.6 5H5V3z"/></svg>
     </a>
@@ -36,19 +36,19 @@
           <h1>让每一份提交，<br><em>都有证据可循。</em></h1>
           <p class="lede">
             接力板是面向多任务并行交付的本地看板。任务、分支、commit、平台编号、得分和证据集中在同一个工作面；
-            PowerContext 记住偏好与每次进展，刷新或重启后仍能接着做。
+            单命令启动时，应用会自动拉起真实 PowerContext 并记住偏好与进展，刷新或重启后仍能接着做。
           </p>
           <div class="hero-actions">
             <a class="button solid" href="#start">查看如何运行</a>
-            <a class="button line" href="https://github.com/ArnoldCherry/powercontext-2026-competition/tree/feat/eco-qoder/qoder" target="_blank" rel="noreferrer">浏览源码</a>
+            <a class="button line" href="https://github.com/ArnoldCherry/powercontext-2026-competition/tree/fix/qoder-self-contained-memory/qoder" target="_blank" rel="noreferrer">浏览源码</a>
           </div>
           <dl class="hero-stats">
             <div><dt>演示任务</dt><dd>11</dd></div>
-            <div><dt>记忆类型</dt><dd>2</dd></div>
-            <div><dt>重启检查</dt><dd>6/6</dd></div>
+            <div><dt>启动命令</dt><dd>1</dd></div>
+            <div><dt>重启检查</dt><dd>8/8</dd></div>
             <div><dt>界面检查</dt><dd>18</dd></div>
           </dl>
-          <p class="hero-note">本地运行 · 单用户 · 无需模型 API</p>
+          <p class="hero-note">单命令启动 · 自动管理真实 PowerContext · 无需模型 API</p>
         </div>
 
         <div class="hero-visual">
@@ -172,6 +172,7 @@
           <h2>记忆不是装饰，<br>它在核心链路上。</h2>
           <p class="memory-lede">
             项目选用 PowerContext 1.2.0 的基础记忆能力：显式写入、FTS 检索，不需要模型 API。
+            应用启动时自动拉起受管理的真实服务，不依赖预先运行的 <code>127.0.0.1:18801</code>；
             偏好与进展各走同一条读写链路，验证脚本可以按 <code>run_id</code> 精确命中。
           </p>
           <ol class="memory-points">
@@ -192,7 +193,7 @@
            \"status\":\"doing\",
            \"next\":\"发布 Qoder Sites\"}"
 }</code></pre>
-            <p>PowerContext 1.2.0 · SQLite + FTS · 基础记忆模式</p>
+            <p>PowerContext 1.2.0 · SQLite + FTS · 应用自动管理</p>
           </div>
         </div>
       </div>
@@ -210,7 +211,9 @@
             <span class="terminal-dots" aria-hidden="true"><i></i><i></i><i></i></span>
             <span>scripts/verify.py</span>
           </div>
-          <pre><code><span class="pass">[PASS]</span> 启动时从 PowerContext 读取偏好
+          <pre><code><span class="pass">[PASS]</span> PowerContext 由应用自动管理
+<span class="pass">[PASS]</span> 启动无错误且自动播种完成
+<span class="pass">[PASS]</span> 启动时从 PowerContext 读取偏好
 <span class="pass">[PASS]</span> 偏好写入 / 重新加载后复用
 <span class="pass">[PASS]</span> 状态变更写入 PowerContext
 <span class="pass">[PASS]</span> 可按 run_id 检索进展记忆
@@ -218,18 +221,19 @@
 <span class="dim">--- 重启 PowerContext 与看板 ---</span>
 <span class="pass">[PASS]</span> 重启后任务状态与下一步仍在
 <span class="pass">[PASS]</span> 重启后偏好仍可恢复
+<span class="pass">[PASS]</span> 重启后仍由应用自动管理 PowerContext
 <span class="pass">[PASS]</span> 重启后进展列表仍包含本次验证
-<span class="dim">14 + 6 项接口检查 · 0 项失败</span></code></pre>
+<span class="dim">16 + 8 项接口检查 · 0 项失败</span></code></pre>
         </div>
         <div class="validate-side">
-          <div class="stat-block"><strong>14</strong><span>读写检查</span></div>
-          <div class="stat-block"><strong>6/6</strong><span>重启恢复检查</span></div>
+          <div class="stat-block"><strong>16</strong><span>读写检查</span></div>
+          <div class="stat-block"><strong>8/8</strong><span>重启恢复检查</span></div>
           <div class="stat-block"><strong>18</strong><span>浏览器交互检查</span></div>
           <div class="stat-block"><strong>0</strong><span>控制台错误</span></div>
           <div class="evidence-links">
-            <a href="https://github.com/ArnoldCherry/powercontext-2026-competition/blob/feat/eco-qoder/qoder/evidence/verification_write.json" target="_blank" rel="noreferrer">读写验证 JSON <span>↗</span></a>
-            <a href="https://github.com/ArnoldCherry/powercontext-2026-competition/blob/feat/eco-qoder/qoder/evidence/verification_after_restart.json" target="_blank" rel="noreferrer">重启验证 JSON <span>↗</span></a>
-            <a href="https://github.com/ArnoldCherry/powercontext-2026-competition/blob/feat/eco-qoder/qoder/evidence/ui_check.json" target="_blank" rel="noreferrer">界面验证 JSON <span>↗</span></a>
+            <a href="https://github.com/ArnoldCherry/powercontext-2026-competition/blob/fix/qoder-self-contained-memory/qoder/evidence/verification_write.json" target="_blank" rel="noreferrer">读写验证 JSON <span>↗</span></a>
+            <a href="https://github.com/ArnoldCherry/powercontext-2026-competition/blob/fix/qoder-self-contained-memory/qoder/evidence/verification_after_restart.json" target="_blank" rel="noreferrer">重启验证 JSON <span>↗</span></a>
+            <a href="https://github.com/ArnoldCherry/powercontext-2026-competition/blob/fix/qoder-self-contained-memory/qoder/evidence/ui_check.json" target="_blank" rel="noreferrer">界面验证 JSON <span>↗</span></a>
           </div>
           <p class="test-note">SQLite 单元测试 4/4 · Ruff 静态检查通过</p>
         </div>
@@ -240,7 +244,7 @@
       <div class="section-head compact">
         <p class="kicker">06 / 界面</p>
         <h2>界面，不是概念图。</h2>
-        <p class="section-lede">所有截图来自本机真实运行；演示数据由 <code>scripts/seed.py</code> 初始化。</p>
+        <p class="section-lede">所有截图来自本机真实运行；演示数据由应用首次启动自动初始化。</p>
       </div>
       <div class="gallery-grid">
         <figure class="shot shot-wide">
@@ -274,20 +278,19 @@
       <div class="start-grid">
         <div class="start-copy">
           <p class="kicker">07 / 运行</p>
-          <h2>五条命令，跑起来。</h2>
-          <p class="section-lede">依赖安装在本地，PowerContext 使用 SQLite，无需数据库服务或 API Key。</p>
+          <h2>一条命令，启动全栈。</h2>
+          <p class="section-lede">依赖安装在本地，应用自动拉起真实 PowerContext（SQLite），无需另开终端、数据库服务或 API Key。</p>
           <ol class="start-steps">
-            <li><span>01</span>创建虚拟环境并安装依赖</li>
-            <li><span>02</span>启动 PowerContext 服务（终端 A）</li>
-            <li><span>03</span>执行 seed 初始化任务、偏好和进展</li>
-            <li><span>04</span>启动看板（终端 B）</li>
-            <li><span>05</span>打开 <code>127.0.0.1:18800</code></li>
+            <li><span class="step-index">01</span><span class="step-text">创建虚拟环境并安装依赖</span></li>
+            <li><span class="step-index">02</span><span class="step-text">启动看板：<code>python -m board</code></span></li>
+            <li><span class="step-index">03</span><span class="step-text">首次启动自动拉起 PowerContext 并播种任务、偏好与进展</span></li>
+            <li><span class="step-index">04</span><span class="step-text">打开 <code>127.0.0.1:18800</code></span></li>
           </ol>
           <div class="start-links">
-            <a class="button line" href="https://github.com/ArnoldCherry/powercontext-2026-competition/blob/feat/eco-qoder/qoder/README.md" target="_blank" rel="noreferrer">完整运行说明</a>
-            <a class="button line" href="https://github.com/ArnoldCherry/powercontext-2026-competition/tree/feat/eco-qoder/qoder" target="_blank" rel="noreferrer">源码目录</a>
+            <a class="button line" href="https://github.com/ArnoldCherry/powercontext-2026-competition/blob/fix/qoder-self-contained-memory/qoder/README.md" target="_blank" rel="noreferrer">完整运行说明</a>
+            <a class="button line" href="https://github.com/ArnoldCherry/powercontext-2026-competition/tree/fix/qoder-self-contained-memory/qoder" target="_blank" rel="noreferrer">源码目录</a>
           </div>
-          <p class="start-note">Windows 命令如下；Linux / macOS 将 <code>.venv\Scripts\</code> 替换为 <code>.venv/bin/</code>。两终端分别运行 PowerContext 与看板。</p>
+          <p class="start-note">Windows 命令如下；Linux / macOS 将 <code>.venv\Scripts\</code> 替换为 <code>.venv/bin/</code>。单命令启动，退出时应用会停止受管理的 PowerContext。</p>
         </div>
         <div class="start-terminal">
           <div class="terminal-head">
@@ -298,12 +301,10 @@
 python -m venv .venv
 .venv\Scripts\python -m pip install -r requirements.txt
 
-<span class="dim"># 终端 A：PowerContext</span>
-.venv\Scripts\powercontext server run --env-file powercontext.env --port 18801
+<span class="dim"># 单命令：自动启动看板 + 受管理的 PowerContext</span>
+.venv\Scripts\python -m board
 
-<span class="dim"># 终端 B：初始化并启动看板</span>
-.venv\Scripts\python scripts\seed.py
-.venv\Scripts\python -m uvicorn board.app:app --port 18800</code></pre>
+<span class="dim"># 打开 http://127.0.0.1:18800</span></code></pre>
           <button class="copy-button" type="button" data-copy-target="quickstart-code">复制命令</button>
         </div>
       </div>
@@ -322,6 +323,7 @@ python -m venv .venv
             <li><b>拆解</b><span>把赛题要求拆成看板字段、记忆链路和验收样例。</span></li>
             <li><b>实现</b><span>完成 FastAPI 接口、SQLite 存储、原生前端与 PowerContext 客户端。</span></li>
             <li><b>验证</b><span>运行单元测试、接口验证、重启恢复和浏览器交互检查。</span></li>
+            <li><b>修复</b><span>按平台反馈把外部服务依赖改为应用自管理，并用干净环境验证重启读回。</span></li>
             <li><b>发布</b><span>制作展示站，通过 Qoder Sites 发布为公开访问。</span></li>
           </ul>
         </div>
@@ -334,10 +336,10 @@ python -m venv .venv
             <div><dt>账号 UID</dt><dd class="mono">01a18285-6bd1-78e0-abad-5d5ee482486e</dd></div>
             <div><dt>开发会话</dt><dd>DS-06.md</dd></div>
             <div><dt>Session</dt><dd class="mono">e4f5152c…4bcf</dd></div>
-            <div><dt>仓库分支</dt><dd class="mono">feat/eco-qoder</dd></div>
-            <div><dt>实现提交</dt><dd class="mono">89a1400c</dd></div>
+            <div><dt>仓库分支</dt><dd class="mono">fix/qoder-self-contained-memory</dd></div>
+            <div><dt>自包含修复</dt><dd class="mono">FIX_COMMIT</dd></div>
           </dl>
-          <a class="record-link" href="https://github.com/ArnoldCherry/powercontext-2026-competition/blob/feat/eco-qoder/qoder/evidence/qoder-session.md" target="_blank" rel="noreferrer">查看会话记录导出 <span>↗</span></a>
+          <a class="record-link" href="https://github.com/ArnoldCherry/powercontext-2026-competition/blob/fix/qoder-self-contained-memory/qoder/evidence/qoder-session.md" target="_blank" rel="noreferrer">查看会话记录导出 <span>↗</span></a>
           <p>本站由 Qoder Sites 发布。</p>
         </aside>
       </div>

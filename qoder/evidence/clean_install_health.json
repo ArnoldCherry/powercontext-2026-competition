@@ -1,0 +1,52 @@
+{
+  "captured_at": "2026-10-29T23:41:11+08:00",
+  "clean_venv": "临时干净虚拟环境（验证后已删除）",
+  "python": "3.14.3",
+  "command": "BOARD_PORT=18813 python -m board",
+  "requirements": "powercontext[cli,server]==1.2.0\nfastapi>=0.115,<1\nuvicorn>=0.34,<1\nhttpx>=0.28,<1",
+  "external_18801": "not-listening",
+  "health": {
+    "status": "ok",
+    "database": {
+      "status": "ok",
+      "tasks": 11,
+      "path": "C:\\Users\\而忧\\.qoder-cn\\tmp\\qoder-clean-data\\board.db"
+    },
+    "memory": {
+      "status": "online",
+      "url": "http://127.0.0.1:54207",
+      "ready": true,
+      "access_mode": "disabled",
+      "mode": "managed",
+      "managed": true,
+      "pid": 39096,
+      "data_dir": "C:\\Users\\而忧\\.qoder-cn\\tmp\\qoder-clean-data\\powercontext",
+      "log_path": "C:\\Users\\而忧\\.qoder-cn\\tmp\\qoder-clean-data\\powercontext-managed.log"
+    },
+    "runtime": {
+      "mode": "managed",
+      "url": "http://127.0.0.1:54207",
+      "managed": true,
+      "pid": 39096,
+      "data_dir": "C:\\Users\\而忧\\.qoder-cn\\tmp\\qoder-clean-data\\powercontext",
+      "log_path": "C:\\Users\\而忧\\.qoder-cn\\tmp\\qoder-clean-data\\powercontext-managed.log",
+      "error": null
+    },
+    "startup_error": null,
+    "seed_error": null,
+    "seed": {
+      "task_count": 11,
+      "created_now": 0,
+      "scope_id": "scp_3vperbv73krkzbsfxb9te91tat",
+      "progress_count": 0,
+      "memory_error": null
+    },
+    "scope_id": "scp_3vperbv73krkzbsfxb9te91tat",
+    "time": "2026-10-29T23:41:10+08:00"
+  },
+  "powercontext_package": [
+    "Name: powercontext",
+    "Version: 1.2.0"
+  ],
+  "cleanup": "临时环境位于非项目盘，验证后已删除；项目运行仅使用 qoder/ 目录与 data/ 目录"
+}

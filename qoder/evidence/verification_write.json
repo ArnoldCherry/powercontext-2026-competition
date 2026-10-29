@@ -1,6 +1,6 @@
 {
   "phase": "write_and_read",
-  "started_at": "2026-10-29T20:51:06+08:00",
+  "started_at": "2026-10-29T23:53:23+08:00",
   "checks": [
     {
       "name": "看板数据库可用",
@@ -8,7 +8,7 @@
       "detail": {
         "status": "ok",
         "tasks": 11,
-        "path": "D:\\database\\pc-parallel\\qoder\\qoder\\data\\board.db"
+        "path": "D:\\database\\pc-parallel\\qoder-fix\\qoder\\data\\board.db"
       }
     },
     {
@@ -16,9 +16,42 @@
       "ok": true,
       "detail": {
         "status": "online",
-        "url": "http://127.0.0.1:18801",
+        "url": "http://127.0.0.1:63149",
         "ready": true,
-        "access_mode": "disabled"
+        "access_mode": "disabled",
+        "mode": "managed",
+        "managed": true,
+        "pid": 11184,
+        "data_dir": "D:\\database\\pc-parallel\\qoder-fix\\qoder\\data\\powercontext",
+        "log_path": "D:\\database\\pc-parallel\\qoder-fix\\qoder\\data\\powercontext-managed.log"
+      }
+    },
+    {
+      "name": "PowerContext 由应用自动管理",
+      "ok": true,
+      "detail": {
+        "mode": "managed",
+        "url": "http://127.0.0.1:63149",
+        "managed": true,
+        "pid": 11184,
+        "data_dir": "D:\\database\\pc-parallel\\qoder-fix\\qoder\\data\\powercontext",
+        "log_path": "D:\\database\\pc-parallel\\qoder-fix\\qoder\\data\\powercontext-managed.log",
+        "error": null
+      }
+    },
+    {
+      "name": "启动无错误且自动播种完成",
+      "ok": true,
+      "detail": {
+        "startup_error": null,
+        "seed_error": null,
+        "seed": {
+          "task_count": 11,
+          "created_now": 0,
+          "scope_id": "scp_1jprw3p49jdfk67cjnpgyfvy37",
+          "progress_count": 0,
+          "memory_error": null
+        }
       }
     },
     {
@@ -38,9 +71,9 @@
           "default_direction": "全部",
           "default_status": "全部",
           "default_difficulty": "全部",
-          "saved_at": "2026-10-29T20:49:02+08:00"
+          "saved_at": "2026-10-29T23:48:05+08:00"
         },
-        "saved_at": "2026-10-29T20:49:02+08:00"
+        "saved_at": "2026-10-29T23:48:05+08:00"
       }
     },
     {
@@ -49,8 +82,8 @@
       "detail": {
         "progress": [
           {
-            "at": "2026-10-29T20:49:02+08:00",
-            "next": "运行验证 verifyrunf916fa26 并确认重启后可恢复",
+            "at": "2026-10-29T23:48:06+08:00",
+            "next": "运行验证 verifyrunc97146cd 并确认重启后可恢复",
             "status": "ready",
             "task": "DEMO-01",
             "title": "验证样例：状态更新写入记忆",
@@ -58,42 +91,42 @@
               "memory_ref": {
                 "family": "memory",
                 "artifact_id": "memory",
-                "revision": 11
+                "revision": 24
               },
-              "entry_id": "mem_ent_7ec4eb97d03745fc928d3d2c078d57dc",
-              "entry_version_id": "mem_ver_26877984da214b14a65d768db8b15d63"
+              "entry_id": "mem_ent_451dddf61e63407280f22c9ee259cc5b",
+              "entry_version_id": "mem_ver_823ae4b2e1584067bac95a620b4d0d6b"
             }
           },
           {
-            "at": "2026-10-29T20:41:25+08:00",
-            "next": "发布 Qoder Sites 展示站并回填公开网址",
-            "status": "doing",
-            "task": "DS-06",
-            "title": "Qoder 提效项目与 Sites 发布",
+            "at": "2026-10-29T23:47:52+08:00",
+            "next": "运行验证 verifyrunc97146cd 并确认重启后可恢复",
+            "status": "ready",
+            "task": "DEMO-01",
+            "title": "验证样例：状态更新写入记忆",
             "_citation": {
               "memory_ref": {
                 "family": "memory",
                 "artifact_id": "memory",
-                "revision": 11
+                "revision": 24
               },
-              "entry_id": "mem_ent_7a2827f992694970a2abb2593e134aad",
-              "entry_version_id": "mem_ver_32822ca23d5e48e298430bf2202b36f9"
+              "entry_id": "mem_ent_119d990be7b74e6cae81a0219527d341",
+              "entry_version_id": "mem_ver_f454cacd536b481db85137a6d30df4cf"
             }
           },
           {
-            "at": "2026-10-29T20:11:22+08:00",
-            "next": "看板后端与界面完成，接入 PowerContext 记忆",
+            "at": "2026-10-29T23:47:51+08:00",
+            "next": "运行验证 verifyrunc97146cd 并确认重启后可恢复",
             "status": "doing",
-            "task": "DS-06",
-            "title": "Qoder 提效项目与 Sites 发布",
+            "task": "DEMO-01",
+            "title": "验证样例：状态更新写入记忆",
             "_citation": {
               "memory_ref": {
                 "family": "memory",
                 "artifact_id": "memory",
-                "revision": 11
+                "revision": 24
               },
-              "entry_id": "mem_ent_7fb86c1b262f418ba3c54e7cb1513339",
-              "entry_version_id": "mem_ver_d58dc061ef48412192b1e0b43bf4ebb1"
+              "entry_id": "mem_ent_ac91ad7b462b4545ad9d7ee185c51812",
+              "entry_version_id": "mem_ver_0d817c34634f4759bb0ab87b4d88ebeb"
             }
           }
         ]
@@ -103,7 +136,7 @@
       "name": "看板已绑定 Scope",
       "ok": true,
       "detail": {
-        "scope_id": "scp_6c5b3q8xkzyma5w264pxf61fgx"
+        "scope_id": "scp_1jprw3p49jdfk67cjnpgyfvy37"
       }
     },
     {
@@ -113,10 +146,10 @@
         "memory_ref": {
           "family": "memory",
           "artifact_id": "memory",
-          "revision": 12
+          "revision": 25
         },
-        "entry_id": "mem_ent_aa6b0cd6c28049389a288b9732c8fd49",
-        "entry_version_id": "mem_ver_0b9f688aec8f4009898c83ef8ad2bb3d"
+        "entry_id": "mem_ent_888e12dc58e946ccace70ee450749574",
+        "entry_version_id": "mem_ver_33c3f79c3d5d4a83825f038c08cbad01"
       }
     },
     {
@@ -128,7 +161,7 @@
           "default_direction": "Qoder",
           "default_status": "ready",
           "default_difficulty": "A",
-          "saved_at": "2026-10-29T20:51:08+08:00"
+          "saved_at": "2026-10-29T23:53:26+08:00"
         },
         "source": "powercontext"
       }
@@ -140,10 +173,10 @@
         "memory_ref": {
           "family": "memory",
           "artifact_id": "memory",
-          "revision": 13
+          "revision": 26
         },
-        "entry_id": "mem_ent_49828b68f70746c9abd24f9bbe69963c",
-        "entry_version_id": "mem_ver_0fe03a0223c642d6ba5a69d4aba5da26"
+        "entry_id": "mem_ent_873df4a1c14c48699f83543f74ab4836",
+        "entry_version_id": "mem_ver_f536290d6e28465db9731221e50ab3ef"
       }
     },
     {
@@ -163,14 +196,14 @@
         "submission_url": "",
         "task_number": "",
         "score": null,
-        "next_action": "运行验证 verifyrunc1f341c5 并确认重启后可恢复",
+        "next_action": "运行验证 verifyrun1152ab0b 并确认重启后可恢复",
         "notes": "评审可安全修改此任务，不会影响真实交付数据。",
-        "created_at": "2026-10-29T12:41:22+00:00",
-        "updated_at": "2026-10-29T12:51:11+00:00",
+        "created_at": "2026-10-29T15:31:25+00:00",
+        "updated_at": "2026-10-29T15:53:28+00:00",
         "evidence": [
           {
             "label": "验证记录",
-            "url": "https://example.com/verify/verifyrunc1f341c5"
+            "url": "https://example.com/verify/verifyrun1152ab0b"
           }
         ]
       }
@@ -185,17 +218,17 @@
             "task": "DEMO-01",
             "status": "ready",
             "title": "验证样例：状态更新写入记忆",
-            "next": "运行验证 verifyrunc1f341c5 并确认重启后可恢复",
-            "at": "2026-10-29T20:51:11+08:00"
+            "next": "运行验证 verifyrun1152ab0b 并确认重启后可恢复",
+            "at": "2026-10-29T23:53:28+08:00"
           },
           "citation": {
             "memory_ref": {
               "family": "memory",
               "artifact_id": "memory",
-              "revision": 14
+              "revision": 27
             },
-            "entry_id": "mem_ent_f2e216ad58bb449bb03edf5c80f7d840",
-            "entry_version_id": "mem_ver_99d7c40e8adb49768c712e4eb3cb1bdd"
+            "entry_id": "mem_ent_5336e13a73604b14846bfac795eeacad",
+            "entry_version_id": "mem_ver_ab014db5f48a46f9a48b53170ec4ad9c"
           }
         }
       }
@@ -209,12 +242,12 @@
             "memory_ref": {
               "family": "memory",
               "artifact_id": "memory",
-              "revision": 14
+              "revision": 27
             },
-            "entry_id": "mem_ent_f2e216ad58bb449bb03edf5c80f7d840",
-            "entry_version_id": "mem_ver_99d7c40e8adb49768c712e4eb3cb1bdd"
+            "entry_id": "mem_ent_5336e13a73604b14846bfac795eeacad",
+            "entry_version_id": "mem_ver_ab014db5f48a46f9a48b53170ec4ad9c"
           },
-          "text": "[progress] {\"at\": \"2026-10-29T20:51:11+08:00\", \"next\": \"运行验证 verifyrunc1f341c5 并确认重启后可恢复\", \"status\": \"ready\", \"task\": \"DEMO-01\", \"title\": \"验证样例：状态更新写入记忆\"}",
+          "text": "[progress] {\"at\": \"2026-10-29T23:53:28+08:00\", \"next\": \"运行验证 verifyrun1152ab0b 并确认重启后可恢复\", \"status\": \"ready\", \"task\": \"DEMO-01\", \"title\": \"验证样例：状态更新写入记忆\"}",
           "score": 0.01639344262295082,
           "matched_by": [
             "fts"
@@ -240,21 +273,21 @@
           "submission_url": "",
           "task_number": "",
           "score": null,
-          "next_action": "运行验证 verifyrunc1f341c5 并确认重启后可恢复",
+          "next_action": "运行验证 verifyrun1152ab0b 并确认重启后可恢复",
           "notes": "评审可安全修改此任务，不会影响真实交付数据。",
-          "created_at": "2026-10-29T12:41:22+00:00",
-          "updated_at": "2026-10-29T12:51:11+00:00",
+          "created_at": "2026-10-29T15:31:25+00:00",
+          "updated_at": "2026-10-29T15:53:28+00:00",
           "evidence": [
             {
               "label": "验证记录",
-              "url": "https://example.com/verify/verifyrunc1f341c5"
+              "url": "https://example.com/verify/verifyrun1152ab0b"
             }
           ]
         },
         "progress": [
           {
-            "at": "2026-10-29T20:51:11+08:00",
-            "next": "运行验证 verifyrunc1f341c5 并确认重启后可恢复",
+            "at": "2026-10-29T23:53:28+08:00",
+            "next": "运行验证 verifyrun1152ab0b 并确认重启后可恢复",
             "status": "ready",
             "task": "DEMO-01",
             "title": "验证样例：状态更新写入记忆",
@@ -262,15 +295,15 @@
               "memory_ref": {
                 "family": "memory",
                 "artifact_id": "memory",
-                "revision": 14
+                "revision": 27
               },
-              "entry_id": "mem_ent_f2e216ad58bb449bb03edf5c80f7d840",
-              "entry_version_id": "mem_ver_99d7c40e8adb49768c712e4eb3cb1bdd"
+              "entry_id": "mem_ent_5336e13a73604b14846bfac795eeacad",
+              "entry_version_id": "mem_ver_ab014db5f48a46f9a48b53170ec4ad9c"
             }
           },
           {
-            "at": "2026-10-29T20:49:02+08:00",
-            "next": "运行验证 verifyrunf916fa26 并确认重启后可恢复",
+            "at": "2026-10-29T23:48:06+08:00",
+            "next": "运行验证 verifyrunc97146cd 并确认重启后可恢复",
             "status": "ready",
             "task": "DEMO-01",
             "title": "验证样例：状态更新写入记忆",
@@ -278,58 +311,58 @@
               "memory_ref": {
                 "family": "memory",
                 "artifact_id": "memory",
-                "revision": 14
+                "revision": 27
               },
-              "entry_id": "mem_ent_7ec4eb97d03745fc928d3d2c078d57dc",
-              "entry_version_id": "mem_ver_26877984da214b14a65d768db8b15d63"
+              "entry_id": "mem_ent_451dddf61e63407280f22c9ee259cc5b",
+              "entry_version_id": "mem_ver_823ae4b2e1584067bac95a620b4d0d6b"
             }
           },
           {
-            "at": "2026-10-29T20:41:25+08:00",
-            "next": "发布 Qoder Sites 展示站并回填公开网址",
-            "status": "doing",
-            "task": "DS-06",
-            "title": "Qoder 提效项目与 Sites 发布",
-            "_citation": {
-              "memory_ref": {
-                "family": "memory",
-                "artifact_id": "memory",
-                "revision": 14
-              },
-              "entry_id": "mem_ent_7a2827f992694970a2abb2593e134aad",
-              "entry_version_id": "mem_ver_32822ca23d5e48e298430bf2202b36f9"
-            }
-          },
-          {
-            "at": "2026-10-29T20:11:22+08:00",
-            "next": "看板后端与界面完成，接入 PowerContext 记忆",
-            "status": "doing",
-            "task": "DS-06",
-            "title": "Qoder 提效项目与 Sites 发布",
-            "_citation": {
-              "memory_ref": {
-                "family": "memory",
-                "artifact_id": "memory",
-                "revision": 14
-              },
-              "entry_id": "mem_ent_7fb86c1b262f418ba3c54e7cb1513339",
-              "entry_version_id": "mem_ver_d58dc061ef48412192b1e0b43bf4ebb1"
-            }
-          },
-          {
-            "at": "2026-10-29T19:41:22+08:00",
-            "next": "验证样例任务已就绪，等待运行 verify.py",
-            "status": "doing",
+            "at": "2026-10-29T23:47:52+08:00",
+            "next": "运行验证 verifyrunc97146cd 并确认重启后可恢复",
+            "status": "ready",
             "task": "DEMO-01",
             "title": "验证样例：状态更新写入记忆",
             "_citation": {
               "memory_ref": {
                 "family": "memory",
                 "artifact_id": "memory",
-                "revision": 14
+                "revision": 27
               },
-              "entry_id": "mem_ent_25c6b192c42b4a4bb7df09cf5afa7460",
-              "entry_version_id": "mem_ver_e6175b3c57ed4fe7ab9b2722ee04b472"
+              "entry_id": "mem_ent_119d990be7b74e6cae81a0219527d341",
+              "entry_version_id": "mem_ver_f454cacd536b481db85137a6d30df4cf"
+            }
+          },
+          {
+            "at": "2026-10-29T23:33:01+08:00",
+            "next": "运行验证 verifyrunc97146cd 并确认重启后可恢复",
+            "status": "ready",
+            "task": "DEMO-01",
+            "title": "验证样例：状态更新写入记忆",
+            "_citation": {
+              "memory_ref": {
+                "family": "memory",
+                "artifact_id": "memory",
+                "revision": 27
+              },
+              "entry_id": "mem_ent_6e4d43d8540a43e88f5219242dd53f20",
+              "entry_version_id": "mem_ver_079fbe8c02c248948addf0d129606103"
+            }
+          },
+          {
+            "at": "2026-10-29T23:32:54+08:00",
+            "next": "运行验证 verifyrunc97146cd 并确认重启后可恢复",
+            "status": "ready",
+            "task": "DEMO-01",
+            "title": "验证样例：状态更新写入记忆",
+            "_citation": {
+              "memory_ref": {
+                "family": "memory",
+                "artifact_id": "memory",
+                "revision": 27
+              },
+              "entry_id": "mem_ent_9088347ebce34c13a16c9891179e47ce",
+              "entry_version_id": "mem_ver_0e7084d2820849359e29089563c93efd"
             }
           }
         ]
@@ -339,21 +372,21 @@
       "name": "已保存重启验证状态",
       "ok": true,
       "detail": {
-        "path": "D:\\database\\pc-parallel\\qoder\\qoder\\data\\verify_state.json",
-        "run_id": "verifyrunc1f341c5"
+        "path": "D:\\database\\pc-parallel\\qoder-fix\\qoder\\data\\verify_state.json",
+        "run_id": "verifyrun1152ab0b"
       }
     }
   ],
-  "finished_at": "2026-10-29T20:51:13+08:00",
-  "run_id": "verifyrunc1f341c5",
+  "finished_at": "2026-10-29T23:53:30+08:00",
+  "run_id": "verifyrun1152ab0b",
   "powercontext_citation": {
     "memory_ref": {
       "family": "memory",
       "artifact_id": "memory",
-      "revision": 14
+      "revision": 27
     },
-    "entry_id": "mem_ent_f2e216ad58bb449bb03edf5c80f7d840",
-    "entry_version_id": "mem_ver_99d7c40e8adb49768c712e4eb3cb1bdd"
+    "entry_id": "mem_ent_5336e13a73604b14846bfac795eeacad",
+    "entry_version_id": "mem_ver_ab014db5f48a46f9a48b53170ec4ad9c"
   },
   "search_hits": [
     {
@@ -361,12 +394,12 @@
         "memory_ref": {
           "family": "memory",
           "artifact_id": "memory",
-          "revision": 14
+          "revision": 27
         },
-        "entry_id": "mem_ent_f2e216ad58bb449bb03edf5c80f7d840",
-        "entry_version_id": "mem_ver_99d7c40e8adb49768c712e4eb3cb1bdd"
+        "entry_id": "mem_ent_5336e13a73604b14846bfac795eeacad",
+        "entry_version_id": "mem_ver_ab014db5f48a46f9a48b53170ec4ad9c"
       },
-      "text": "[progress] {\"at\": \"2026-10-29T20:51:11+08:00\", \"next\": \"运行验证 verifyrunc1f341c5 并确认重启后可恢复\", \"status\": \"ready\", \"task\": \"DEMO-01\", \"title\": \"验证样例：状态更新写入记忆\"}",
+      "text": "[progress] {\"at\": \"2026-10-29T23:53:28+08:00\", \"next\": \"运行验证 verifyrun1152ab0b 并确认重启后可恢复\", \"status\": \"ready\", \"task\": \"DEMO-01\", \"title\": \"验证样例：状态更新写入记忆\"}",
       "score": 0.01639344262295082,
       "matched_by": [
         "fts"

@@ -1,24 +1,25 @@
 from __future__ import annotations
 
-import os
+import asyncio
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any, Literal
+from typing import Annotated, Any, Literal
 
-import uvicorn
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, field_validator
 
 from board.config import load_settings
 from board.memory import MemoryService, MemoryUnavailable
+from board.runtime import PowerContextRuntime, PowerContextRuntimeError
+from board.seed import seed_board
 from board.store import DIFFICULTIES, STATUSES, Store
 
 settings = load_settings()
 store = Store(settings.db_path)
-memory = MemoryService(settings, store)
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 LOCAL_TIMEZONE = timezone(timedelta(hours=8))
@@ -102,8 +103,44 @@ class PreferencePayload(BaseModel):
         return value
 
 
-app = FastAPI(title="生态赛交付看板", version="1.0.0")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    runtime = PowerContextRuntime(settings)
+    try:
+        await asyncio.to_thread(runtime.start)
+    except PowerContextRuntimeError as error:
+        runtime.error = str(error)
+    app.state.runtime = runtime
+    app.state.startup_error = runtime.error
+    service = MemoryService(settings, store, unavailable_reason=runtime.error)
+    app.state.memory = service
+    app.state.seed_result = None
+    app.state.seed_error = None
+    if settings.auto_seed:
+        try:
+            result = await asyncio.to_thread(
+                seed_board,
+                store,
+                service,
+                receipt_path=settings.db_path.parent / "seed_receipt.json",
+            )
+            app.state.seed_result = result
+            app.state.seed_error = result.get("memory_error")
+        except Exception as error:  # noqa: BLE001 - surface initialization failures in /api/health
+            app.state.seed_error = str(error)
+    yield
+    runtime.stop()
+
+
+app = FastAPI(title="生态赛交付看板", version="1.1.0", lifespan=lifespan)
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
+
+def get_memory(request: Request) -> MemoryService:
+    return request.app.state.memory
+
+
+MemoryDependency = Annotated[MemoryService, Depends(get_memory)]
 
 
 def _local_now() -> str:
@@ -123,7 +160,7 @@ def _merged_preferences(saved: dict[str, Any] | None) -> dict[str, Any]:
     return merged
 
 
-def _memory_bundle() -> dict[str, Any]:
+def _memory_bundle(memory: MemoryService) -> dict[str, Any]:
     health = memory.health()
     bundle: dict[str, Any] = {
         "memory": health,
@@ -153,11 +190,23 @@ def _memory_bundle() -> dict[str, Any]:
     return bundle
 
 
-def _memory_write(action: Any) -> dict[str, Any]:
+def _memory_write(memory: MemoryService, action: Any) -> dict[str, Any]:
     try:
         return {"status": "saved", "detail": action()}
     except MemoryUnavailable as error:
         return {"status": "error", "error": str(error)}
+
+
+def _seed_summary(result: dict[str, Any] | None) -> dict[str, Any] | None:
+    if result is None:
+        return None
+    return {
+        "task_count": result.get("task_count"),
+        "created_now": result.get("created_now"),
+        "scope_id": result.get("scope_id"),
+        "progress_count": len(result.get("seeded_progress") or []),
+        "memory_error": result.get("memory_error"),
+    }
 
 
 @app.get("/", include_in_schema=False)
@@ -166,12 +215,25 @@ def index() -> FileResponse:
 
 
 @app.get("/api/health")
-def health() -> dict[str, Any]:
-    memory_health = memory.health()
+def health(request: Request) -> dict[str, Any]:
+    runtime = request.app.state.runtime
+    runtime_status = runtime.status()
+    memory_health = request.app.state.memory.health()
     return {
         "status": "ok",
         "database": {"status": "ok", "tasks": store.count_tasks(), "path": str(settings.db_path)},
-        "memory": memory_health,
+        "memory": {
+            **memory_health,
+            "mode": runtime_status["mode"],
+            "managed": runtime_status["managed"],
+            "pid": runtime_status["pid"],
+            "data_dir": runtime_status["data_dir"],
+            "log_path": runtime_status["log_path"],
+        },
+        "runtime": runtime_status,
+        "startup_error": request.app.state.startup_error,
+        "seed_error": request.app.state.seed_error,
+        "seed": _seed_summary(request.app.state.seed_result),
         "scope_id": store.get_meta("powercontext_scope_id"),
         "time": _local_now(),
     }
@@ -179,12 +241,13 @@ def health() -> dict[str, Any]:
 
 @app.get("/api/bootstrap")
 def bootstrap(
+    memory: MemoryDependency,
     direction: str | None = None,
     difficulty: str | None = None,
     status: str | None = None,
     q: str | None = None,
 ) -> dict[str, Any]:
-    bundle = _memory_bundle()
+    bundle = _memory_bundle(memory)
     return {
         "tasks": store.list_tasks(direction=direction, difficulty=difficulty, status=status, query=q),
         "stats": store.stats(),
@@ -206,16 +269,20 @@ def list_tasks(
 
 
 @app.post("/api/tasks", status_code=201)
-def create_task(payload: TaskCreate) -> dict[str, Any]:
+def create_task(payload: TaskCreate, memory: MemoryDependency) -> dict[str, Any]:
     if store.get_task(payload.id):
         raise HTTPException(status_code=409, detail=f"任务 {payload.id} 已存在")
     task = store.create_task(payload.model_dump())
-    memory_result = _memory_write(lambda: memory.record_progress(task, f"创建任务 {task['id']}"))
+    memory_result = _memory_write(memory, lambda: memory.record_progress(task, f"创建任务 {task['id']}"))
     return {"task": task, "memory": memory_result}
 
 
 @app.patch("/api/tasks/{task_id}")
-def update_task(task_id: str, payload: TaskUpdate) -> dict[str, Any]:
+def update_task(
+    task_id: str,
+    payload: TaskUpdate,
+    memory: MemoryDependency,
+) -> dict[str, Any]:
     before = store.get_task(task_id)
     if not before:
         raise HTTPException(status_code=404, detail=f"任务 {task_id} 不存在")
@@ -226,7 +293,8 @@ def update_task(task_id: str, payload: TaskUpdate) -> dict[str, Any]:
     memory_fields = {"status", "next_action", "evidence", "submission_url", "task_number", "score", "commit_hash"}
     if memory_fields.intersection(changes):
         memory_result = _memory_write(
-            lambda: memory.record_progress(task, f"更新任务 {task_id}: {before['status']} -> {task['status']}")
+            memory,
+            lambda: memory.record_progress(task, f"更新任务 {task_id}: {before['status']} -> {task['status']}"),
         )
     else:
         memory_result = {"status": "skipped", "reason": "本次修改仅涉及描述字段"}
@@ -234,8 +302,8 @@ def update_task(task_id: str, payload: TaskUpdate) -> dict[str, Any]:
 
 
 @app.get("/api/preferences")
-def get_preferences() -> dict[str, Any]:
-    bundle = _memory_bundle()
+def get_preferences(memory: MemoryDependency) -> dict[str, Any]:
+    bundle = _memory_bundle(memory)
     return {
         "preferences": bundle["preferences"],
         "source": bundle["preference_source"],
@@ -245,7 +313,10 @@ def get_preferences() -> dict[str, Any]:
 
 
 @app.put("/api/preferences")
-def save_preferences(payload: PreferencePayload) -> dict[str, Any]:
+def save_preferences(
+    payload: PreferencePayload,
+    memory: MemoryDependency,
+) -> dict[str, Any]:
     try:
         result = memory.save_preference(payload.model_dump())
     except MemoryUnavailable as error:
@@ -254,7 +325,10 @@ def save_preferences(payload: PreferencePayload) -> dict[str, Any]:
 
 
 @app.get("/api/memory/progress")
-def memory_progress(limit: int = Query(default=12, ge=1, le=50)) -> dict[str, Any]:
+def memory_progress(
+    memory: MemoryDependency,
+    limit: int = Query(default=12, ge=1, le=50),
+) -> dict[str, Any]:
     try:
         entries = memory.recent_progress(limit=limit)
     except MemoryUnavailable as error:
@@ -263,18 +337,13 @@ def memory_progress(limit: int = Query(default=12, ge=1, le=50)) -> dict[str, An
 
 
 @app.get("/api/memory/search")
-def memory_search(q: str = Query(min_length=1, max_length=100), limit: int = Query(default=20, ge=1, le=80)):
+def memory_search(
+    memory: MemoryDependency,
+    q: str = Query(min_length=1, max_length=100),
+    limit: int = Query(default=20, ge=1, le=80),
+):
     try:
         hits = memory.search(q, limit=limit)
     except MemoryUnavailable as error:
         raise HTTPException(status_code=503, detail=str(error)) from error
     return {"query": q, "hits": hits, "total": len(hits)}
-
-
-if __name__ == "__main__":
-    uvicorn.run(
-        "board.app:app",
-        host=os.environ.get("BOARD_HOST", "127.0.0.1"),
-        port=int(os.environ.get("BOARD_PORT", "18800")),
-        reload=False,
-    )
