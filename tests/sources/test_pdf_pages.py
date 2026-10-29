@@ -188,6 +188,37 @@ def test_search_is_bounded_distinct_and_statement_aware() -> None:
     assert asyncio.run(search_pdf_pages(memory, "   ", limit=5)) == ()
 
 
+def test_search_targets_named_document_statement_page() -> None:
+    memory_ref = ArtifactRef(family="memory", artifact_id="memory-2", revision=1)
+
+    def record(index: int, text: str) -> SimpleNamespace:
+        return SimpleNamespace(
+            citation=MemoryCitation(
+                memory_ref=memory_ref,
+                entry_id=f"entry-{index}",
+                entry_version_id=f"version-{index}",
+            ),
+            entry=SimpleNamespace(text=text),
+        )
+
+    records = (
+        record(1, "PEPSICO_2022_10K\ngeography and other disclosures"),
+        record(2, "PEPSICO_2022_10K\nConsolidated Statement of Income net revenue 2022"),
+        record(3, "BOEING_2022_10K\nnet revenue net revenue net revenue gross profit"),
+        record(4, "BOEING_2022_10K\nConsolidated Statement of Income net revenue 2022"),
+    )
+    memory = SimpleNamespace(list=_listing(records))
+
+    citations = asyncio.run(
+        search_pdf_pages(
+            memory,
+            "What is PepsiCo's FY2022 net revenue shown in the income statement?",
+            limit=2,
+        )
+    )
+    assert citations[0].entry_id == "entry-2"
+
+
 def _listing(records):
     async def list_entries():
         return SimpleNamespace(entries=records)
