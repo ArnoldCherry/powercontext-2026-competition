@@ -204,15 +204,22 @@ class PiSessionConnector:
     async def run(self, session: ConnectorRunSession) -> ConnectorRunCompletion:
         archive = _parse_archive(self._path.read_bytes())
         imported = _load_checkpoint(session.checkpoint)
+        records_by_identity: dict[str, dict[str, JsonValue]] = {}
+        for event_id, record in archive.by_id.items():
+            try:
+                identity = pi_event_source_id(archive.session_id, event_id)
+            except ValueError:
+                continue
+            records_by_identity[identity] = record
+        for identity, digest in imported.items():
+            record = records_by_identity.get(identity)
+            if record is None:
+                raise ValueError("an imported Pi event is missing")
+            if _record_digest(record) != digest:
+                raise ValueError("an imported Pi event was modified")
         all_events = tuple(
             event for record in archive.records if (event := _event_from_record(archive.session_id, record)) is not None
         )
-        for event in all_events:
-            identity = pi_event_source_id(event.session_id, event.event_id)
-            digest = _record_digest(event.record)
-            existing = imported.get(identity)
-            if existing is not None and existing != digest:
-                raise ValueError("an imported Pi event was modified")
         selected = {
             pi_event_source_id(event.session_id, event.event_id)
             for record in _selected_chain(archive, self._leaf_id)
@@ -242,6 +249,10 @@ def _parse_archive(content: bytes) -> _PiArchive:
     return _PiArchive(session_id=session_id, records=tuple(records[1:]), by_id=by_id, order=order)
 
 
+def _reject_json_constant(value: str) -> JsonValue:
+    raise ValueError(f"Pi session JSON constant is not allowed: {value}")
+
+
 def _decode_records(content: bytes) -> list[dict[str, JsonValue]]:
     if not isinstance(content, bytes):
         raise ValueError("Pi session content must be bytes")
@@ -254,9 +265,11 @@ def _decode_records(content: bytes) -> list[dict[str, JsonValue]]:
         if not line.strip():
             continue
         try:
-            value = json.loads(line)
+            value = json.loads(line, parse_constant=_reject_json_constant)
         except json.JSONDecodeError as error:
             raise ValueError("Pi session lines must be valid JSON") from error
+        except ValueError as error:
+            raise ValueError("Pi session lines must not contain NaN or Infinity") from error
         if not isinstance(value, dict):
             raise ValueError("Pi session lines must be JSON objects")
         records.append(value)
