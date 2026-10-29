@@ -1,0 +1,5 @@
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+  "sdd(req_id, kind): requirement marker read by the SDD context importer",
+]

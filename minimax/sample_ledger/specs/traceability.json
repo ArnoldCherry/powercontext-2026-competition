@@ -1,0 +1,142 @@
+{
+  "schema": "sdd-traceability/v1",
+  "requirements": {
+    "REQ-REPORT-001": {
+      "keywords": ["月报", "分类", "汇总", "支出", "monthly", "category", "group", "total"],
+      "links": [
+        {
+          "kind": "code",
+          "path": "ledger/report.py",
+          "symbol": "monthly_report",
+          "relation": "implements",
+          "rationale": "月报分类汇总入口"
+        },
+        {
+          "kind": "test",
+          "path": "tests/test_report.py",
+          "name": "test_monthly_report_groups_positive_expenses",
+          "relation": "regression",
+          "rationale": "正数支出的分类合计必须保持"
+        },
+        {
+          "kind": "test",
+          "path": "tests/test_cli.py",
+          "name": "test_cli_report_prints_positive_month",
+          "relation": "regression",
+          "rationale": "CLI 输出兼容性"
+        },
+        {
+          "kind": "test",
+          "path": "tests/test_csv_io.py",
+          "name": "test_load_transactions_reads_bom_and_blank_lines",
+          "relation": "regression",
+          "rationale": "CSV 输入是月报上游兼容面"
+        },
+        {
+          "kind": "test",
+          "path": "tests/test_csv_io.py",
+          "name": "test_load_transactions_rejects_bad_amount",
+          "relation": "regression",
+          "rationale": "坏金额必须继续报错"
+        },
+        {
+          "kind": "test",
+          "path": "tests/test_csv_io.py",
+          "name": "test_load_transactions_rejects_wrong_header",
+          "relation": "regression",
+          "rationale": "表头契约不得回退"
+        }
+      ]
+    },
+    "REQ-REPORT-002": {
+      "keywords": ["月份", "当月", "过滤", "month", "filter"],
+      "links": [
+        {
+          "kind": "code",
+          "path": "ledger/report.py",
+          "symbol": "monthly_report",
+          "relation": "implements",
+          "rationale": "月份筛选入口"
+        },
+        {
+          "kind": "test",
+          "path": "tests/test_report.py",
+          "name": "test_monthly_report_filters_month",
+          "relation": "regression",
+          "rationale": "跨月数据不得混入"
+        },
+        {
+          "kind": "test",
+          "path": "tests/test_report.py",
+          "name": "test_monthly_report_handles_empty_month",
+          "relation": "regression",
+          "rationale": "空月份必须返回空汇总"
+        }
+      ]
+    },
+    "REQ-REPORT-003": {
+      "keywords": ["排序", "稳定", "sort", "order"],
+      "links": [
+        {
+          "kind": "code",
+          "path": "ledger/report.py",
+          "symbol": "monthly_report",
+          "relation": "implements",
+          "rationale": "分类排序入口"
+        },
+        {
+          "kind": "test",
+          "path": "tests/test_report.py",
+          "name": "test_monthly_report_sorts_categories",
+          "relation": "regression",
+          "rationale": "分类顺序必须稳定"
+        }
+      ]
+    },
+    "REQ-REPORT-004": {
+      "keywords": ["退款", "负数", "refund", "refund_total", "net_total", "negative"],
+      "links": [
+        {
+          "kind": "code",
+          "path": "ledger/report.py",
+          "symbol": "monthly_report",
+          "relation": "implements",
+          "rationale": "退款分离逻辑入口"
+        },
+        {
+          "kind": "test",
+          "path": "tests/test_report.py",
+          "name": "test_monthly_report_separates_refunds",
+          "relation": "verifies",
+          "rationale": "退款不得冲减分类与 total"
+        },
+        {
+          "kind": "test",
+          "path": "tests/test_cli.py",
+          "name": "test_cli_report_includes_refund_fields",
+          "relation": "verifies",
+          "rationale": "CLI 必须输出 refund_total 和 net_total"
+        }
+      ]
+    },
+    "REQ-REPORT-005": {
+      "keywords": ["min_amount", "最低金额", "阈值", "过滤", "threshold", "minimum"],
+      "links": [
+        {
+          "kind": "code",
+          "path": "ledger/report.py",
+          "symbol": "monthly_report",
+          "relation": "implements",
+          "rationale": "最低金额过滤入口"
+        },
+        {
+          "kind": "test",
+          "path": "tests/test_report.py",
+          "name": "test_monthly_report_applies_min_amount",
+          "relation": "verifies",
+          "rationale": "阈值包含边界且退款不受影响"
+        }
+      ]
+    }
+  }
+}

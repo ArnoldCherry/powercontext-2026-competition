@@ -1,0 +1,3 @@
+powercontext[cli,server]==1.2.0
+PyMySQL>=1.1
+pytest>=8

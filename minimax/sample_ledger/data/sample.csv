@@ -1,0 +1,7 @@
+date,category,amount,note
+2026-01-03,food,40.00,lunch
+2026-01-05,food,60.00,groceries
+2026-01-08,travel,50.00,train
+2026-01-10,food,-15.00,refund
+2026-01-12,books,5.00,notebook
+2026-02-01,food,99.00,next month
