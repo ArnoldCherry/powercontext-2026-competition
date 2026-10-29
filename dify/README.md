@@ -73,7 +73,8 @@ seekdb（数据库 inn）
    ├─ inn_events     历史事件：每轮行为、原话、增减、会话号
    ├─ inn_lore       江湖异闻：14 条预置设定 + FULLTEXT(title, body, keywords)
    ├─ inn_daily      每日暗号：日期、暗号、提示
-   └─ inn_secrets    暗号领取记录：玩家 + 日期
+   ├─ inn_secrets    暗号领取记录：玩家 + 日期
+   └─ inn_requests   幂等账：玩家 + workflow run id → 已返回的响应
 ```
 
 ### 2.2 Dify 节点分工
@@ -82,7 +83,7 @@ seekdb（数据库 inn）
 | --- | --- | --- |
 | 开始 | start | 接收 `sys.query`，不要求额外开场参数 |
 | 小二听音 | parameter-extractor | 用 DeepSeek Flash 提取 `action`、`keywords`、`player_name`；提示词限定 11 类行为 |
-| 查账本 | http-request | 把玩家 id、会话 id、原话、提取结果发给后端；超时/重试可配 |
+| 查账本 | http-request | 以 `application/x-www-form-urlencoded` 发送原话/会话/提取结果；身份来自 `sys.user_id` 请求头，服务鉴权来自应用环境变量 `INN_SERVICE_TOKEN`，幂等键来自 `sys.workflow_run_id` |
 | 账房先生 | code (python3) | 解析后端 JSON，输出 `ok`、`status_line`、`director_note`、`tier`、`reputation`、`secret_hit`、`is_returning` |
 | 账房接上了吗 | if-else | 根据 HTTP 200 分支；失败时给玩家一句兜底话，不把异常栈暴露给玩家 |
 | 掌柜回话 | llm | 按「账本密报」生成 120–220 字的角色回复；温度 1.0，关闭思考模式以降低延迟 |
@@ -97,13 +98,18 @@ seekdb（数据库 inn）
 - 每轮事件写入，用于「上次你……」式回忆；
 - 赊账、人情值、称号、暗号领取记录；
 - 江湖异闻的全文检索（`MATCH ... AGAINST`），并在中文分词不命中时用 `LIKE` 兜底；
+- 每轮请求的幂等响应（`player_id + request_id` 唯一），用于 Dify 重试/响应丢失时不重复加扣分；
 - 后端启动时自动建库建表并幂等种入 14 条异闻。
 
 Dify 侧的 `.env` 同时配置了 `VECTOR_STORE=seekdb` 和 `OCEANBASE_VECTOR_*`，seekdb 容器也作为 Dify 的向量存储后端在运行；**本作品没有创建 Dify 知识库，因此没有向量数据写入**。验收时请以 `inn` 库中的业务数据和全文检索记录为准，不要把它误认为「只装了一个组件」。向量存储与业务库共用同一个 seekdb 实例，但使用不同的 database（`test` 与 `inn`）。
 
 ### 2.4 关键工程点
 
-- **SSRF 放行**：Dify 的 HTTP Request 节点经过 Squid 正向代理，默认拒绝私网。`SSRF_PROXY_ALLOW_PRIVATE_DOMAINS=inn-backend` 只放行后端容器名，不放开整个私网。可以在 `evidence/dify-stack.txt` 的 Squid access log 中看到 `inn-backend:8000` 请求。
+- **SSRF 放行 + 回环端口**：Dify 的 HTTP Request 节点经过 Squid 正向代理，默认拒绝私网。`SSRF_PROXY_ALLOW_PRIVATE_DOMAINS=inn-backend` 只放行后端容器名，不放开整个私网；后端宿主机端口只绑定 `127.0.0.1`，不暴露到局域网。
+- **身份与服务边界**：DSL 不接收玩家输入的 `player_id`。玩家身份只来自 `X-Inn-Player-Id: {{#sys.user_id#}}`，后端忽略/拒绝 body 里的伪造 `player_id`；所有业务接口要求 `X-Inn-Service-Token`，值只存在 Dify 应用环境变量和 docker/.env 中。
+- **可靠输入编码**：HTTP 节点改用 `application/x-www-form-urlencoded` 键值对，由 Dify/httpx 负责转义；双引号、换行、Unicode 不再拼进手写 JSON。
+- **幂等与并发**：`X-Inn-Request-Id: {{#sys.workflow_run_id#}}` 在 `inn_requests` 中唯一；重复请求直接返回已存响应。玩家行用 `SELECT ... FOR UPDATE` 串行化，跨进程并发不会丢更新。
+- **启动守卫**：`preflight.sh` 拒绝 `ChangeMe2026!`/`CHANGE_ME_*` 等示例值；后端启动也拒绝占位 `INN_SERVICE_TOKEN`、`INN_ADMIN_TOKEN`、`SEEKDB_PASSWORD`。
 - **状态行准确性**：称号和人情由后端计算，LLM 不负责算数；最后用 Code 节点清洗重复状态行，避免模型把 2 算成 9。
 - **失败兜底**：IF/ELSE 根据 HTTP 状态码分流；HTTP 节点自身配置 2 次重试。网络完全断开时 Dify 仍可能直接失败，这是已知限制。
 - **可复现**：DSL 用 `include_secret=false` 导出，包内不含 API Key；模型 provider 以 Marketplace 依赖声明，安装时只需配置自己的 Key。
@@ -118,7 +124,7 @@ Dify 侧的 `.env` 同时配置了 `VECTOR_STORE=seekdb` 和 `OCEANBASE_VECTOR_*
 | Dify 插件 | `langgenius/deepseek` 0.0.26（Marketplace 安装） |
 | 模型 | `deepseek-flash`；`thinking=false`，温度 1.0（掌柜）/ 0.1（识意） |
 | seekdb | `oceanbase/seekdb:latest`，实测 `5.7.25-OceanBase seekdb-v1.4.0.0` |
-| 后端 | Python 3.12 + FastAPI 0.115.6 + PyMySQL 1.1.1 |
+| 后端 | Python 3.12 + FastAPI 0.115.6 + Uvicorn 0.34.0 + PyMySQL 1.1.1 + python-multipart 0.0.20 |
 | 编排 | Docker Engine + Docker Compose v2 |
 | 运行环境 | WSL2 Ubuntu 24.04；8 GB 内存可跑（seekdb 容器限 2G） |
 
@@ -131,7 +137,7 @@ Dify 侧的 `.env` 同时配置了 `VECTOR_STORE=seekdb` 和 `OCEANBASE_VECTOR_*
 - Docker Engine 与 `docker compose` 可用；
 - 能访问 Dify Marketplace（安装 DeepSeek 插件）和 `https://api.deepseek.com`；
 - 一个 DeepSeek API Key；
-- 端口 8080（Dify）与 8000（后端）空闲；如果 2881 已被其他 seekdb 占用，请先停掉或改端口。
+- 端口 8080（Dify）与 8000（后端，仅 `127.0.0.1`）空闲；如果 2881 已被其他 seekdb 占用，请先停掉或改端口。
 
 ### 4.2 准备 Dify 1.18.0
 
@@ -141,7 +147,7 @@ cd dify/docker
 cp .env.example .env
 ```
 
-把本目录的 `env.example` 中各项合并进 `dify/docker/.env`（至少包括 `EXPOSE_NGINX_PORT`、`VECTOR_STORE`、`COMPOSE_PROFILES`、`OCEANBASE_VECTOR_*`、`SSRF_PROXY_ALLOW_PRIVATE_DOMAINS`、`INIT_PASSWORD`）。`OCEANBASE_VECTOR_PASSWORD` 和 `INN_ADMIN_TOKEN` 要记下来：后端通过前一个变量连接 seekdb，重置演示接口用后一个 token。
+把本目录的 `env.example` 中各项合并进 `dify/docker/.env`（至少包括 `EXPOSE_NGINX_PORT`、`VECTOR_STORE`、`COMPOSE_PROFILES`、`OCEANBASE_VECTOR_*`、`SSRF_PROXY_ALLOW_PRIVATE_DOMAINS`、`INIT_PASSWORD`）。`OCEANBASE_VECTOR_PASSWORD`、`INN_SERVICE_TOKEN`、`INN_ADMIN_TOKEN` 要记下来：后端用第一个变量连接 seekdb，第二个用于 Dify→后端的服务鉴权，第三个用于重置演示。三个值都必须换成真实随机值；`INN_SERVICE_TOKEN` 还要填进 Dify 应用环境变量。
 
 > 若本机 2881 被占用：停掉旧的 seekdb，或把 Compose 的 seekdb 宿主机映射改成 2882（只改 ports，不要改 `OCEANBASE_VECTOR_PORT`，否则 api/worker 会连错内部端口）。
 
@@ -159,8 +165,16 @@ cp /path/to/powercontext-2026-competition/dify/docker-compose.inn.yaml ./docker-
 
 ### 4.4 启动
 
+先检查占位值（示例值会被拒绝，退出码非 0 时先改 `.env`）：
+
 ```bash
 cd dify/docker
+bash preflight.sh .env
+```
+
+然后启动：
+
+```bash
 docker compose -f docker-compose.yaml -f docker-compose.inn.yaml \
   --profile seekdb --profile postgresql up -d --build \
   api worker worker_beat web db_postgres redis plugin_daemon nginx \
@@ -175,7 +189,7 @@ curl http://localhost:8000/health
 # {"ok":true,"seekdb":"5.7.25-OceanBase seekdb-v1.4.0.0","database":"inn"}
 ```
 
-后端首次启动会自动创建 `inn` 库、5 张表，并幂等种入 14 条异闻和今天的暗号；不需要手工跑 SQL。
+后端首次启动会自动创建 `inn` 库、6 张表（含 `inn_requests` 幂等账），并幂等种入 14 条异闻和今天的暗号；不需要手工跑 SQL。
 
 ### 4.5 初始化 Dify 并安装模型插件
 
@@ -192,7 +206,10 @@ Dify 控制台 → Studio → 创建空白应用 → 导入 DSL：
 - 推荐上传 `dsl/不二客栈.yml`（Dify 1.18 导出的 app.yaml）；
 - 也可以在 Dify 1.18 中上传 `dsl/不二客栈.ifpkg`（应用包，含 manifest 与 app.yaml）。
 
-导入后打开应用 →「发布」→「运行」。首次运行如果报模型未配置，回到模型供应商确认 DeepSeek 凭据。
+导入后：
+
+1. 打开应用 → 环境变量，把 `INN_SERVICE_TOKEN` 改成与 `docker/.env` 完全一致的真实值（DSL 里是 `CHANGE_ME_INN_SERVICE_TOKEN` 占位）。
+2. 「发布」→「运行」。首次运行如果报模型未配置，回到模型供应商确认 DeepSeek 凭据；如果返回 401，检查应用环境变量与后端 token 是否一致。
 
 ### 4.7 重置演示
 
@@ -223,27 +240,38 @@ docker compose -f docker-compose.yaml -f docker-compose.inn.yaml restart inn-bac
 
 ## 5. 验证样例
 
-以下用例在本地实际执行，原始节点日志在 `evidence/case*.sse`，可读摘要在同名 `.parsed.txt`。初始状态：已按 4.7 清空玩家 `令狐冲`（`player_id` 为 Dify 控制台账号的 `sys.user_id`）。
+以下用例在**服务鉴权 + 表单编码 + 幂等**版本上实际执行，原始节点日志在 `evidence/case*-secure.sse`，可读摘要在同名 `.parsed.txt`。初始状态：已按 4.7 清空玩家 `楚留香`（`player_id` 为 Dify 控制台账号的 `sys.user_id`）。案例 1 的原话包含双引号、换行和 emoji，用来验证表单编码与逐字保真。
 
 | # | 输入 | 关键预期 | 实际证据 |
 | --- | --- | --- | --- |
-| 1 | 我叫令狐冲，来碗断肠面。 | 提取 `点菜/断肠面/令狐冲`；seekdb 返回《断肠面》；首次来访，人情 2，生客 | `case1-first-visit.*`：`retrieval=fulltext`，回复开头称呼「令狐冲少侠」 |
-| 2 | 掌柜的，还认得我吗？上次那碗断肠面什么味儿，我到现在还记得。 | 新会话仍记得上一次点菜；人情 5，熟客 | `case2-return-memory.*`：`is_returning=true`，`memories` 含第一次原话，回复引用「上回您一进门就喊…」 |
-| 3 | 掌柜的，今日暗号是什么？ | 返回当天暗号「招财今天吃小鱼干」 | `case3-daily-hint.*`：`daily_hint` 字段与回复一致 |
-| 4 | 招财今天吃小鱼干！ | 暗号命中，人情 +18（含 +15 奖励），触发地窖女儿红；检索到《招财》《地窖》 | `case4-secret.*`：`secret_hit=true`，人情 25，座上宾，回复提到女儿红 |
-| 5 | 这破店我砸了！ | 识别捣乱，人情 -10，掌柜冷脸但还留客 | `case5-hostile.*`：`action=捣乱`，回复「我这破板凳破桌子可经不起你耍剑」 |
-| 6 | 先赊二十文酒钱，记我账上。 | 赊账 -5，债务 20，末尾催账 | `case6-credit.*`：`debt=20`，`memories` 含「赊账簿上记着 20 文未还」 |
-| 7 | 我还你二十文，把账清了。 | 还账 +8，债务归零 | `case7-repay.*`：`debt=0`，回复「二十文我收下了」 |
-| 8 | 给我讲讲燕十三的事。 | 全文检索《燕十三》，回忆之前砸店/暗号 | `case8-lore.*`：`retrieval=fulltext`，回复引用燕十三设定 |
+| 1 | `我叫楚留香，他说“来碗面”，
+第二行 🍜。` | 表单原样送达并入库；提取 `点菜`；首次来访，人情 2，生客 | `case1-secure.*`：`utterance` 逐字一致，回复称呼「楚留香少侠」 |
+| 2 | 掌柜的，还认得我吗？上次那碗断肠面，我可记得清清楚楚。 | 新会话仍记得上一次点菜；人情 5，熟客 | `case2-secure.*`：`is_returning=true`，`memories` 含第一次带引号/换行的原话 |
+| 3 | 掌柜的，今日暗号是什么？ | 返回当天暗号「招财今天吃小鱼干」 | `case3-secure.*`：`daily_hint` 字段与回复一致 |
+| 4 | 招财今天吃小鱼干！ | 暗号命中，人情 +18（含 +15 奖励），触发地窖女儿红；检索到《招财》《地窖》 | `case4-secure.*`：`secret_hit=true`，人情 25，座上宾，回复提到女儿红 |
+| 5 | 这破店我砸了！ | 识别捣乱，人情 -10，掌柜冷脸但还留客 | `case5-secure.*`：`action=捣乱`，回复冷脸但留客 |
+| 6 | 先赊二十文酒钱，记我账上。 | 赊账 -5，债务 20，末尾催账 | `case6-secure.*`：`debt=20`，`memories` 含「赊账簿上记着 20 文未还」 |
+| 7 | 我还你二十文，把账清了。 | 还账 +8，债务归零 | `case7-secure.*`：`debt=0`，回复「二十文我收下了」 |
+| 8 | 给我讲讲燕十三的事。 | 全文检索《燕十三》，回忆之前砸店/暗号 | `case8-secure.*`：`retrieval=fulltext`，回复引用燕十三设定 |
 
-跨会话验证的要点：案例 2 没有携带案例 1 的 `conversation_id`，Dify 新建了会话；后端通过 `sys.user_id` 找到同一玩家，`visit_no` 从 1 变 2，`memories` 来自上一会话。这正是「新会话仍记得」的验收点。
+跨会话验证的要点：案例 2 没有携带案例 1 的 `conversation_id`，Dify 新建了会话；后端通过可信请求头 `X-Inn-Player-Id: sys.user_id` 找到同一玩家，`visit_no` 从 1 变 2，`memories` 来自上一会话。这正是「新会话仍记得」的验收点。
+
+安全/幂等回归（`evidence/security-regression.txt`，全部 PASS）：
+
+- 无/错误服务 token、缺玩家 header 拒绝；
+- body 伪造 `player_id` 拒绝且不创建玩家；
+- 未授权 ledger 拒绝，管理员或本人可读；
+- 无管理员 token reset 拒绝；
+- 双引号/换行/Unicode 原话逐字保真；
+- 重复 `request_id` 只记一次；
+- 两个后端进程并发不同请求不丢更新（reputation=4）；
+- 两个后端进程并发同一 `request_id` 只记一次（reputation=2）。
 
 ### 5.1 网页端证据
 
-- `evidence/ui-0-opening.png`：应用开场与 4 个建议问题；
-- `evidence/ui-1-first-visit.png`：第一次点菜，掌柜称呼名号并使用《断肠面》；
-- `evidence/ui-2-return-memory.png`：新会话点「掌柜的，还认得我吗」，掌柜复述上次点菜；
-- `evidence/ui-3-daily-hint.png`：同一会话继续问暗号，返回当天暗号与女儿红。
+- `evidence/ui-secure-0-opening.png`：应用开场与 4 个建议问题；
+- `evidence/ui-secure-1-first-visit.png`：第一次带引号/换行/emoji 点菜；
+- `evidence/ui-secure-2-return-memory.png`：新会话点「掌柜的，还认得我吗」，掌柜复述上次点菜。
 
 网页端用无头 Chrome 实际点击输入框、发送消息、等待回复后截图；截图中的对话就是 Dify Web App 的真实渲染结果。
 
@@ -256,9 +284,10 @@ docker compose -f docker-compose.yaml -f docker-compose.inn.yaml restart inn-bac
 ```sql
 SELECT VERSION();                 -- 5.7.25-OceanBase seekdb-v1.4.0.0
 SHOW DATABASES;                   -- inn / test / mysql / oceanbase ...
-USE inn; SHOW TABLES;             -- inn_players, inn_events, inn_lore, inn_daily, inn_secrets
-SELECT * FROM inn_players;        -- 楚留香 / 令狐冲等玩家的名号、人情、赊账、访问次数
-SELECT * FROM inn_events;         -- 每轮行为、原话、delta、会话号
+USE inn; SHOW TABLES;             -- inn_players, inn_events, inn_lore, inn_daily, inn_secrets, inn_requests
+SELECT * FROM inn_players;        -- 楚留香等玩家的名号、人情、赊账、访问次数
+SELECT * FROM inn_events;         -- 每轮行为、原话（含引号/换行）、delta、会话号
+SELECT * FROM inn_requests;       -- 每个 workflow run 的幂等响应
 SELECT * FROM inn_lore;           -- 14 条异闻
 SHOW INDEX FROM inn_lore;         -- ft_inn_lore: FULLTEXT(title, body, keywords)
 SELECT ... MATCH ... AGAINST ('燕十三' IN NATURAL LANGUAGE MODE);
@@ -271,7 +300,9 @@ SELECT * FROM inn_daily;          -- 当天暗号「招财今天吃小鱼干」
 - 玩家「楚留香」的 `visits=2`，说明网页端第一次对话和「开启新对话」后的第二次对话都落到了同一个 seekdb 玩家行；
 - `inn_events` 中有对应的点菜、叙旧、打听、暗号等事件；
 - `inn_lore` 的 FULLTEXT 索引真实存在，`MATCH ... AGAINST ('燕十三')` 返回 score 3.404；
-- `inn_secrets` 记录了当天说对暗号的玩家。
+- `inn_secrets` 记录了当天说对暗号的玩家；
+- `inn_requests` 保留了 Dify 传入的 workflow run id 与响应，重复请求可原地重放；
+- `inn_events` 中的原话保留了双引号、换行和 emoji。
 
 `evidence/fresh-db-init.txt` 是另一份证据：用全新的 `inn_verify` 库启动后端，后端自动建表、种入 14 条异闻，第一次调用 `/api/visit` 就能通过全文检索返回《桂花酿》。这证明评审不需要作者本地的旧数据库。
 
@@ -281,10 +312,11 @@ SELECT * FROM inn_daily;          -- 当天暗号「招财今天吃小鱼干」
 - seekdb 镜像与 `SELECT VERSION()`；
 - `inn-backend` 的访问日志（含 `retrieval=fulltext`、lore 标题）；
 - Squid access log 中对 `inn-backend:8000` 的请求；
-- DeepSeek 插件安装目录与模型列表；
-- 应用 id / mode / 站点开关。
+- DeepSeek 插件安装目录；
+- 应用 id / mode / 站点开关；
+- 后端 8000 只监听 `127.0.0.1`。
 
-`evidence/import-verify.*` 是把导出的 `不二客栈.yml` 重新导入为另一个应用后跑通的记录，证明 DSL 可独立复现。
+`evidence/startup-guards.txt` 记录占位 token/密码被后端和 preflight 拒绝、preflight 接受真实值、以及回环绑定。`evidence/security-regression.txt` 是覆盖伪造身份、未授权访问、幂等与双进程并发的完整回归。
 
 ---
 
@@ -294,7 +326,10 @@ SELECT * FROM inn_daily;          -- 当天暗号「招财今天吃小鱼干」
 dify/
 ├── README.md                     # 本文件
 ├── env.example                   # Dify .env 需要合并的变量（占位值）
-├── docker-compose.inn.yaml       # 增加 inn-backend 服务
+├── preflight.sh                  # 拒绝示例/占位凭据
+├── docker-compose.inn.yaml       # 增加 inn-backend 服务（仅回环端口）
+├── tests/
+│   └── security_regression.py    # 身份、鉴权、幂等、并发回归
 ├── dsl/
 │   ├── 不二客栈.yml               # Dify 1.18 导出的 app.yaml（推荐导入）
 │   └── 不二客栈.ifpkg             # Dify 1.18 应用包（备用导入）
@@ -303,12 +338,13 @@ dify/
 │   ├── requirements.txt
 │   └── Dockerfile
 └── evidence/
-    ├── case1..case8              # 8 组 SSE 原始日志 + 可读摘要
-    ├── ui-*.png                  # 网页端截图
-    ├── seekdb-verification.txt   # SQL 读写/全文检索证据
+    ├── case1..case8-secure       # 8 组鉴权版 SSE 原始日志 + 可读摘要
+    ├── ui-secure-*.png           # 网页端截图
+    ├── seekdb-verification.txt   # SQL 读写/全文检索/幂等账证据
     ├── fresh-db-init.txt         # 空库自动初始化证据
-    ├── dify-stack.txt            # 容器/版本/网络/插件证据
-    └── import-verify.*           # 导出 DSL 重新导入后的运行证据
+    ├── startup-guards.txt        # 占位凭据与回环绑定证据
+    ├── security-regression.txt   # 鉴权/伪造身份/幂等/并发回归
+    └── dify-stack.txt            # 容器/版本/网络/插件证据
 ```
 
 ### 7.1 外部依赖与来源
@@ -321,8 +357,9 @@ dify/
 ### 7.2 安全与凭据
 
 - 仓库和 DSL 中不包含 DeepSeek API Key、Dify 管理员密码或 seekdb 密码；DSL 用 `include_secret=false` 导出。
-- 运行前把 `env.example` 里的 `CHANGE_ME_*` 换成自己的值；`INN_ADMIN_TOKEN` 建议改成随机串。
-- 后端的 `/api/visit` 没有鉴权，适合本地体验；若暴露到公网，请在反向代理层加访问控制，并修改管理员 token。
+- 运行前把 `env.example` 里的 `CHANGE_ME_*` 换成自己的值，并先跑 `preflight.sh`；后端启动也会拒绝占位 `INN_SERVICE_TOKEN`/`INN_ADMIN_TOKEN`/`SEEKDB_PASSWORD`。
+- `/api/visit`、`/api/daily` 要求服务 token；ledger 还要求本人 header 或管理员 token；reset 只接受管理员 token。后端宿主机端口只绑定 `127.0.0.1`。
+- 玩家身份只来自 Dify 的 `sys.user_id` 请求头；body 中的 `player_id` 会被拒绝，不能用它覆盖身份。
 - `inn-backend` 的 SQL 全部参数化；玩家输入长度受限；异闻内容是预置数据，不执行玩家输入。
 
 ---
@@ -332,6 +369,8 @@ dify/
 - Dify 1.18 的导出格式是 `.ifpkg`（内含 `app.yaml`），本目录同时提供 YAML 和包，二者都已验证可导入。
 - 每日暗号按运行后端的机器本地日期轮换；跨时区部署时以服务器日期为准。
 - 玩家身份来自 Dify 的 `sys.user_id`：同一 Dify 账号/同一浏览器共享记忆；换账号或清除站点数据会被当成新客人。这是有意的「记住你」设计，不是会话隔离缺陷。
-- 后端是单实例、同步数据库连接，适合单人/小范围体验；高并发需要加连接池和限流。
+- 后端每请求一条同步数据库连接，适合单人/小范围体验；`inn_players` 行锁保证跨进程并发不丢更新，但更高吞吐仍需连接池和限流。
+- `inn_requests` 当前不做定期清理；长期运行可按日期归档。
+- Dify 应用环境变量里的 `INN_SERVICE_TOKEN` 必须与 `docker/.env` 完全一致，修改任一侧后要同步并重新发布。
 - HTTP 节点对完全断网（连接被拒绝）不会进入 200/非 200 的 IF 分支，会由 Dify 的工作流错误处理接管；IF/ELSE 主要覆盖后端可达但返回非 200 的情况。
 - 本地 Dify 首次启动需要拉取镜像和安装 Marketplace 插件；离线环境需要提前导入插件包。

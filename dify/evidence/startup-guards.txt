@@ -1,0 +1,23 @@
+== backend refuses placeholder service token ==
+    raise RuntimeError(f"{name} must be a non-placeholder secret; set it in docker/.env and Dify app variables")
+RuntimeError: INN_SERVICE_TOKEN must be a non-placeholder secret; set it in docker/.env and Dify app variables
+
+== backend refuses placeholder admin token ==
+    raise RuntimeError(f"{name} must be a non-placeholder secret; set it in docker/.env and Dify app variables")
+RuntimeError: INN_ADMIN_TOKEN must be a non-placeholder secret; set it in docker/.env and Dify app variables
+
+== preflight rejects env.example placeholders ==
+refuse placeholder or empty INIT_PASSWORD in /tmp/placeholders.env
+refuse placeholder or empty OCEANBASE_VECTOR_PASSWORD in /tmp/placeholders.env
+refuse placeholder or empty INN_SERVICE_TOKEN in /tmp/placeholders.env
+refuse placeholder or empty INN_ADMIN_TOKEN in /tmp/placeholders.env
+EXIT=1
+
+== preflight accepts real values ==
+EXIT=0
+
+== backend host bindings are loopback only ==
+LISTEN 0      4096        127.0.0.1:8000       0.0.0.0:*    users:(("docker-proxy",pid=51977,fd=7))  
+
+== compose backend port ==
+docker-inn-backend-1 127.0.0.1:8000->8000/tcp

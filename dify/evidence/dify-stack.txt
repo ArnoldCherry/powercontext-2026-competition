@@ -1,111 +1,66 @@
 == date ==
-Thu Oct 29 18:03:29 CST 2026
+Thu Oct 29 20:44:54 CST 2026
 
 == docker compose ps ==
 NAME                     IMAGE                                        STATUS
-docker-agent_backend-1   langgenius/dify-agent-backend:1.18.0         Up About a minute
-docker-api-1             langgenius/dify-api:1.18.0                   Up 17 minutes (healthy)
-docker-db_postgres-1     postgres:15-alpine                           Up 17 minutes (healthy)
-docker-inn-backend-1     inn-backend:local                            Up 7 minutes (healthy)
-docker-nginx-1           nginx:latest                                 Up 17 minutes
-docker-plugin_daemon-1   langgenius/dify-plugin-daemon:0.6.10-local   Up About a minute
-docker-redis-1           redis:6-alpine                               Up 17 minutes (healthy)
-docker-sandbox-1         langgenius/dify-sandbox:0.2.15               Up 17 minutes (healthy)
-docker-ssrf_proxy-1      ubuntu/squid:latest                          Up 17 minutes
-docker-web-1             langgenius/dify-web:1.18.0                   Up 17 minutes
-docker-worker-1          langgenius/dify-api:1.18.0                   Up 17 minutes
-docker-worker_beat-1     langgenius/dify-api:1.18.0                   Up 17 minutes
-seekdb                   oceanbase/seekdb:latest                      Up 17 minutes (healthy)
+docker-agent_backend-1   langgenius/dify-agent-backend:1.18.0         Up 22 minutes
+docker-api-1             langgenius/dify-api:1.18.0                   Up 22 minutes (healthy)
+docker-db_postgres-1     postgres:15-alpine                           Up 22 minutes (healthy)
+docker-inn-backend-1     inn-backend:local                            Up 5 minutes (healthy)
+docker-nginx-1           nginx:latest                                 Up 22 minutes
+docker-plugin_daemon-1   langgenius/dify-plugin-daemon:0.6.10-local   Up 22 minutes
+docker-redis-1           redis:6-alpine                               Up 22 minutes (healthy)
+docker-sandbox-1         langgenius/dify-sandbox:0.2.15               Up 22 minutes (healthy)
+docker-ssrf_proxy-1      ubuntu/squid:latest                          Up 22 minutes
+docker-web-1             langgenius/dify-web:1.18.0                   Up 22 minutes
+docker-worker-1          langgenius/dify-api:1.18.0                   Up 22 minutes
+docker-worker_beat-1     langgenius/dify-api:1.18.0                   Up 22 minutes
+seekdb                   oceanbase/seekdb:latest                      Up 22 minutes (healthy)
 
-== seekdb image ==
-[oceanbase/seekdb:latest] sha256:4db4961869d554313520d6081fca29265ba6da6db7313311bd8acbed771a956b
+== backend bindings ==
+LISTEN 0      4096        127.0.0.1:8000       0.0.0.0:*    users:(("docker-proxy",pid=51977,fd=7))  
+LISTEN 0      4096          0.0.0.0:8080       0.0.0.0:*    users:(("docker-proxy",pid=1341,fd=7))   
+LISTEN 0      4096          0.0.0.0:2881       0.0.0.0:*    users:(("docker-proxy",pid=1439,fd=7))   
+LISTEN 0      4096             [::]:8080          [::]:*    users:(("docker-proxy",pid=1351,fd=7))   
+LISTEN 0      4096             [::]:2881          [::]:*    users:(("docker-proxy",pid=1449,fd=7))   
 
 == seekdb version ==
-mysql: [Warning] Using a password on the command line interface can be insecure.
 5.7.25-OceanBase seekdb-v1.4.0.0
 
-== seekdb log tail ==
-SeekDB SQL server is accepting connections on attempt #3.
-Existing instance authentication succeeded.
-Seekdb started
-Waiting for SeekDB process (pid 11) to exit...
-Received termination signal, shutting down...
-Already initialized. Waiting for SQL server, then verifying configured password...
-Starting seekdb with command: /usr/bin/seekdb --nodaemon --base-dir=/var/lib/seekdb
-Configuration loaded from: /etc/seekdb/seekdb.cnf
-SeekDB SQL server is accepting connections on attempt #3.
-Existing instance authentication succeeded.
-Seekdb started
-Waiting for SeekDB process (pid 11) to exit...
+== backend visit log ==
+2026-10-29 12:43:08,123 INFO visit player=01e1430d-43a8-425e-ba43-9e48d59d87f4 request=525aa19f-e74e-4bca-a310-cff0c6a919a8 action=点菜 delta=2 rep=2 tier=生客 terms=['面'] retrieval=like lore=['断肠面', '燕十三'] secret=False
+2026-10-29 12:43:11,576 INFO visit player=01e1430d-43a8-425e-ba43-9e48d59d87f4 request=2a6ddad1-1a7a-4a5b-9521-32c55570c088 action=叙旧 delta=3 rep=5 tier=熟客 terms=['掌柜', '断肠面'] retrieval=fulltext lore=['断肠面'] secret=False
+2026-10-29 12:44:00,583 INFO visit player=cba44587-7b8a-4eda-a4f9-6d9a028e307a request=2fc70f32-b5cc-49fe-b501-41fe1143459c action=点菜 delta=2 rep=2 tier=生客 terms=['面'] retrieval=like lore=['断肠面', '燕十三'] secret=False
+2026-10-29 12:44:03,653 INFO visit player=cba44587-7b8a-4eda-a4f9-6d9a028e307a request=b2eff484-6f64-4cbe-89e7-30e569e07a19 action=叙旧 delta=3 rep=5 tier=熟客 terms=['掌柜', '断肠面'] retrieval=fulltext lore=['断肠面'] secret=False
+2026-10-29 12:44:06,545 INFO visit player=cba44587-7b8a-4eda-a4f9-6d9a028e307a request=c398045b-d430-4779-8f0a-023e7844cfa2 action=打听 delta=2 rep=7 tier=熟客 terms=['暗号'] retrieval=like lore=['灶王爷'] secret=False
+2026-10-29 12:44:09,392 INFO visit player=cba44587-7b8a-4eda-a4f9-6d9a028e307a request=5415d953-2ea8-416a-9e87-11297c7d0d79 action=叙旧 delta=18 rep=25 tier=座上宾 terms=['招财', '小鱼干'] retrieval=like lore=['招财', '地窖'] secret=True
+2026-10-29 12:44:12,928 INFO visit player=cba44587-7b8a-4eda-a4f9-6d9a028e307a request=0762080c-a7b6-4ab5-bebf-f157ead632dd action=捣乱 delta=-10 rep=15 tier=熟客 terms=[] retrieval=none lore=[] secret=False
+2026-10-29 12:44:16,519 INFO visit player=cba44587-7b8a-4eda-a4f9-6d9a028e307a request=1097af10-0e36-4b55-a087-b493bb8d6125 action=赊账 delta=-5 rep=10 tier=熟客 terms=['二十文', '酒钱'] retrieval=none lore=[] secret=False
+2026-10-29 12:44:19,899 INFO visit player=cba44587-7b8a-4eda-a4f9-6d9a028e307a request=c15d0006-c5c4-4664-90f4-85ebc66f9419 action=还账 delta=8 rep=18 tier=熟客 terms=['二十文'] retrieval=none lore=[] secret=False
+2026-10-29 12:44:23,133 INFO visit player=cba44587-7b8a-4eda-a4f9-6d9a028e307a request=4499fb00-2fe4-471e-9e8a-9acad794e313 action=打听 delta=2 rep=20 tier=熟客 terms=['燕十三'] retrieval=fulltext lore=['燕十三'] secret=False
 
-== inn-backend visit log ==
-2026-10-29 09:56:15,975 INFO visit player=cba44587-7b8a-4eda-a4f9-6d9a028e307a action=叙旧 delta=3 rep=5 tier=熟客 terms=['掌柜', '断肠面'] retrieval=fulltext lore=['断肠面'] secret=False
-2026-10-29 09:56:18,183 INFO visit player=cba44587-7b8a-4eda-a4f9-6d9a028e307a action=打听 delta=2 rep=7 tier=熟客 terms=['暗号'] retrieval=like lore=['灶王爷'] secret=False
-2026-10-29 09:56:21,096 INFO visit player=cba44587-7b8a-4eda-a4f9-6d9a028e307a action=叙旧 delta=18 rep=25 tier=座上宾 terms=['招财', '小鱼干'] retrieval=like lore=['招财', '地窖'] secret=True
-2026-10-29 09:56:24,053 INFO visit player=cba44587-7b8a-4eda-a4f9-6d9a028e307a action=捣乱 delta=-10 rep=15 tier=熟客 terms=[] retrieval=none lore=[] secret=False
-2026-10-29 09:56:27,093 INFO visit player=cba44587-7b8a-4eda-a4f9-6d9a028e307a action=赊账 delta=-5 rep=10 tier=熟客 terms=['二十文', '酒钱'] retrieval=none lore=[] secret=False
-2026-10-29 09:56:30,352 INFO visit player=cba44587-7b8a-4eda-a4f9-6d9a028e307a action=还账 delta=8 rep=18 tier=熟客 terms=['二十文'] retrieval=none lore=[] secret=False
-2026-10-29 09:56:33,064 INFO visit player=cba44587-7b8a-4eda-a4f9-6d9a028e307a action=打听 delta=2 rep=20 tier=熟客 terms=['燕十三'] retrieval=fulltext lore=['燕十三'] secret=False
-2026-10-29 09:59:27,869 INFO visit player=8d67a8c2-0cfe-45bc-93d3-59b604d92700 action=点菜 delta=2 rep=2 tier=生客 terms=['断肠面'] retrieval=fulltext lore=['断肠面'] secret=False
-2026-10-29 10:00:07,367 INFO visit player=78981f49-6ac3-4aa3-9e93-e08b4486bdaf action=点菜 delta=2 rep=2 tier=生客 terms=['断肠面'] retrieval=fulltext lore=['断肠面'] secret=False
-2026-10-29 10:00:12,551 INFO visit player=78981f49-6ac3-4aa3-9e93-e08b4486bdaf action=叙旧 delta=3 rep=5 tier=熟客 terms=['掌柜', '断肠面'] retrieval=fulltext lore=['断肠面'] secret=False
-2026-10-29 10:00:16,024 INFO visit player=78981f49-6ac3-4aa3-9e93-e08b4486bdaf action=打听 delta=2 rep=7 tier=熟客 terms=['暗号'] retrieval=like lore=['灶王爷'] secret=False
-2026-10-29 10:03:15,758 INFO visit player=cba44587-7b8a-4eda-a4f9-6d9a028e307a action=打听 delta=2 rep=22 tier=熟客 terms=['暗号'] retrieval=like lore=['灶王爷'] secret=False
+== ssrf proxy access log ==
+1793277788.124     18 172.20.0.7 TCP_MISS/200 1462 POST http://inn-backend:8000/api/visit - HIER_DIRECT/172.20.0.2 application/json
+1793277791.576      8 172.20.0.7 TCP_MISS/200 1482 POST http://inn-backend:8000/api/visit - HIER_DIRECT/172.20.0.2 application/json
+1793277840.583     19 172.20.0.7 TCP_MISS/200 1462 POST http://inn-backend:8000/api/visit - HIER_DIRECT/172.20.0.2 application/json
+1793277843.654     10 172.20.0.7 TCP_MISS/200 1482 POST http://inn-backend:8000/api/visit - HIER_DIRECT/172.20.0.2 application/json
+1793277846.546      7 172.20.0.7 TCP_MISS/200 1823 POST http://inn-backend:8000/api/visit - HIER_DIRECT/172.20.0.2 application/json
+1793277849.392     33 172.20.0.7 TCP_MISS/200 2039 POST http://inn-backend:8000/api/visit - HIER_DIRECT/172.20.0.2 application/json
+1793277852.929     12 172.20.0.7 TCP_MISS/200 1369 POST http://inn-backend:8000/api/visit - HIER_DIRECT/172.20.0.2 application/json
+1793277856.519      9 172.20.0.7 TCP_MISS/200 1386 POST http://inn-backend:8000/api/visit - HIER_DIRECT/172.20.0.2 application/json
+1793277859.900      7 172.20.0.7 TCP_MISS/200 1240 POST http://inn-backend:8000/api/visit - HIER_DIRECT/172.20.0.2 application/json
+1793277863.134      8 172.20.0.7 TCP_MISS/200 1542 POST http://inn-backend:8000/api/visit - HIER_DIRECT/172.20.0.2 application/json
 
-== ssrf proxy access log (backend calls) ==
-1793267775.976     20 172.20.0.12 TCP_MISS/200 1434 POST http://inn-backend:8000/api/visit - HIER_DIRECT/172.20.0.2 application/json
-1793267778.183     32 172.20.0.12 TCP_MISS/200 1793 POST http://inn-backend:8000/api/visit - HIER_DIRECT/172.20.0.2 application/json
-1793267781.097     11 172.20.0.12 TCP_MISS/200 2057 POST http://inn-backend:8000/api/visit - HIER_DIRECT/172.20.0.2 application/json
-1793267784.054     13 172.20.0.12 TCP_MISS/200 1387 POST http://inn-backend:8000/api/visit - HIER_DIRECT/172.20.0.2 application/json
-1793267787.094      7 172.20.0.12 TCP_MISS/200 1386 POST http://inn-backend:8000/api/visit - HIER_DIRECT/172.20.0.2 application/json
-1793267790.353      7 172.20.0.12 TCP_MISS/200 1240 POST http://inn-backend:8000/api/visit - HIER_DIRECT/172.20.0.2 application/json
-1793267793.065      8 172.20.0.12 TCP_MISS/200 1542 POST http://inn-backend:8000/api/visit - HIER_DIRECT/172.20.0.2 application/json
-1793267967.870     23 172.20.0.12 TCP_MISS/200 1195 POST http://inn-backend:8000/api/visit - HIER_DIRECT/172.20.0.2 application/json
-1793268007.368     17 172.20.0.12 TCP_MISS/200 1195 POST http://inn-backend:8000/api/visit - HIER_DIRECT/172.20.0.2 application/json
-1793268012.552      9 172.20.0.12 TCP_MISS/200 1434 POST http://inn-backend:8000/api/visit - HIER_DIRECT/172.20.0.2 application/json
-1793268016.025     10 172.20.0.12 TCP_MISS/200 1499 POST http://inn-backend:8000/api/visit - HIER_DIRECT/172.20.0.2 application/json
-1793268195.759     15 172.20.0.12 TCP_MISS/200 1652 POST http://inn-backend:8000/api/visit - HIER_DIRECT/172.20.0.2 application/json
-
-== deepseek plugin package ==
+== deepseek plugin ==
 deepseek:0.0.26@bdf47cb41e9062bba00d26625d2a795c1874011d8ce64bff738c44b5a31787ea
-
-== deepseek models via Dify API ==
-[
-  {
-    "model": "deepseek-flash",
-    "label": {
-      "zh_Hans": "deepseek-flash",
-      "en_US": "deepseek-flash"
-    }
-  },
-  {
-    "model": "deepseek-v4-flash",
-    "label": {
-      "zh_Hans": "deepseek-v4-flash",
-      "en_US": "deepseek-v4-flash"
-    }
-  },
-  {
-    "model": "deepseek-v4-flash-vision-exp",
-    "label": {
-      "zh_Hans": "deepseek-v4-flash-vision-exp",
-      "en_US": "deepseek-v4-flash-vision-exp"
-    }
-  },
-  {
-    "model": "deepseek-v4-pro",
-    "label": {
-      "zh_Hans": "deepseek-v4-pro",
-      "en_US": "deepseek-v4-pro"
-    }
-  }
-]
 
 == app info ==
 {
   "id": "ee67f0df-024e-44b3-89be-1121fb4506d7",
   "name": "不二客栈 · 记仇掌柜",
   "mode": "advanced-chat",
-  "enable_site": true,
-  "api_base_url": "http://127.0.0.1/v1"
+  "enable_site": true
 }
+
+== inn_requests count ==
+13

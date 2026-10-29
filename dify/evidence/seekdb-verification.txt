@@ -3,7 +3,7 @@ SQL> SELECT VERSION() AS version, CURRENT_USER() AS cur_user, NOW() AS ts
   {
     "version": "5.7.25-OceanBase seekdb-v1.4.0.0",
     "cur_user": "root@%",
-    "ts": "2026-10-29 18:01:07"
+    "ts": "2026-10-29 20:42:40"
   }
 ]
 
@@ -20,6 +20,9 @@ SQL> SHOW DATABASES
   },
   {
     "Database": "oceanbase"
+  },
+  {
+    "Database": "sdd_context"
   },
   {
     "Database": "test"
@@ -41,12 +44,91 @@ SQL> SHOW TABLES
     "Tables_in_inn": "inn_players"
   },
   {
+    "Tables_in_inn": "inn_requests"
+  },
+  {
     "Tables_in_inn": "inn_secrets"
+  }
+]
+
+SQL> DESCRIBE inn_requests
+[
+  {
+    "Field": "player_id",
+    "Type": "varchar(128)",
+    "Null": "NO",
+    "Key": "PRI",
+    "Default": null,
+    "Extra": ""
+  },
+  {
+    "Field": "request_id",
+    "Type": "varchar(128)",
+    "Null": "NO",
+    "Key": "PRI",
+    "Default": null,
+    "Extra": ""
+  },
+  {
+    "Field": "response_json",
+    "Type": "mediumtext",
+    "Null": "NO",
+    "Key": "",
+    "Default": null,
+    "Extra": ""
+  },
+  {
+    "Field": "created_at",
+    "Type": "datetime",
+    "Null": "NO",
+    "Key": "",
+    "Default": null,
+    "Extra": ""
   }
 ]
 
 SQL> SELECT player_id, name, reputation, debt, visits, rounds, last_conversation_id, last_seen FROM inn_players ORDER BY last_seen DESC
 [
+  {
+    "player_id": "cba44587-7b8a-4eda-a4f9-6d9a028e307a",
+    "name": "楚留香",
+    "reputation": 5,
+    "debt": 0,
+    "visits": 2,
+    "rounds": 1,
+    "last_conversation_id": "1809d7a5-2b0a-45ff-be68-d7ab47a01b41",
+    "last_seen": "2026-10-29 12:41:38"
+  },
+  {
+    "player_id": "reg-519fad778b4e43188472f37dbe672769",
+    "name": "阿飞",
+    "reputation": 5,
+    "debt": 0,
+    "visits": 2,
+    "rounds": 1,
+    "last_conversation_id": "c2",
+    "last_seen": "2026-10-29 12:40:01"
+  },
+  {
+    "player_id": "test-player-1",
+    "name": "阿飞",
+    "reputation": 2,
+    "debt": 0,
+    "visits": 1,
+    "rounds": 1,
+    "last_conversation_id": "c1",
+    "last_seen": "2026-10-29 12:39:29"
+  },
+  {
+    "player_id": "18909c5e-ca95-497e-95ed-84d2ba654fc2",
+    "name": "傅红雪",
+    "reputation": 2,
+    "debt": 0,
+    "visits": 1,
+    "rounds": 1,
+    "last_conversation_id": "53a9d27b-07c7-4310-ba5f-c7823dfb9512",
+    "last_seen": "2026-10-29 10:07:23"
+  },
   {
     "player_id": "78981f49-6ac3-4aa3-9e93-e08b4486bdaf",
     "name": "楚留香",
@@ -66,152 +148,82 @@ SQL> SELECT player_id, name, reputation, debt, visits, rounds, last_conversation
     "rounds": 1,
     "last_conversation_id": "eeb9b8c8-bf44-4ee0-9b8f-b4e323a53ffb",
     "last_seen": "2026-10-29 09:59:28"
-  },
-  {
-    "player_id": "cba44587-7b8a-4eda-a4f9-6d9a028e307a",
-    "name": "令狐冲",
-    "reputation": 20,
-    "debt": 0,
-    "visits": 8,
-    "rounds": 1,
-    "last_conversation_id": "7aac8214-64e7-4aff-9b2d-a23af67bdcef",
-    "last_seen": "2026-10-29 09:56:33"
   }
 ]
 
-SQL> SELECT id, player_id, conversation_id, visit_no, round_no, action, LEFT(utterance, 40) AS utterance, delta, created_at FROM inn_events ORDER BY id
+SQL> SELECT id, player_id, conversation_id, visit_no, round_no, action, utterance, delta, created_at FROM inn_events WHERE player_id = 'cba44587-7b8a-4eda-a4f9-6d9a028e307a' ORDER BY id
 [
   {
-    "id": 11,
+    "id": 1000013,
     "player_id": "cba44587-7b8a-4eda-a4f9-6d9a028e307a",
-    "conversation_id": "efde2a5b-a528-4969-8bed-256f37e13866",
+    "conversation_id": "2b9e54e3-be35-4b96-abc6-925f621c5d6c",
     "visit_no": 1,
     "round_no": 1,
     "action": "点菜",
-    "utterance": "我叫令狐冲，来碗断肠面。",
+    "utterance": "我叫楚留香，他说“来碗面”，\n第二行 🍜。",
     "delta": 2,
-    "created_at": "2026-10-29 09:56:14"
+    "created_at": "2026-10-29 12:41:30"
   },
   {
-    "id": 12,
+    "id": 1000014,
     "player_id": "cba44587-7b8a-4eda-a4f9-6d9a028e307a",
-    "conversation_id": "d870a511-fa8c-4630-9cf4-8148047454e9",
+    "conversation_id": "1809d7a5-2b0a-45ff-be68-d7ab47a01b41",
     "visit_no": 2,
     "round_no": 1,
     "action": "叙旧",
-    "utterance": "掌柜的，还认得我吗？上次那碗断肠面什么味儿，我到现在还记得。",
+    "utterance": "掌柜的，还认得我吗？上次那碗断肠面，我可记得清清楚楚。",
     "delta": 3,
-    "created_at": "2026-10-29 09:56:16"
-  },
+    "created_at": "2026-10-29 12:41:38"
+  }
+]
+
+SQL> SELECT player_id, request_id, LENGTH(response_json) AS response_bytes, created_at FROM inn_requests ORDER BY created_at DESC LIMIT 10
+[
   {
-    "id": 13,
     "player_id": "cba44587-7b8a-4eda-a4f9-6d9a028e307a",
-    "conversation_id": "d5b9695c-a8b5-41c8-b22e-d42de158a360",
-    "visit_no": 3,
-    "round_no": 1,
-    "action": "打听",
-    "utterance": "掌柜的，今日暗号是什么？",
-    "delta": 2,
-    "created_at": "2026-10-29 09:56:18"
+    "request_id": "4e24dbf4-2b8b-48ef-aa80-775809035f19",
+    "response_bytes": 1293,
+    "created_at": "2026-10-29 12:41:38"
   },
   {
-    "id": 14,
     "player_id": "cba44587-7b8a-4eda-a4f9-6d9a028e307a",
-    "conversation_id": "8c987b32-7621-45ec-b0c7-b5f97fcedd26",
-    "visit_no": 4,
-    "round_no": 1,
-    "action": "叙旧",
-    "utterance": "招财今天吃小鱼干！",
-    "delta": 18,
-    "created_at": "2026-10-29 09:56:21"
+    "request_id": "56002c18-733a-406b-9156-a4307d61015a",
+    "response_bytes": 1279,
+    "created_at": "2026-10-29 12:41:30"
   },
   {
-    "id": 15,
+    "player_id": "reg-519fad778b4e43188472f37dbe672769",
+    "request_id": "r1",
+    "response_bytes": 1001,
+    "created_at": "2026-10-29 12:40:01"
+  },
+  {
+    "player_id": "reg-519fad778b4e43188472f37dbe672769",
+    "request_id": "r2",
+    "response_bytes": 1281,
+    "created_at": "2026-10-29 12:40:01"
+  },
+  {
+    "player_id": "test-player-1",
+    "request_id": "req-001",
+    "response_bytes": 1001,
+    "created_at": "2026-10-29 12:39:29"
+  }
+]
+
+SQL> SELECT player_id, COUNT(*) AS request_count FROM inn_requests GROUP BY player_id
+[
+  {
     "player_id": "cba44587-7b8a-4eda-a4f9-6d9a028e307a",
-    "conversation_id": "cff6f7a0-16f0-404e-b94d-5563de1c135f",
-    "visit_no": 5,
-    "round_no": 1,
-    "action": "捣乱",
-    "utterance": "这破店我砸了！",
-    "delta": -10,
-    "created_at": "2026-10-29 09:56:24"
+    "request_count": 2
   },
   {
-    "id": 16,
-    "player_id": "cba44587-7b8a-4eda-a4f9-6d9a028e307a",
-    "conversation_id": "b46c455a-77bd-486b-be67-1f91c361e01a",
-    "visit_no": 6,
-    "round_no": 1,
-    "action": "赊账",
-    "utterance": "先赊二十文酒钱，记我账上。",
-    "delta": -5,
-    "created_at": "2026-10-29 09:56:27"
+    "player_id": "reg-519fad778b4e43188472f37dbe672769",
+    "request_count": 2
   },
   {
-    "id": 17,
-    "player_id": "cba44587-7b8a-4eda-a4f9-6d9a028e307a",
-    "conversation_id": "ecdb0873-b52f-44af-a257-b20e46605d25",
-    "visit_no": 7,
-    "round_no": 1,
-    "action": "还账",
-    "utterance": "我还你二十文，把账清了。",
-    "delta": 8,
-    "created_at": "2026-10-29 09:56:30"
-  },
-  {
-    "id": 18,
-    "player_id": "cba44587-7b8a-4eda-a4f9-6d9a028e307a",
-    "conversation_id": "7aac8214-64e7-4aff-9b2d-a23af67bdcef",
-    "visit_no": 8,
-    "round_no": 1,
-    "action": "打听",
-    "utterance": "给我讲讲燕十三的事。",
-    "delta": 2,
-    "created_at": "2026-10-29 09:56:33"
-  },
-  {
-    "id": 19,
-    "player_id": "8d67a8c2-0cfe-45bc-93d3-59b604d92700",
-    "conversation_id": "eeb9b8c8-bf44-4ee0-9b8f-b4e323a53ffb",
-    "visit_no": 1,
-    "round_no": 1,
-    "action": "点菜",
-    "utterance": "我叫令狐冲，来碗断肠面。",
-    "delta": 2,
-    "created_at": "2026-10-29 09:59:28"
-  },
-  {
-    "id": 20,
-    "player_id": "78981f49-6ac3-4aa3-9e93-e08b4486bdaf",
-    "conversation_id": "eb43b32f-8f27-46d7-9704-692a7b7e1e20",
-    "visit_no": 1,
-    "round_no": 1,
-    "action": "点菜",
-    "utterance": "我叫楚留香，来碗断肠面。",
-    "delta": 2,
-    "created_at": "2026-10-29 10:00:07"
-  },
-  {
-    "id": 21,
-    "player_id": "78981f49-6ac3-4aa3-9e93-e08b4486bdaf",
-    "conversation_id": "6ce7f704-16bc-4ced-b5b5-dd19499c9f6e",
-    "visit_no": 2,
-    "round_no": 1,
-    "action": "叙旧",
-    "utterance": "掌柜的，还认得我吗？上次那碗断肠面什么味儿，我到现在还记得。",
-    "delta": 3,
-    "created_at": "2026-10-29 10:00:13"
-  },
-  {
-    "id": 22,
-    "player_id": "78981f49-6ac3-4aa3-9e93-e08b4486bdaf",
-    "conversation_id": "6ce7f704-16bc-4ced-b5b5-dd19499c9f6e",
-    "visit_no": 2,
-    "round_no": 2,
-    "action": "打听",
-    "utterance": "今日暗号是什么？",
-    "delta": 2,
-    "created_at": "2026-10-29 10:00:16"
+    "player_id": "test-player-1",
+    "request_count": 1
   }
 ]
 
@@ -399,12 +411,7 @@ SQL> SELECT id, title, MATCH(title, body, keywords) AGAINST ('燕十三' IN NATU
 ]
 
 SQL> SELECT player_id, code_date FROM inn_secrets ORDER BY code_date DESC
-[
-  {
-    "player_id": "cba44587-7b8a-4eda-a4f9-6d9a028e307a",
-    "code_date": "2026-10-29"
-  }
-]
+[]
 
 SQL> SELECT * FROM inn_daily ORDER BY code_date DESC LIMIT 3
 [

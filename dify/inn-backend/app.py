@@ -18,8 +18,7 @@ from datetime import date, datetime
 from typing import Any
 
 import pymysql
-from fastapi import FastAPI, Header, HTTPException
-from pydantic import BaseModel, Field
+from fastapi import FastAPI, Header, HTTPException, Request
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger("inn-backend")
@@ -29,10 +28,29 @@ SEEKDB_PORT = int(os.getenv("SEEKDB_PORT", "2881"))
 SEEKDB_USER = os.getenv("SEEKDB_USER", "root")
 SEEKDB_PASSWORD = os.getenv("SEEKDB_PASSWORD", "")
 SEEKDB_DATABASE = os.getenv("SEEKDB_DATABASE", "inn")
-ADMIN_TOKEN = os.getenv("INN_ADMIN_TOKEN", "")
+SERVICE_TOKEN = os.getenv("INN_SERVICE_TOKEN", "").strip()
+ADMIN_TOKEN = os.getenv("INN_ADMIN_TOKEN", "").strip()
 
 if not re.fullmatch(r"[A-Za-z0-9_]+", SEEKDB_DATABASE):
     raise ValueError("SEEKDB_DATABASE must be a simple identifier")
+
+
+def _is_placeholder_secret(value: str) -> bool:
+    normalized = value.strip().upper()
+    return not normalized or any(
+        marker in normalized
+        for marker in ("CHANGE_ME", "CHANGEME", "CHANGE-ME", "PLACEHOLDER", "INN-LOCAL-ADMIN")
+    )
+
+
+def _require_startup_secret(name: str, value: str) -> None:
+    if _is_placeholder_secret(value):
+        raise RuntimeError(f"{name} must be a non-placeholder secret; set it in docker/.env and Dify app variables")
+
+
+_require_startup_secret("SEEKDB_PASSWORD", SEEKDB_PASSWORD)
+_require_startup_secret("INN_SERVICE_TOKEN", SERVICE_TOKEN)
+_require_startup_secret("INN_ADMIN_TOKEN", ADMIN_TOKEN)
 
 TIERS = (
     (60, "生死之交"),
@@ -94,16 +112,6 @@ DAILY_PHRASES = (
     ("招财今天吃小鱼干", "灶王爷说：猫比人诚实。"),
     ("断肠面里不放葱", "灶王爷说：有些人，不吃葱。"),
 )
-
-
-class VisitRequest(BaseModel):
-    player_id: str = Field(min_length=1, max_length=128)
-    conversation_id: str | None = Field(default=None, max_length=128)
-    utterance: str = Field(min_length=1, max_length=1000)
-    action: str | None = Field(default=None, max_length=32)
-    keywords: str | None = Field(default=None, max_length=200)
-    player_name: str | None = Field(default=None, max_length=32)
-    signals: str | None = Field(default=None, max_length=600)
 
 
 def connect(database: str | None = None) -> pymysql.Connection:
@@ -198,6 +206,17 @@ def init_database() -> None:
                           player_id VARCHAR(128) NOT NULL,
                           code_date DATE NOT NULL,
                           PRIMARY KEY (player_id, code_date)
+                        ) DEFAULT CHARSET=utf8mb4
+                        """
+                    )
+                    cur.execute(
+                        """
+                        CREATE TABLE IF NOT EXISTS inn_requests (
+                          player_id VARCHAR(128) NOT NULL,
+                          request_id VARCHAR(128) NOT NULL,
+                          response_json MEDIUMTEXT NOT NULL,
+                          created_at DATETIME NOT NULL,
+                          PRIMARY KEY (player_id, request_id)
                         ) DEFAULT CHARSET=utf8mb4
                         """
                     )
@@ -406,37 +425,6 @@ def build_director_note(
     return "\n".join(parts)
 
 
-def fetch_or_create_player(cur, player_id: str, conversation_id: str, name_hint: str) -> dict[str, Any]:
-    cur.execute("SELECT * FROM inn_players WHERE player_id = %s", (player_id,))
-    player = cur.fetchone()
-    now = datetime.now()
-    if player is None:
-        name = name_hint or "无名少侠"
-        cur.execute(
-            "INSERT INTO inn_players "
-            "(player_id, name, reputation, debt, visits, rounds, last_conversation_id, created_at, last_seen) "
-            "VALUES (%s, %s, 0, 0, 1, 0, %s, %s, %s)",
-            (player_id, name, conversation_id, now, now),
-        )
-        cur.execute("SELECT * FROM inn_players WHERE player_id = %s", (player_id,))
-        player = cur.fetchone()
-        assert player is not None
-        return dict(player)
-    player = dict(player)
-    if name_hint:
-        player["name"] = name_hint
-    new_visit = player["last_conversation_id"] != conversation_id
-    if new_visit:
-        player["visits"] = player["visits"] + 1
-        player["rounds"] = 0
-    cur.execute(
-        "UPDATE inn_players SET name = %s, visits = %s, rounds = %s, "
-        "last_conversation_id = %s, last_seen = %s WHERE player_id = %s",
-        (player["name"], player["visits"], player["rounds"], conversation_id, now, player_id),
-    )
-    return player
-
-
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     init_database()
@@ -458,14 +446,59 @@ def health() -> dict[str, Any]:
     return {"ok": True, "seekdb": row.get("version"), "database": SEEKDB_DATABASE}
 
 
+def require_service_token(value: str) -> None:
+    if not SERVICE_TOKEN or not secrets.compare_digest(value or "", SERVICE_TOKEN):
+        raise HTTPException(status_code=401, detail="service authentication required")
+
+
+def require_admin_token(value: str) -> None:
+    if not ADMIN_TOKEN or not secrets.compare_digest(value or "", ADMIN_TOKEN):
+        raise HTTPException(status_code=403, detail="admin token required")
+
+
+def require_player_id(value: str) -> str:
+    player_id = normalize_text(value, 128)
+    if not player_id:
+        raise HTTPException(status_code=401, detail="trusted player identity required")
+    return player_id
+
+
+def _admin_token_ok(value: str) -> bool:
+    return bool(ADMIN_TOKEN) and bool(value) and secrets.compare_digest(value, ADMIN_TOKEN)
+
+
+def _form_text(form, key: str, limit: int, *, required: bool = False) -> str:
+    value = form.get(key)
+    if value is None:
+        if required:
+            raise HTTPException(status_code=422, detail=f"{key} is required")
+        return ""
+    if not isinstance(value, str):
+        raise HTTPException(status_code=422, detail=f"{key} must be text")
+    if len(value) > limit:
+        raise HTTPException(status_code=422, detail=f"{key} is too long")
+    return value
+
+
 @app.get("/api/daily")
-def daily() -> dict[str, Any]:
+def daily(x_inn_service_token: str = Header(default="")) -> dict[str, Any]:
+    require_service_token(x_inn_service_token)
     phrase, hint = daily_phrase(date.today())
     return {"date": date.today().isoformat(), "passphrase": phrase, "hint": hint}
 
 
 @app.get("/api/ledger/{player_id}")
-def ledger(player_id: str) -> dict[str, Any]:
+def ledger(
+    player_id: str,
+    x_inn_service_token: str = Header(default=""),
+    x_inn_player_id: str = Header(default=""),
+    x_inn_admin_token: str = Header(default=""),
+) -> dict[str, Any]:
+    require_service_token(x_inn_service_token)
+    if not _admin_token_ok(x_inn_admin_token) and not (
+        x_inn_player_id and secrets.compare_digest(x_inn_player_id, player_id)
+    ):
+        raise HTTPException(status_code=403, detail="ledger access requires ownership or admin token")
     conn = connect(SEEKDB_DATABASE)
     try:
         with conn.cursor() as cur:
@@ -486,11 +519,11 @@ def ledger(player_id: str) -> dict[str, Any]:
 
 @app.post("/api/players/{player_id}/reset")
 def reset_player(player_id: str, x_admin_token: str = Header(default="")) -> dict[str, Any]:
-    if not ADMIN_TOKEN or not secrets.compare_digest(x_admin_token, ADMIN_TOKEN):
-        raise HTTPException(status_code=403, detail="admin token required")
+    require_admin_token(x_admin_token)
     conn = connect(SEEKDB_DATABASE)
     try:
         with conn.cursor() as cur:
+            cur.execute("DELETE FROM inn_requests WHERE player_id = %s", (player_id,))
             cur.execute("DELETE FROM inn_events WHERE player_id = %s", (player_id,))
             cur.execute("DELETE FROM inn_secrets WHERE player_id = %s", (player_id,))
             cur.execute("DELETE FROM inn_players WHERE player_id = %s", (player_id,))
@@ -501,35 +534,74 @@ def reset_player(player_id: str, x_admin_token: str = Header(default="")) -> dic
 
 
 @app.post("/api/visit")
-def visit(request: VisitRequest) -> dict[str, Any]:
-    player_id = request.player_id.strip()
-    if not player_id:
-        raise HTTPException(status_code=422, detail="player_id is required")
-    conversation_id = normalize_text(request.conversation_id, 128) or "default"
-    utterance = request.utterance.strip()[:1000]
-    signal_action, signal_keywords, signal_name = parse_signals(request.signals)
-    action = classify_action(signal_action or request.action, utterance)
-    name_hint = extract_name(signal_name or request.player_name, utterance)
-    terms = split_terms(signal_keywords or request.keywords, utterance)
+async def visit(
+    request: Request,
+    x_inn_service_token: str = Header(default=""),
+    x_inn_player_id: str = Header(default=""),
+    x_inn_request_id: str = Header(default=""),
+) -> dict[str, Any]:
+    require_service_token(x_inn_service_token)
+    player_id = require_player_id(x_inn_player_id)
+    request_id = normalize_text(x_inn_request_id, 128)
+    if not request_id:
+        raise HTTPException(status_code=400, detail="trusted request id required")
+
+    form = await request.form()
+    if form.get("player_id") is not None:
+        raise HTTPException(status_code=403, detail="player identity must come from the trusted header")
+    utterance = _form_text(form, "utterance", 1000, required=True).strip()
+    if not utterance:
+        raise HTTPException(status_code=422, detail="utterance is required")
+    conversation_id = normalize_text(_form_text(form, "conversation_id", 128), 128) or "default"
+    action = _form_text(form, "action", 32)
+    keywords = _form_text(form, "keywords", 200)
+    player_name = _form_text(form, "player_name", 32)
+    signals = _form_text(form, "signals", 600)
+    signal_action, signal_keywords, signal_name = parse_signals(signals)
+    action = classify_action(signal_action or action, utterance)
+    name_hint = extract_name(signal_name or player_name, utterance)
+    terms = split_terms(signal_keywords or keywords, utterance)
     today = date.today()
     phrase, hint = daily_phrase(today)
     secret_hit = phrase in utterance and "暗号" not in utterance
+    now = datetime.now()
 
     conn = connect(SEEKDB_DATABASE)
     try:
         with conn.cursor() as cur:
-            player = fetch_or_create_player(cur, player_id, conversation_id, name_hint)
+            inserted = cur.execute(
+                "INSERT IGNORE INTO inn_players "
+                "(player_id, name, reputation, debt, visits, rounds, last_conversation_id, created_at, last_seen) "
+                "VALUES (%s, %s, 0, 0, 1, 0, %s, %s, %s)",
+                (player_id, name_hint or "无名少侠", conversation_id, now, now),
+            )
+            cur.execute("SELECT * FROM inn_players WHERE player_id = %s FOR UPDATE", (player_id,))
+            player_row = cur.fetchone()
+            if player_row is None:
+                raise RuntimeError("player row disappeared during visit")
+            player = dict(player_row)
+            cur.execute(
+                "SELECT response_json FROM inn_requests WHERE player_id = %s AND request_id = %s",
+                (player_id, request_id),
+            )
+            replay = cur.fetchone()
+            if replay is not None:
+                conn.commit()
+                return json.loads(replay["response_json"])
+
+            if not inserted:
+                if name_hint:
+                    player["name"] = name_hint
+                if player["last_conversation_id"] != conversation_id:
+                    player["visits"] = player["visits"] + 1
+                    player["rounds"] = 0
+            visit_no = player["visits"]
+            round_no = player["rounds"] + 1
             previous = recent_events(cur, player_id, conversation_id)
             is_returning = bool(previous) and any(
                 event["conversation_id"] != conversation_id for event in previous
             )
-            visit_no = player["visits"]
-            round_no = player["rounds"] + 1
             delta = ACTION_DELTAS[action]
-            cur.execute(
-                "UPDATE inn_players SET rounds = %s WHERE player_id = %s",
-                (round_no, player_id),
-            )
             if action in HOSTILE_ACTIONS:
                 prior_hostile = sum(1 for event in previous if event["action"] in HOSTILE_ACTIONS)
                 delta = max(-25, delta * (1 + min(prior_hostile, 2)))
@@ -554,14 +626,15 @@ def visit(request: VisitRequest) -> dict[str, Any]:
             reputation = max(-100, min(100, player["reputation"] + delta))
             tier = tier_for(reputation)
             cur.execute(
-                "UPDATE inn_players SET reputation = %s, debt = %s WHERE player_id = %s",
-                (reputation, debt, player_id),
+                "UPDATE inn_players SET name = %s, reputation = %s, debt = %s, visits = %s, rounds = %s, "
+                "last_conversation_id = %s, last_seen = %s WHERE player_id = %s",
+                (player["name"], reputation, debt, visit_no, round_no, conversation_id, now, player_id),
             )
             cur.execute(
                 "INSERT INTO inn_events "
                 "(player_id, conversation_id, visit_no, round_no, action, utterance, delta, created_at) "
                 "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
-                (player_id, conversation_id, visit_no, round_no, action, utterance, delta, datetime.now()),
+                (player_id, conversation_id, visit_no, round_no, action, utterance, delta, now),
             )
             lore, retrieval_mode = retrieve_lore(cur, terms, reputation)
             if secret_hit:
@@ -593,6 +666,37 @@ def visit(request: VisitRequest) -> dict[str, Any]:
                 daily_hint=daily_hint,
                 secret_hit=secret_hit,
             )
+            response = {
+                "ok": True,
+                "player": {
+                    "name": player["name"],
+                    "reputation": reputation,
+                    "tier": tier,
+                    "visit_no": visit_no,
+                    "round": round_no,
+                    "debt": debt,
+                },
+                "visit": {
+                    "is_returning": is_returning,
+                    "is_first": visit_no == 1 and round_no == 1,
+                    "action": action,
+                    "delta": delta,
+                },
+                "memories": memories,
+                "lore": [
+                    {"title": row["title"], "body": row["body"], "kind": row["kind"]}
+                    for row in lore
+                ],
+                "daily_hint": daily_hint[0] if daily_hint else None,
+                "secret_hit": secret_hit,
+                "retrieval": retrieval_mode,
+                "director_note": note,
+                "status_line": f"【人情 {reputation} · {tier}】",
+            }
+            cur.execute(
+                "INSERT INTO inn_requests (player_id, request_id, response_json, created_at) VALUES (%s, %s, %s, %s)",
+                (player_id, request_id, json.dumps(response, ensure_ascii=False), now),
+            )
         conn.commit()
     except Exception:
         conn.rollback()
@@ -601,8 +705,9 @@ def visit(request: VisitRequest) -> dict[str, Any]:
         conn.close()
 
     logger.info(
-        "visit player=%s action=%s delta=%d rep=%d tier=%s terms=%s retrieval=%s lore=%s secret=%s",
+        "visit player=%s request=%s action=%s delta=%d rep=%d tier=%s terms=%s retrieval=%s lore=%s secret=%s",
         player_id,
+        request_id,
         action,
         delta,
         reputation,
@@ -612,30 +717,4 @@ def visit(request: VisitRequest) -> dict[str, Any]:
         [row["title"] for row in lore],
         secret_hit,
     )
-    return {
-        "ok": True,
-        "player": {
-            "name": player["name"],
-            "reputation": reputation,
-            "tier": tier,
-            "visit_no": visit_no,
-            "round": round_no,
-            "debt": debt,
-        },
-        "visit": {
-            "is_returning": is_returning,
-            "is_first": visit_no == 1 and round_no == 1,
-            "action": action,
-            "delta": delta,
-        },
-        "memories": memories,
-        "lore": [
-            {"title": row["title"], "body": row["body"], "kind": row["kind"]}
-            for row in lore
-        ],
-        "daily_hint": daily_hint[0] if daily_hint else None,
-        "secret_hit": secret_hit,
-        "retrieval": retrieval_mode,
-        "director_note": note,
-        "status_line": f"【人情 {reputation} · {tier}】",
-    }
+    return response

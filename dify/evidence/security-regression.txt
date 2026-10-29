@@ -1,0 +1,22 @@
+wsl: 检测到 localhost 代理配置，但未镜像到 WSL。NAT 模式下的 WSL 不支持 localhost 代理。
+[PASS] 管理员 reset 可用: 200
+[PASS] health 无需鉴权: 200
+[PASS] daily 缺服务 token 拒绝: 401
+[PASS] daily 带服务 token 可用: 200
+[PASS] visit 缺服务 token 拒绝: 401
+[PASS] visit 错误服务 token 拒绝: 401
+[PASS] visit 缺玩家 header 拒绝: 401
+[PASS] 伪造 body player_id 拒绝: 403
+[PASS] 拒绝后未创建玩家: 404
+[PASS] 表单引号/换行/Unicode 正常入账: 200
+[PASS] 原始正文逐字保真: '我叫阿飞，他说“来碗面”，\n第二行 🍜。'
+[PASS] 重复 request_id 不重复记账: events=1
+[PASS] 跨会话记忆: ['上次光临，你「我叫阿飞，他说“来碗面”， 第二行 🍜。」（点菜，结了个善缘）']
+[PASS] 未授权 ledger 拒绝: 403
+[PASS] 管理员 ledger 可用: 200
+[PASS] 无管理员 token reset 拒绝: 403
+[PASS] 跨进程并发不丢更新: reputation=4
+[PASS] 并发同 request_id 只记一次: reputation=2
+[PASS] reset 后 ledger 404: 200/404
+
+RESULT: PASS

@@ -5,7 +5,7 @@ app:
   icon_background: '#FFEAD5'
   icon_type: emoji
   mode: advanced-chat
-  name: 不二客栈 · 记仇掌柜
+  name: 不二客栈-占位包
   use_icon_as_answer_icon: false
 dependencies:
 - current_identifier: null
@@ -32,7 +32,15 @@ site:
 version: 0.7.0
 workflow:
   conversation_variables: []
-  environment_variables: []
+  environment_variables:
+  - description: 与 inn-backend 的 INN_SERVICE_TOKEN 一致；导入后请在应用环境变量中改成真实随机值。
+    id: 7c1e6a2b-4d3f-4a8e-9b1c-2f5d7e9a0b3c
+    name: INN_SERVICE_TOKEN
+    selector:
+    - env
+    - INN_SERVICE_TOKEN
+    value: CHANGE_ME_INN_SERVICE_TOKEN
+    value_type: string
   features:
     file_upload:
       allowed_file_extensions: []
@@ -261,12 +269,34 @@ workflow:
         body:
           data:
           - id: key-value-1
-            key: ''
+            key: utterance
             type: text
-            value: '{"player_id":"{{#sys.user_id#}}","conversation_id":"{{#sys.conversation_id#}}","utterance":"{{#sys.query#}}","action":"{{#1002.action#}}","keywords":"{{#1002.keywords#}}","player_name":"{{#1002.player_name#}}"}'
-          type: raw-text
+            value: '{{#sys.query#}}'
+          - id: key-value-2
+            key: conversation_id
+            type: text
+            value: '{{#sys.conversation_id#}}'
+          - id: key-value-3
+            key: action
+            type: text
+            value: '{{#1002.action#}}'
+          - id: key-value-4
+            key: keywords
+            type: text
+            value: '{{#1002.keywords#}}'
+          - id: key-value-5
+            key: player_name
+            type: text
+            value: '{{#1002.player_name#}}'
+          type: x-www-form-urlencoded
         desc: 账房先生查 seekdb：玩家旧事、人情值、赊账与江湖异闻。
-        headers: 'Content-Type: application/json'
+        headers: 'Content-Type: application/x-www-form-urlencoded
+
+          X-Inn-Service-Token: {{#env.INN_SERVICE_TOKEN#}}
+
+          X-Inn-Player-Id: {{#sys.user_id#}}
+
+          X-Inn-Request-Id: {{#sys.workflow_run_id#}}'
         method: post
         params: ''
         retry_config:

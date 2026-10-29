@@ -10,9 +10,10 @@ services:
       SEEKDB_USER: root
       SEEKDB_PASSWORD: ${OCEANBASE_VECTOR_PASSWORD:?set OCEANBASE_VECTOR_PASSWORD}
       SEEKDB_DATABASE: inn
+      INN_SERVICE_TOKEN: ${INN_SERVICE_TOKEN:?set INN_SERVICE_TOKEN}
       INN_ADMIN_TOKEN: ${INN_ADMIN_TOKEN:?set INN_ADMIN_TOKEN}
     ports:
-      - "${INN_BACKEND_PORT:-8000}:8000"
+      - "127.0.0.1:${INN_BACKEND_PORT:-8000}:8000"
     depends_on:
       seekdb:
         condition: service_healthy

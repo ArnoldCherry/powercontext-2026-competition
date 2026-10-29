@@ -1,6 +1,6 @@
 == fresh database health ==
 {"ok":true,"seekdb":"5.7.25-OceanBase seekdb-v1.4.0.0","database":"inn_verify"}
-== first visit on empty database ==
+== first visit on empty database (service auth + form body) ==
 {
     "ok": true,
     "player": {
@@ -33,6 +33,8 @@
 }
 
 == initialized tables ==
-['inn_daily', 'inn_events', 'inn_lore', 'inn_players', 'inn_secrets']
+['inn_daily', 'inn_events', 'inn_lore', 'inn_players', 'inn_requests', 'inn_secrets']
 {'lore_count': 14}
 [{'title': '断肠面', 'min_reputation': -100}, {'title': '桂花酿', 'min_reputation': -100}, {'title': '青花瓷碗', 'min_reputation': -100}, {'title': '后院老槐树', 'min_reputation': -100}, {'title': '地窖', 'min_reputation': 40}, {'title': '燕十三', 'min_reputation': 0}, {'title': '招财', 'min_reputation': -100}, {'title': '阿绣', 'min_reputation': 20}, {'title': '灶王爷', 'min_reputation': -100}, {'title': '江湖悬赏', 'min_reputation': -100}, {'title': '陈年赊账簿', 'min_reputation': -100}, {'title': '断剑听雨', 'min_reputation': 30}, {'title': '客栈规矩', 'min_reputation': -100}, {'title': '女儿红', 'min_reputation': 60}]
+[{'player_id': 'fresh-user', 'name': '阿飞', 'reputation': 2, 'visits': 1}]
+[{'player_id': 'fresh-user', 'request_id': 'fresh-req-1', 'response_bytes': 989}]
