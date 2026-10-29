@@ -36,11 +36,17 @@ from powercontext.builtin.runtime.prepared_text import TRUST_POLICY
 _BEGIN_MARKER = "BEGIN_POWERCONTEXT_PREPARED_CONTEXT_V1"
 _END_MARKER = "END_POWERCONTEXT_PREPARED_CONTEXT_V1"
 _TOKEN_RE = re.compile(r"[^\W_]+", re.UNICODE)
+_CJK_RE = re.compile(
+    "[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\uac00-\ud7af]",
+    re.UNICODE,
+)
 _CLOSING_PUNCTUATION = "\"')]\u201d\u2019"
 _OPENING_PUNCTUATION = "\"'([\u201c\u2018"
 _LONG_SPAN_RESERVE = 640
-_MIN_SPLIT_CHARS = 160
+_MIN_SPLIT_BYTES = 160
 _MIN_PREFIX_MATCH = 5
+# Clause punctuation used to place byte-budget cuts for scripts without spaces.
+_SPLIT_PUNCTUATION = frozenset(".!?;:,\u3002\uff01\uff1f\uff1b\uff1a\uff0c\u3001\uff0e")
 _DOCUMENT_PRIOR = 0.4
 _NEIGHBOR_DAMPING = 0.5
 _RELATIVE_FLOOR = 0.35
@@ -318,7 +324,7 @@ def select_evidence(query: str, max_bytes: int, entries: Sequence[EvidenceEntry]
 
 
 def _chunks(entries: Sequence[EvidenceEntry], max_bytes: int) -> list[_Chunk]:
-    long_span_limit = max(_MIN_SPLIT_CHARS, max_bytes - _LONG_SPAN_RESERVE)
+    long_span_limit = max(_MIN_SPLIT_BYTES, max_bytes - _LONG_SPAN_RESERVE)
     chunks: list[_Chunk] = []
     for entry_index, entry in enumerate(entries):
         for start, end in _sentence_spans(entry.text, long_span_limit):
@@ -363,6 +369,8 @@ def _chunk_score(
         frequency = frequencies.get(term, 0)
         if frequency:
             score += weights[term] * (1.0 + 0.5 * math.log(frequency))
+        elif not term.isascii() and any(term in stem for stem in frequencies):
+            score += weights[term] * 0.8
         elif any(_prefix_match(term, stem) for stem in frequencies):
             score += weights[term] * 0.6
     for pair in query_bigrams:
@@ -387,7 +395,7 @@ def _apply_document_prior(chunks: Sequence[_Chunk], entry_count: int) -> None:
 def _query_terms(query: str) -> tuple[str, ...]:
     terms: list[str] = []
     seen: set[str] = set()
-    for token in _TOKEN_RE.findall(query.lower()):
+    for token in _tokens(query.lower()):
         if token in _STOPWORDS and not token.isdigit():
             continue
         stem = _stem(token)
@@ -396,7 +404,7 @@ def _query_terms(query: str) -> tuple[str, ...]:
             terms.append(stem)
     if terms:
         return tuple(terms)
-    for token in _TOKEN_RE.findall(query.lower()):
+    for token in _tokens(query.lower()):
         stem = _stem(token)
         if stem and stem not in seen:
             seen.add(stem)
@@ -405,7 +413,40 @@ def _query_terms(query: str) -> tuple[str, ...]:
 
 
 def _stems(text: str) -> tuple[str, ...]:
-    return tuple(_stem(token) for token in _TOKEN_RE.findall(text.lower()))
+    return tuple(_stem(token) for token in _tokens(text.lower()))
+
+
+def _tokens(text: str) -> tuple[str, ...]:
+    """Split text into searchable tokens, including scripts without spaces.
+
+    Latin runs stay word-sized. A contiguous CJK run would otherwise collapse
+    into one unsearchable token, so it is split into overlapping character
+    bigrams; single-character runs are kept whole.
+    """
+
+    tokens: list[str] = []
+    for match in _TOKEN_RE.findall(text):
+        if match.isascii():
+            tokens.append(match)
+            continue
+        run = ""
+        run_is_cjk = False
+        for character in match:
+            is_cjk = bool(_CJK_RE.match(character))
+            if run and is_cjk != run_is_cjk:
+                tokens.extend(_split_run(run, run_is_cjk))
+                run = ""
+            run += character
+            run_is_cjk = is_cjk
+        if run:
+            tokens.extend(_split_run(run, run_is_cjk))
+    return tuple(tokens)
+
+
+def _split_run(run: str, is_cjk: bool) -> list[str]:
+    if not is_cjk or len(run) == 1:
+        return [run]
+    return [run[index : index + 2] for index in range(len(run) - 1)]
 
 
 def _has_vowel(word: str) -> bool:
@@ -544,7 +585,7 @@ def _split_long_spans(
 ) -> tuple[tuple[int, int], ...]:
     result: list[tuple[int, int]] = []
     for start, end in spans:
-        if end - start <= long_span_limit:
+        if _utf8_length(text, start, end) <= long_span_limit:
             result.append((start, end))
         else:
             result.extend(_split_long_span(text, start, end, long_span_limit))
@@ -560,20 +601,47 @@ def _append_span(spans: list[tuple[int, int]], text: str, start: int, end: int) 
         spans.append((start, end))
 
 
+def _utf8_length(text: str, start: int, end: int) -> int:
+    return len(text[start:end].encode("utf-8"))
+
+
 def _split_long_span(text: str, start: int, end: int, limit: int) -> list[tuple[int, int]]:
     spans: list[tuple[int, int]] = []
-    while end - start > limit:
-        cut = text.rfind(" ", start + limit // 2, start + limit)
-        if cut <= start:
-            cut = text.find(" ", start + limit)
+    while _utf8_length(text, start, end) > limit:
+        cut = _cut_point(text, start, end, limit)
         if cut <= start or cut >= end:
             break
         _append_span(spans, text, start, cut)
-        start = cut + 1
+        start = cut
         while start < end and text[start].isspace():
             start += 1
     _append_span(spans, text, start, end)
     return spans
+
+
+def _cut_point(text: str, start: int, end: int, limit: int) -> int:
+    """Return the largest char index whose UTF-8 prefix stays within ``limit``.
+
+    Prefer the last whitespace or clause punctuation in the second half of the
+    window so English stays on word boundaries; scripts without spaces (CJK)
+    fall back to a hard cut on a character boundary.
+    """
+
+    cut = start
+    size = 0
+    while cut < end:
+        step = len(text[cut].encode("utf-8"))
+        if size + step > limit:
+            break
+        size += step
+        cut += 1
+    if cut <= start:
+        return start
+    window_start = start + max(1, (cut - start) // 2)
+    for index in range(cut, window_start, -1):
+        if text[index - 1].isspace() or text[index - 1] in _SPLIT_PUNCTUATION:
+            return index
+    return cut
 
 
 def _is_abbreviation(text: str, period: int) -> bool:

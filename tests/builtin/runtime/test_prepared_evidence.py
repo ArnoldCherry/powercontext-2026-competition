@@ -233,3 +233,36 @@ def test_no_candidates_returns_empty_context() -> None:
     assert build.context.status == "empty"
     assert build.fragments == ()
     assert build.origins == ()
+
+
+def test_short_cjk_query_matches_contiguous_text_without_spaces() -> None:
+    text = "\u8bc1\u636e" * 1000
+    build = _build("\u8bc1\u636e", {"one": text}, max_bytes=16384)
+
+    assert build.context.content is not None
+    assert build.fragments
+    assert "\u8bc1\u636e" in build.context.content
+    for fragment in build.fragments:
+        assert fragment.text == text[fragment.start : fragment.end]
+
+
+def test_long_cjk_span_is_split_to_fit_byte_budget() -> None:
+    text = "\u8bc1\u636e" * 1000
+    build = _build("\u8bc1\u636e\u8bc1\u636e\u8bc1\u636e", {"one": text}, max_bytes=4096)
+
+    assert build.context.content is not None
+    assert build.fragments
+    assert build.context.content_bytes == len(build.context.content.encode("utf-8")) <= 4096
+    assert any("\u8bc1\u636e" in fragment.text for fragment in build.fragments)
+    for fragment in build.fragments:
+        assert 0 <= fragment.start < fragment.end <= len(text)
+        assert fragment.text == text[fragment.start : fragment.end]
+
+
+def test_single_character_cjk_query_is_searchable() -> None:
+    text = "\u8bc1\u636e\u8bc1\u636e\u8bc1\u636e\u8bc1\u636e"
+    build = _build("\u8bc1", {"one": text}, max_bytes=16384)
+
+    assert build.fragments
+    assert any("\u8bc1" in fragment.text for fragment in build.fragments)
+
