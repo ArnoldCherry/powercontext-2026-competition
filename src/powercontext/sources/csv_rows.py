@@ -66,16 +66,13 @@ class CSVRowInput(BaseModel):
 
     @model_validator(mode="after")
     def validate_row(self) -> CSVRowInput:
-        _validate_document_id(self.document_id)
-        _validate_primary_key(self.primary_key)
-        if not self.primary_key_value.strip():
-            raise ValueError("primary_key_value must not be blank")
-        if not self.columns or len(self.columns) != len(self.values):
-            raise ValueError("columns and values must have the same non-zero width")
-        if any(not column.strip() for column in self.columns):
-            raise ValueError("columns must not contain blank names")
-        if len(set(self.columns)) != len(self.columns):
-            raise ValueError("columns must be unique")
+        _validate_row_fields(
+            self.document_id,
+            self.primary_key,
+            self.primary_key_value,
+            self.columns,
+            self.values,
+        )
         return self
 
 
@@ -92,11 +89,16 @@ class CSVRowSource(Source):
 
     @model_validator(mode="after")
     def validate_identity(self) -> CSVRowSource:
+        _validate_row_fields(
+            self.document_id,
+            self.primary_key,
+            self.primary_key_value,
+            self.columns,
+            self.values,
+        )
         expected = csv_row_source_id(self.document_id, self.primary_key_value)
         if self.source_id != expected or self.name != expected:
             raise ValueError("CSV row source name and source_id must match the row identity")
-        if len(self.columns) != len(self.values):
-            raise ValueError("columns and values must have the same width")
         return self
 
 
@@ -233,6 +235,31 @@ def _parse_rows(
             )
         )
     return tuple(parsed)
+
+
+def _validate_row_fields(
+    document_id: str,
+    primary_key: str,
+    primary_key_value: str,
+    columns: tuple[str, ...],
+    values: tuple[str, ...],
+) -> None:
+    _validate_document_id(document_id)
+    _validate_primary_key(primary_key)
+    if not isinstance(primary_key_value, str) or not primary_key_value.strip():
+        raise ValueError("primary_key_value must be a non-blank string")
+    if not columns or len(columns) != len(values):
+        raise ValueError("columns and values must have the same non-zero width")
+    if any(not isinstance(column, str) or not column.strip() for column in columns):
+        raise ValueError("columns must not contain blank names")
+    if len(set(columns)) != len(columns):
+        raise ValueError("columns must be unique")
+    try:
+        primary_key_index = columns.index(primary_key)
+    except ValueError as error:
+        raise ValueError("primary_key must exactly match one CSV column") from error
+    if values[primary_key_index] != primary_key_value:
+        raise ValueError("primary_key_value must equal the row's primary key field")
 
 
 def _validate_document_id(document_id: str) -> None:
