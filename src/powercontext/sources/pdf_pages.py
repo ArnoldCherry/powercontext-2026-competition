@@ -281,7 +281,9 @@ _STATEMENT_PATTERNS: dict[str, re.Pattern[str]] = {
     "income": re.compile(r"statement(?:s)? of (?:consolidated )?(?:income|earnings|operations)"),
     "cashflow": re.compile(r"statement(?:s)? of (?:consolidated )?cash flows?"),
     "balance": re.compile(r"balance sheets?"),
-    "equity": re.compile(r"statement(?:s)? of (?:consolidated )?(?:stockholders'? |shareholders'? )?equity"),
+    "equity": re.compile(
+        r"statement(?:s)? of (?:consolidated )?(?:changes in )?(?:stockholders'? |shareholders'? )?equity"
+    ),
 }
 
 _STATEMENT_TRIGGERS: dict[str, frozenset[str]] = {
@@ -744,6 +746,8 @@ def _question_cues(question: str) -> _Cues:
     if ("work" in terms and "capit" in terms) or ("cash" in terms and "equivalent" in terms):
         add("balance")
     if "equit" in terms and terms.intersection({"dividend", "repurchas", "stock", "share"}):
+        add("equity")
+    if terms.intersection({"dividend", "repurchas"}):
         add("equity")
     geography = bool(terms.intersection({"geograph", "countr", "territor"}))
     legal = bool(terms.intersection({"leg", "litigat", "battl", "lawsuit"}))
