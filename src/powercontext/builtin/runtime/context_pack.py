@@ -134,15 +134,12 @@ class ContextPackDelta:
         if type(prefix_items) is not int or prefix_items < 0:
             raise ContextPackError("delta prefix_items must be a non-negative integer")
         appended = _decode_items(payload["appended"], "Context Pack delta appended")
-        delta = cls(
+        return cls(
             base_digest=base_digest,
             target_digest=target_digest,
             prefix_items=prefix_items,
             appended=appended,
         )
-        if delta.to_bytes() != data:
-            raise ContextPackError("Context Pack delta JSON is not canonical")
-        return delta
 
 
 def apply_context_pack_delta(base: ContextPack, delta: ContextPackDelta) -> ContextPack:
